@@ -1,7 +1,13 @@
-FROM php:8.3-fpm
+FROM php:8.2-fpm
 
-RUN docker-php-ext-install mysqli pdo pdo_mysql
+# Install required PHP extensions
+RUN docker-php-ext-install pdo pdo_mysql mysqli
 
+# Install Node.js for auto-refresh
+RUN apt-get update && apt-get install -y curl git \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g npm
+
+# Set working directory
 WORKDIR /var/www/html
-
-CMD ["php-fpm"]

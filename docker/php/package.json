@@ -1,0 +1,11 @@
+{
+  "name": "hospital_app",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "php -S 0.0.0.0:8000 -t public",
+    "dev": "chokidar 'src/**/*.php' -c 'killall php; php -S 0.0.0.0:8000 -t public'"
+  },
+  "devDependencies": {
+    "chokidar-cli": "^3.0.0"
+  }
+}
