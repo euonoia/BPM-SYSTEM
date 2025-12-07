@@ -1,7 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
     const root = document.getElementById("root") || createRoot();
-
-    root.innerHTML = "<p>Hello from src/main.js!</p>";
 });
 
 function createRoot() {
