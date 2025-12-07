@@ -40,6 +40,7 @@ services:
       - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
     networks:
       - hospital_net
+    restart: unless-stopped
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
@@ -54,6 +55,7 @@ services:
       - db
     networks:
       - hospital_net
+    restart: unless-stopped
 
 volumes:
   mysql_data:
