@@ -1,24 +1,20 @@
 <?php
 
-// Requested URL path
-$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
 
-// Root path → load src/index.html
-if ($path === '/' || $path === '/index.php') {
-    echo file_get_contents(__DIR__ . '/../src/index.html');
-    exit;
+define('LARAVEL_START', microtime(true));
+
+// Determine if the application is in maintenance mode...
+if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
+    require $maintenance;
 }
 
-// If it ends with .html → load file from src/
-if (str_ends_with($path, '.html')) {
-    $file = __DIR__ . '/../src' . $path;
+// Register the Composer autoloader...
+require __DIR__.'/../vendor/autoload.php';
 
-    if (file_exists($file)) {
-        echo file_get_contents($file);
-        exit;
-    }
-}
+// Bootstrap Laravel and handle the request...
+/** @var Application $app */
+$app = require_once __DIR__.'/../bootstrap/app.php';
 
-// For anything else → 404 or assets
-http_response_code(404);
-echo "404 Not Found";
+$app->handleRequest(Request::capture());
