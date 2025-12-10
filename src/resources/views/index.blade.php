@@ -8,7 +8,11 @@
 <body>
     <h1>Welcome to HR2</h1>
     
-    <!-- Laravel route link -->
-   <a href="{{ route('hr2') }}">Go to HR2 Index</a>
+    <!-- Link to HR2 page itself -->
+    <a href="{{ route('hr2') }}">Go to HR2 Index</a>
+    <br>
+
+    <!-- Link to Patients CRUD index page -->
+    <a href="{{ route('patients.index') }}">Go to Patients</a>
 </body>
 </html>
