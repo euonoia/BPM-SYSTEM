@@ -16,7 +16,8 @@
     @endif
 
     <!-- Add Patient Link -->
-    <a href="{{ route('patients.create') }}">Add Patient</a>
+    <a href="{{ route('patients.create') }}">Add Patient</a> |
+    <a href="{{ url('/') }}">Back to Home</a>
     <br><br>
 
     <!-- Patient List -->
