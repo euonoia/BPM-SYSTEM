@@ -1,14 +1,17 @@
+/* landing.css */
 body {
-    background-image: url('/images/hospital.jpeg'); /* use relative path */
+    background-image: url('/images/hospital.jpeg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     min-height: 100vh;
     margin: 0;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; /* token font style */
+    color: var(--neutral-800); /* use token for text color */
 }
 
 h1, h2, ul, li, a {
-    color: black;
+    color: var(--neutral-900); /* darker text for readability */
 }
 
 ul {
@@ -18,9 +21,10 @@ ul {
 
 a {
     text-decoration: none;
-    color: black;
+    color: var(--primary-base); /* use primary token */
 }
 
 a:hover {
     text-decoration: underline;
+    color: var(--primary-dark); /* hover state using token */
 }
