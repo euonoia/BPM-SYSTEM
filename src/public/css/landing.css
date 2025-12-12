@@ -1,0 +1,26 @@
+body {
+    background-image: url('/images/hospital.jpeg'); /* use relative path */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    margin: 0;
+}
+
+h1, h2, ul, li, a {
+    color: black;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+a:hover {
+    text-decoration: underline;
+}

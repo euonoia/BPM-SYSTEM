@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Landing Page</title>
+    <!-- Link external CSS -->
+    <link rel="stylesheet" href="{{ asset('css/landing.css') }}">
 </head>
 <body>
     <h1>Welcome to the Landing Page</h1>
