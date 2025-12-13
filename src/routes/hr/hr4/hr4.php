@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HR\HR4Controller;
+use App\Http\Controllers\hr4\HR4Controller;
 
 Route::prefix('hr/hr4')->name('hr.hr4.')->group(function () {
     // Main index

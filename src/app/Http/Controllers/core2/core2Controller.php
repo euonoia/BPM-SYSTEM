@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Core;
+namespace App\Http\Controllers\core2;
 
 use App\Http\Controllers\Controller;
 
-class Core2Controller extends Controller
+class core2Controller extends Controller
 {
     public function index()
     {

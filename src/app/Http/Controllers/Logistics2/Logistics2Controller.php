@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Logistics;
+namespace App\Http\Controllers\Logistics2;
 
 use App\Http\Controllers\Controller;
 
