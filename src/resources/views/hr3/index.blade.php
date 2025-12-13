@@ -19,7 +19,7 @@ $counts = [
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="{{ asset('css/hr3/example.css') }}">
-    <title>Employee Dashboard - </title>
+    <title>Employee Dashboard - HR1</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 <body>
