@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\HR;
+namespace App\Http\Controllers\hr2;
 
 use App\Http\Controllers\Controller;
 

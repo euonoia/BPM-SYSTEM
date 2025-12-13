@@ -4,25 +4,32 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PatientController;
 
 // Homepage
-Route::get('/', function () {
-    return view('index');
-});
+Route::get('/', fn () => view('index'));
 
-// Dynamically load all module route files
-foreach (glob(__DIR__.'/core/*.php') as $file) {
-    require $file;
+/*
+|--------------------------------------------------------------------------
+| Modular Route Loading
+|--------------------------------------------------------------------------
+| - core, hr, logistics  => nested
+| - financials          => flat
+*/
+
+$nestedModules = ['core', 'hr', 'logistics'];
+$flatModules   = ['financials'];
+
+// Nested modules
+foreach ($nestedModules as $module) {
+    foreach (glob(__DIR__ . "/{$module}/**/*.php") as $file) {
+        require $file;
+    }
 }
 
-foreach (glob(__DIR__.'/logistics/*.php') as $file) {
-    require $file;
+// Flat modules
+foreach ($flatModules as $module) {
+    foreach (glob(__DIR__ . "/{$module}/*.php") as $file) {
+        require $file;
+    }
 }
 
-foreach (glob(__DIR__.'/hr/*.php') as $file) {
-    require $file;
-}
-
-foreach (glob(__DIR__.'/financials/*.php') as $file) {
-    require $file;
-}
-
+// Resources
 Route::resource('patients', PatientController::class);
