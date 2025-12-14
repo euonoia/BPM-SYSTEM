@@ -3,52 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CityCare Hospital</title>
-
+    <title>Concord Hospital</title>
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
-    <!-- Theme + Landing Styles -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    
+        <!-- Theme + Landing Styles -->
     <link rel="stylesheet" href="{{ asset('css/landing.css') }}">
-
-    <style>
-        /* Secondary nav under header */
-        .sub-nav {
-            background-color: #f8f8f8;
-            padding: 10px 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .sub-nav .container {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-        }
-
-        .sub-nav a {
-            text-decoration: none;
-            color: var(--text-dark);
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .sub-nav a:hover,
-        .sub-nav a.active {
-            color: var(--primary);
-            font-weight: 700;
-        }
-    </style>
 </head>
 <body>
-
 <!-- Header -->
 <header>
     <div class="container">
         <nav>
             <div class="logo">Concord Hospital</div>
             <ul>
-                <li><a href="#home">Calls us</a></li>
-                <li><a href="#about">Book Now</a></li>
+                <li>
+                    <a href="#home" class="btn btn-call">
+                        <i class="bi bi-telephone-fill"></i> Call Us
+                    </a>
+                </li>
+                <li>
+                    <a href="#about" class="btn btn-book">
+                        <i class="bi bi-calendar-check-fill"></i> Book Now
+                    </a>
+                </li>
             </ul>
         </nav>
     </div>

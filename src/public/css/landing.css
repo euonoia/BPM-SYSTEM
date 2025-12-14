@@ -46,20 +46,105 @@ nav {
 }
 
 nav ul {
-    display: flex;
     list-style: none;
-    gap: 20px;
+    display: flex;
+    gap: 15px;
+    margin: 0;
+    padding: 0;
 }
 
 nav ul li a {
-    font-weight: 500;
-    color: var(--text-dark);
-    transition: color 0.3s ease;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px; /* space between icon and text */
+    transition: all 0.3s ease;
+    color: #fff;
 }
 
 nav ul li a:hover {
     color: var(--primary-hover);
 }
+/* Navigation buttons container */
+.nav-buttons {
+    list-style: none;
+    display: flex;
+    gap: var(--space-md);
+    margin: 0;
+    padding: 0;
+}
+
+/* Common button styles */
+.nav-buttons li a.btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-lg);
+    font-weight: 600;
+    font-size: 16px;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Call button: green accent */
+.btn-call {
+    background-color: var(--neutral-200);
+    color: black;
+}
+
+.btn-call:hover {
+    background-color: var(--neutral-500); 
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Book button: primary blue */
+.btn-book {
+    background-color: var(--primary-base);
+    color: #ffffff;
+}
+
+.btn-book:hover {
+    background-color: var(--neutral-200);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Icon spacing */
+.nav-buttons li a.btn i {
+    font-size: 18px;
+    vertical-align: middle;
+}
+
+/* Secondary nav under header */
+        .sub-nav {
+            background-color: #f8f8f8;
+            padding: 10px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .sub-nav .container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .sub-nav a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .sub-nav a:hover,
+        .sub-nav a.active {
+            color: var(--primary);
+            font-weight: 700;
+        }
 
 /* Hero Section - Full Width */
 .hero {
