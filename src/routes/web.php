@@ -10,26 +10,32 @@ Route::get('/', fn () => view('index'));
 |--------------------------------------------------------------------------
 | Modular Route Loading
 |--------------------------------------------------------------------------
-| - core, hr, logistics  => nested
-| - financials          => flat
+| Dynamically loads all route files from modules (nested or flat) 
+| recursively to ensure all routes are instantly available.
 */
 
-$nestedModules = ['core', 'hr', 'logistics'];
-$flatModules   = ['financials'];
+// Helper function to recursively load all PHP files in a directory
+function loadModuleRoutes(string $dir)
+{
+    if (!is_dir($dir)) return;
 
-// Nested modules
-foreach ($nestedModules as $module) {
-    foreach (glob(__DIR__ . "/{$module}/**/*.php") as $file) {
-        require $file;
+    $iterator = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($dir)
+    );
+
+    foreach ($iterator as $file) {
+        if ($file->isFile() && $file->getExtension() === 'php') {
+            require $file->getPathname();
+        }
     }
 }
 
-// Flat modules
-foreach ($flatModules as $module) {
-    foreach (glob(__DIR__ . "/{$module}/*.php") as $file) {
-        require $file;
-    }
+// List of all modules
+$modules = ['core', 'hr', 'logistics', 'landing', 'financials'];
+
+foreach ($modules as $module) {
+    loadModuleRoutes(__DIR__ . '/' . $module);
 }
 
-// Resources
+// Resource routes
 Route::resource('patients', PatientController::class);

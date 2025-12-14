@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CityCare Hospital</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Theme + Landing Styles -->
+    <link rel="stylesheet" href="{{ asset('css/landing.css') }}">
+
+    <style>
+        /* Secondary nav under header */
+        .sub-nav {
+            background-color: #f8f8f8;
+            padding: 10px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .sub-nav .container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .sub-nav a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .sub-nav a:hover,
+        .sub-nav a.active {
+            color: var(--primary);
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+    <div class="container">
+        <nav>
+            <div class="logo">Concord Hospital</div>
+            <ul>
+                <li><a href="#home">Calls us</a></li>
+                <li><a href="#about">Book Now</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<!-- Sub Navigation -->
+<div class="sub-nav">
+    <div class="container">
+        <a href="#services" class="sub-link">Home</a>
+        <a href="#doctors" class="sub-link">Find a Doctor</a>
+        <a href="#appointments" class="sub-link">Services</a>
+        <a href="#contact" class="sub-link">Patients Resources</a>
+    </div>
+</div>
+
+<!-- Hero Section -->
+<section class="hero" id="home">
+    <div class="container hero-content">
+        <div class="hero-text">
+            <h1>Trusted Care for Every Patient</h1>
+            <p>
+                Concord Hospital delivers compassionate, patient-centered
+                healthcare with modern facilities and experienced professionals.
+            </p>
+        </div>
+
+        <div class="hero-image">
+            <img src="{{ asset('images/achievment.jpeg') }}" alt="Healthcare Professionals">
+        </div>
+    </div>
+</section>
+
+<!-- Features / Services -->
+<section class="features container" id="services">
+    <div class="feature">
+        <h3>24/7 Emergency Care</h3>
+        <p>
+            Our emergency department operates around the clock with
+            rapid-response medical teams.
+        </p>
+    </div>
+
+    <div class="feature">
+        <h3>Expert Medical Staff</h3>
+        <p>
+            Board-certified physicians and specialists committed to
+            patient safety and excellence.
+        </p>
+    </div>
+
+    <div class="feature">
+        <h3>Modern Facilities</h3>
+        <p>
+            Advanced diagnostic and treatment technology designed
+            for comfort and accuracy.
+        </p>
+    </div>
+</section>
+
+<!-- Additional Sections -->
+<section id="doctors" class="container">
+    <h2>Our Doctors</h2>
+</section>
+
+<section id="appointments" class="container">
+    <h2>Book an Appointment</h2>
+</section>
+
+<section id="contact" class="container">
+    <h2>Contact Us</h2>
+</section>
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <p>&copy; 2025 CityCare Hospital. All rights reserved.</p>
+        <p>
+            <a href="#privacy">Privacy Policy</a> |
+            <a href="#terms">Terms of Service</a>
+        </p>
+    </div>
+</footer>
+
+<!-- Sub NavLink Highlight JS -->
+<script>
+    const sections = document.querySelectorAll("section[id]");
+    const subLinks = document.querySelectorAll(".sub-link");
+
+    window.addEventListener("scroll", () => {
+        let scrollPos = window.scrollY + 150;
+        sections.forEach(section => {
+            if(scrollPos >= section.offsetTop && scrollPos < section.offsetTop + section.offsetHeight){
+                subLinks.forEach(link => {
+                    link.classList.remove("active");
+                    if(link.getAttribute("href") === "#" + section.id){
+                        link.classList.add("active");
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
