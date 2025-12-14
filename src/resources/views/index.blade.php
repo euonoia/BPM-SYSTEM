@@ -10,6 +10,15 @@
 <body>
     <h1>Welcome to the Landing Page</h1>
 
+    <h2>Landing Page</h2>
+    <ul>
+        <li>
+            <a href="{{ route('landing.landingPage.index') }}" class="text-blue-600 hover:underline">
+                Landing Page
+            </a>
+        </li>
+    </ul>
+
     <h2>Core Modules</h2>
     <ul>
         <li><a href="{{ route('core.core1.index') }}">Go to Core1 Index</a></li>
