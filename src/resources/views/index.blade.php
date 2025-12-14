@@ -9,7 +9,7 @@
 </head>
 <body>
     <h1>Welcome to the Landing Page</h1>
-    <h2>Test Commit</h2>
+    
 
     <h2>Core Modules</h2>
     <ul>
