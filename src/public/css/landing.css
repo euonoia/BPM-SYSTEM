@@ -1,6 +1,8 @@
 @import 'theme.css';
 
-/* Reset & Base */
+/* =========================
+   Reset & Base
+========================= */
 * {
     margin: 0;
     padding: 0;
@@ -12,6 +14,7 @@ body {
     line-height: 1.6;
     color: var(--text-dark);
     background-color: var(--bg);
+    overflow-x: hidden; /* prevents horizontal scrollbar */
 }
 
 a {
@@ -19,14 +22,20 @@ a {
     color: inherit;
 }
 
-/* Container */
+/* =========================
+   Container
+========================= */
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-/* Header */
+/* =========================
+   Header & Navigation
+========================= */
 header {
     background-color: #ffffff;
     padding: 20px 0;
@@ -49,8 +58,6 @@ nav ul {
     list-style: none;
     display: flex;
     gap: 15px;
-    margin: 0;
-    padding: 0;
 }
 
 nav ul li a {
@@ -60,7 +67,7 @@ nav ul li a {
     font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 8px; /* space between icon and text */
+    gap: 8px;
     transition: all 0.3s ease;
     color: #fff;
 }
@@ -68,16 +75,14 @@ nav ul li a {
 nav ul li a:hover {
     color: var(--primary-hover);
 }
-/* Navigation buttons container */
+
+/* Navigation buttons */
 .nav-buttons {
     list-style: none;
     display: flex;
     gap: var(--space-md);
-    margin: 0;
-    padding: 0;
 }
 
-/* Common button styles */
 .nav-buttons li a.btn {
     display: flex;
     align-items: center;
@@ -89,23 +94,21 @@ nav ul li a:hover {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Call button: green accent */
 .btn-call {
     background-color: var(--neutral-200);
     color: black;
 }
 
 .btn-call:hover {
-    background-color: var(--neutral-500); 
-    color: #ffffff;
+    background-color: var(--neutral-500);
+    color: #fff;
     transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
 }
 
-/* Book button: primary blue */
 .btn-book {
     background-color: var(--primary-base);
-    color: #ffffff;
+    color: #fff;
 }
 
 .btn-book:hover {
@@ -114,42 +117,44 @@ nav ul li a:hover {
     box-shadow: var(--shadow-lg);
 }
 
-/* Icon spacing */
 .nav-buttons li a.btn i {
     font-size: 18px;
     vertical-align: middle;
 }
 
-/* Secondary nav under header */
-        .sub-nav {
-            background-color: #f8f8f8;
-            padding: 10px 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
+/* =========================
+   Sub Navigation
+========================= */
+.sub-nav {
+    background-color: #f8f8f8;
+    padding: 10px 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
 
-        .sub-nav .container {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-        }
+.sub-nav .container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
 
-        .sub-nav a {
-            text-decoration: none;
-            color: var(--text-dark);
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
+.sub-nav a {
+    text-decoration: none;
+    color: var(--text-dark);
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
 
-        .sub-nav a:hover,
-        .sub-nav a.active {
-            color: var(--primary);
-            font-weight: 700;
-        }
+.sub-nav a:hover,
+.sub-nav a.active {
+    color: var(--primary);
+    font-weight: 700;
+}
 
-/* Hero Section - Full Width */
+/* =========================
+   Hero Section
+========================= */
 .hero {
-    width: 100vw;
-    margin-left: calc(-50vw + 50%);
+    width: 100%; /* prevent overflow */
     position: relative;
     overflow: hidden;
     padding: 16vh 2%;
@@ -159,7 +164,6 @@ nav ul li a:hover {
     background-repeat: no-repeat;
 }
 
-/* Hero Content: container flex for text left, image right */
 .hero-content {
     display: flex;
     align-items: center;
@@ -167,10 +171,9 @@ nav ul li a:hover {
     flex-wrap: wrap;
     gap: 50px;
     position: relative;
-    color: #ffffff;
+    color: #fff;
 }
 
-/* Hero Text */
 .hero-text {
     max-width: 600px;
     position: relative;
@@ -179,7 +182,6 @@ nav ul li a:hover {
     padding-top: 10px;
 }
 
-/* Overlay behind text (optional gradient) */
 .hero-text::before {
     content: '';
     position: absolute;
@@ -187,39 +189,35 @@ nav ul li a:hover {
     left: 0;
     width: 100%;
     height: 100%;
-   
     border-radius: var(--radius-lg);
     z-index: 0;
 }
 
-/* Hero Heading & Paragraph */
 .hero h1 {
     font-size: 3rem;
     margin-bottom: 20px;
-    color: #ffffff;
+    color: #fff;
 }
 
 .hero p {
     font-size: 1.125rem;
     margin-bottom: 30px;
-    color: #ffffff;
+    color: #fff;
 }
 
-/* Hero Image */
 .hero-image img {
-    max-width: 500px;
-    width: 100%;
-    height: 400px;
+    max-width: 100%;
+    width: 500px;
+    height: auto;
     object-fit: cover;
     border-radius: var(--radius-lg);
     position: relative;
     z-index: 1;
 }
 
-/* CTA Button */
 .cta-btn {
     background-color: var(--primary-dark);
-    color: #ffffff;
+    color: #fff;
     padding: 15px 30px;
     font-weight: 600;
     border-radius: var(--radius-md);
@@ -232,40 +230,263 @@ nav ul li a:hover {
     background-color: var(--primary-hover);
 }
 
-/* Features Section */
-.features {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 30px;
-    padding: 80px 0;
+/* =========================
+   Appointments Section
+========================= */
+.appointments-section {
+    padding: var(--space-3xl) 0;
+    text-align: center;
 }
 
-.feature {
+.appointments-header {
+    max-width: 700px;
+    margin: 0 auto var(--space-2xl);
+}
+
+.appointments-header h2 {
+    color: var(--primary-base);
+    font-size: 2.5rem;
+    margin-bottom: var(--space-sm);
+}
+
+.appointments-header p {
+    color: var(--text-light);
+    font-size: 1.1rem;
+}
+
+.appointment-form {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-md);
+}
+
+.appointment-form input,
+.appointment-form select {
+    width: 100%;
+    padding: var(--space-sm);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--neutral-300);
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.appointment-form input:focus,
+.appointment-form select:focus {
+    border-color: var(--primary-base);
+    box-shadow: 0 0 5px rgba(27,60,83,0.3);
+    outline: none;
+}
+
+.appointment-form button {
+    align-self: flex-start;
+    padding: var(--space-sm) var(--space-2xl);
+    font-weight: 600;
+    border-radius: var(--radius-md);
+    border: none;
+    cursor: pointer;
+    background-color: var(--primary-base);
+    color: #fff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.appointment-form button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* =========================
+   Doctors Section
+========================= */
+.doctors-section {
+    padding: var(--space-3xl) 0;
+    text-align: center;
+}
+
+.doctors-header {
+    max-width: 700px;
+    margin: 0 auto var(--space-2xl);
+}
+
+.doctors-header h2 {
+    color: var(--primary-base);
+    font-size: 2.5rem;
+    margin-bottom: var(--space-sm);
+}
+
+.doctors-header p {
+    color: var(--text-light);
+    font-size: 1.1rem;
+}
+
+/* Doctor Cards List */
+.doctors-list {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: var(--space-lg);
+    flex-wrap: wrap;
+    margin-top: var(--space-2xl);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Individual Doctor Card */
+.doctor-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 180px; /* larger to reduce pixelation */
+}
+
+.doctor-card img {
+    width: 180px;
+    height: 270px; /* portrait 2:3 */
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    border: 2px solid var(--accent-base);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.doctor-card h4 {
+    margin-top: var(--space-sm);
+    margin-bottom: var(--space-xs);
+    color: var(--primary-base);
+    font-size: 1.1rem;
+}
+
+.doctor-card p {
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+/* Highlighted Doctor */
+.doctor-card.highlight {
+    transform: scale(1.1);
+    z-index: 1;
+}
+
+.doctor-card.highlight img {
+    border-color: var(--primary-base);
+    box-shadow: var(--shadow-lg);
+}
+
+.doctor-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+/* =========================
+   Careers Section
+========================= */
+.careers-section {
+    padding: var(--space-3xl) 0;
+}
+
+.careers-header {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto var(--space-2xl);
+}
+
+.careers-header h2 {
+    color: var(--primary-base);
+    font-size: 2.5rem;
+    margin-bottom: var(--space-sm);
+}
+
+.careers-header p {
+    color: var(--text-light);
+    font-size: 1.1rem;
+}
+
+.careers-content {
+    display: flex;
+    gap: var(--space-2xl);
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: var(--space-3xl);
+}
+
+.careers-image {
+    flex: 1 1 400px;
+}
+
+.careers-image img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+}
+
+.careers-text {
+    flex: 1 1 400px;
+}
+
+.careers-text h3 {
+    color: var(--primary-base);
+    margin-bottom: var(--space-sm);
+}
+
+.careers-text p {
+    color: var(--text-light);
+    margin-bottom: var(--space-sm);
+    line-height: 1.6;
+}
+
+.careers-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--space-xl);
+}
+
+.career-card {
     background-color: #ffffff;
-    padding: 30px;
+    padding: var(--space-xl);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
     text-align: center;
-    transition: transform 0.3s ease;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    border-top: 4px solid var(--accent-base);
 }
 
-.feature:hover {
-    transform: translateY(-5px);
+.career-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
 }
 
-.feature h3 {
-    margin-bottom: 15px;
-    color: var(--primary);
+.career-card i {
+    font-size: 36px;
+    color: var(--accent-base);
+    margin-bottom: var(--space-md);
 }
 
-.feature p {
+.career-card h4 {
+    margin-bottom: var(--space-sm);
+    color: var(--primary-base);
+}
+
+.career-card p {
     color: var(--text-light);
+    font-size: 0.95rem;
+    line-height: 1.5;
 }
 
-/* Footer */
+/* =========================
+   Footer
+========================= */
 footer {
     background-color: var(--primary);
-    color: #ffffff;
+    color: #fff;
     text-align: center;
     padding: 40px 0;
 }
@@ -282,10 +503,25 @@ footer a:hover {
     text-decoration: underline;
 }
 
-/* Responsive */
+/* =========================
+   Responsive Adjustments
+========================= */
 @media (max-width: 1024px) {
     .hero-image img {
         height: 300px;
+    }
+
+    .careers-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .careers-text h3 {
+        margin-top: var(--space-md);
+    }
+
+    .doctor-card.highlight {
+        transform: scale(1.05);
     }
 }
 
@@ -317,5 +553,18 @@ footer a:hover {
 
     .hero-text::before {
         display: none;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .doctors-list {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .doctor-card.highlight {
+        transform: scale(1.15);
     }
 }

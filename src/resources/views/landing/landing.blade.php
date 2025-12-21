@@ -36,10 +36,10 @@
 <!-- Sub Navigation -->
 <div class="sub-nav">
     <div class="container">
-        <a href="#services" class="sub-link">Home</a>
-        <a href="#doctors" class="sub-link">Find a Doctor</a>
-        <a href="#appointments" class="sub-link">Services</a>
-        <a href="#contact" class="sub-link">Patients Resources</a>
+        <a href="#home" class="sub-link">Home</a>
+        <a href="#doctors" class="sub-link">Doctors</a>
+        <a href="#appointments" class="sub-link">Appointments</a>
+        <a href="#careers" class="sub-link">Careers</a>
     </div>
 </div>
 
@@ -60,45 +60,121 @@
     </div>
 </section>
 
-<!-- Features / Services -->
-<section class="features container" id="services">
-    <div class="feature">
-        <h3>24/7 Emergency Care</h3>
-        <p>
-            Our emergency department operates around the clock with
-            rapid-response medical teams.
-        </p>
+
+<section id="appointments" class="container appointments-section">
+
+    <div class="appointments-header">
+        <h2>Book an Appointment</h2>
+        <p>Schedule your consultation with our specialists quickly and easily.</p>
     </div>
 
-    <div class="feature">
-        <h3>Expert Medical Staff</h3>
-        <p>
-            Board-certified physicians and specialists committed to
-            patient safety and excellence.
-        </p>
+    <form action="" method="POST" class="appointment-form">
+        @csrf
+        <div class="form-grid">
+            <input type="text" name="name" placeholder="Full Name" required>
+            <input type="email" name="email" placeholder="Email Address" required>
+            <input type="tel" name="phone" placeholder="Phone Number" required>
+            <select name="department" required>
+                <option value="">Select Department</option>
+                <option value="consultancy">Consultancy</option>
+                <option value="residency">Residency & Fellowship</option>
+                <option value="internship">Internship</option>
+            </select>
+            <input type="date" name="date" required>
+            <input type="time" name="time" required>
+        </div>
+        <button type="submit" class="btn-book">Book Now</button>
+    </form>
+
+</section>
+
+
+<section id="doctors" class="container doctors-section">
+
+    <div class="doctors-header">
+        <h2>Multi-awarded Doctors</h2>
+        <p>Meet our top medical professionals who deliver excellence in healthcare.</p>
     </div>
 
-    <div class="feature">
-        <h3>Modern Facilities</h3>
-        <p>
-            Advanced diagnostic and treatment technology designed
-            for comfort and accuracy.
-        </p>
+    <div class="doctors-list">
+        <div class="doctor-card">
+            <img src="{{ asset('images/robert.jpeg') }}" alt="Dr. Rober">
+            <h4>Dr. Robert</h4>
+            <p>Cardiology</p>
+        </div>
+
+        <div class="doctor-card">
+            <img src="{{ asset('images/gilbert.jpeg') }}" alt="Dr. Kathy">
+            <h4>Dr. Kathy</h4>
+            <p>Neurology</p>
+        </div>
+
+        <!-- Highlighted Doctor in the middle -->
+        <div class="doctor-card highlight">
+            <img src="{{ asset('images/kim.jpeg') }}" alt="Dr. Kim">
+            <h4>Dr. Kim</h4>
+            <p>Chief Surgeon</p>
+        </div>
+
+        <div class="doctor-card">
+            <img src="{{ asset('images/kubica.jpeg') }}" alt="Dr. Damian">
+            <h4>Dr. Damian</h4>
+            <p>Pediatrics</p>
+        </div>
+
+        <div class="doctor-card">
+            <img src="{{ asset('images/lebron.jpeg') }}" alt="Dr. Joshua">
+            <h4>Dr. Joshua</h4>
+            <p>Orthopedics</p>
+        </div>
     </div>
+
 </section>
 
-<!-- Additional Sections -->
-<section id="doctors" class="container">
-    <h2>Our Doctors</h2>
+
+   <section id="careers" class="container careers-section">
+
+    <!-- Section Title -->
+    <div class="careers-header">
+        <h2>Careers</h2>
+        <p>Join our dedicated healthcare team and make a real difference in patients' lives.</p>
+    </div>
+
+    <!-- Image + Text -->
+    <div class="careers-content">
+        <div class="careers-image">
+            <img src="{{ asset('images/career.jpeg') }}" alt="Careers at Concord Hospital">
+        </div>
+        <div class="careers-text">
+            <h3>Why Work With Us?</h3>
+            <p>At Concord Hospital, we value compassion, excellence, and collaboration. We provide a supportive environment where healthcare professionals can grow, innovate, and deliver the best care to our patients.</p>
+            <p>We offer opportunities across clinical, administrative, and support roles, ensuring a fulfilling career path for everyone.</p>
+        </div>
+    </div>
+
+        <div class="careers-cards">
+            <div class="career-card">
+                <i class="bi bi-person-badge"></i>
+                <h4>Consultancy</h4>
+                <p>Deliver compassionate patient care in a supportive environment.</p>
+            </div>
+
+            <div class="career-card">
+                <i class="bi bi-clipboard2-pulse"></i>
+                <h4>Residency & Fellowship</h4>
+                <p>Work alongside experienced physicians using modern medical technologies.</p>
+            </div>
+
+            <div class="career-card">
+                <i class="bi bi-journal-text"></i>
+                <h4>Internship</h4>
+                <p>Support hospital operations and ensure quality healthcare delivery.</p>
+            </div>
+        </div>
+
+
 </section>
 
-<section id="appointments" class="container">
-    <h2>Book an Appointment</h2>
-</section>
-
-<section id="contact" class="container">
-    <h2>Contact Us</h2>
-</section>
 
 <!-- Footer -->
 <footer>
