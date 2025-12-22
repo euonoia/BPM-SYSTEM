@@ -1,18 +1,32 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>ESS Requests</h1>
+<h1>Employee Self Service (ESS)</h1>
 
-<form action="{{ route('hr.ess.store') }}" method="POST">
+@if(session('message'))
+    <p style="color: green;">{{ session('message') }}</p>
+@endif
+
+<form method="POST" action="{{ route('hr2.ess.store') }}">
     @csrf
     <label>Type:</label>
-    <input type="text" name="type" required>
+    <select name="type" required>
+        <option value="">Select Request Type</option>
+        <option value="Leave">Leave</option>
+        <option value="Overtime">Overtime</option>
+        <option value="Payroll Issue">Payroll Issue</option>
+        <option value="Other">Other</option>
+    </select>
+    <br><br>
     <label>Details:</label>
-    <textarea name="details" required></textarea>
+    <textarea name="details" placeholder="Request details..." required></textarea>
+    <br><br>
     <button type="submit">Submit Request</button>
 </form>
 
-<table border="1">
+<br>
+
+<table border="1" cellpadding="6">
     <thead>
         <tr>
             <th>ESS ID</th>
@@ -20,6 +34,7 @@
             <th>Details</th>
             <th>Status</th>
             <th>Created At</th>
+            <th>Updated At</th>
         </tr>
     </thead>
     <tbody>
@@ -28,12 +43,13 @@
             <td>{{ $req->ess_id }}</td>
             <td>{{ $req->type }}</td>
             <td>{{ $req->details }}</td>
-            <td>{{ $req->status }}</td>
-            <td>{{ $req->created_at->format('Y-m-d') }}</td>
+            <td>{{ ucfirst($req->status) }}</td>
+            <td>{{ $req->created_at }}</td>
+            <td>{{ $req->updated_at }}</td>
         </tr>
         @empty
         <tr>
-            <td colspan="5">No ESS requests found.</td>
+            <td colspan="6" style="text-align:center;">No ESS requests found.</td>
         </tr>
         @endforelse
     </tbody>
