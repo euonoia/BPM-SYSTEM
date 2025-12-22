@@ -1,0 +1,11 @@
+<?php
+
+namespace App\Models\Hr2;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Competency extends Model
+{
+    protected $table = 'competencies_hr2';
+    protected $fillable = ['code', 'title', 'description', 'competency_group'];
+}

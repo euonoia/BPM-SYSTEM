@@ -1,13 +1,25 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\hr2\HR2Controller;
+use App\Http\Controllers\hr2\DashboardController;
+use App\Http\Controllers\hr2\CompetencyController;
+use App\Http\Controllers\hr2\LearningController;
+use App\Http\Controllers\hr2\TrainingController;
+use App\Http\Controllers\hr2\SuccessionController;
+use App\Http\Controllers\hr2\EssController;
 
-Route::prefix('hr/hr2')->name('hr.hr2.')->group(function () {
-    // Main index
-    Route::get('/', [hr2Controller::class, 'index'])->name('index');
+// HR2 Dashboard
+Route::middleware('auth')->prefix('hr2')->group(function () {
+    Route::get('/', [DashboardController::class, 'index'])->name('hr2.dashboard');
+    
+    Route::get('/competencies', [CompetencyController::class, 'index'])->name('hr2.competencies');
+    Route::get('/learning', [LearningController::class, 'index'])->name('hr2.learning');
+    Route::get('/training', [TrainingController::class, 'index'])->name('hr2.training');
+    Route::get('/succession', [SuccessionController::class, 'index'])->name('hr2.succession');
+    Route::get('/ess', [EssController::class, 'index'])->name('hr2.ess');
+    Route::post('/ess', [EssController::class, 'store'])->name('hr2.ess.store');
 
-    // Nested routes
-    Route::get('/policies', [hr2Controller::class, 'policies'])->name('policies');
-    Route::get('/reports', [hr2Controller::class, 'reports'])->name('reports');
+    // Enrollment routes
+    Route::get('/learning/enroll/{course}', [LearningController::class, 'enroll'])->name('hr2.learning.enroll');
+    Route::get('/training/enroll/{training}', [TrainingController::class, 'enroll'])->name('hr2.training.enroll');
 });

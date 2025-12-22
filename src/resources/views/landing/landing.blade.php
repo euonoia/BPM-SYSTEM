@@ -24,7 +24,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#about" class="btn btn-book">
+                    <a href="#appointments" class="btn btn-book">
                         <i class="bi bi-calendar-check-fill"></i> Book Now
                     </a>
                 </li>

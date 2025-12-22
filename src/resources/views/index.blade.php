@@ -19,6 +19,12 @@
         </li>
     </ul>
 
+    <h2>Authentication</h2>
+    <ul>
+        <li><a href="{{ route('login') }}">Login</a></li>
+        <li><a href="{{ route('register') }}">Register</a></li>
+    </ul>
+    
     <h2>Core Modules</h2>
     <ul>
         <li><a href="{{ route('core.core1.index') }}">Go to Core1 Index</a></li>
@@ -31,13 +37,21 @@
         <li><a href="{{ route('logistics.logistics2.index') }}">Go to Logistics2 Index</a></li>
     </ul>
 
-    <h2>HR Modules</h2>
-    <ul>
-        <li><a href="{{ route('hr.hr1.index') }}">Go to HR1 Index</a></li>
-        <li><a href="{{ route('hr.hr2.index') }}">Go to HR2 Index</a></li>
-        <li><a href="{{ route('hr.hr3.index') }}">Go to HR3 Index</a></li>
-        <li><a href="{{ route('hr.hr4.index') }}">Go to HR4 Index</a></li>
-    </ul>
+   <h2>HR Modules</h2>
+<ul>
+    <li>
+        <a href="{{ route('hr.hr1.index') }}">Go to HR1 Index</a>
+    </li>
+
+    <li>
+        <a href="{{ route('hr.hr3.index') }}">Go to HR3 Index</a>
+    </li>
+
+    <li>
+        <a href="{{ route('hr.hr4.index') }}">Go to HR4 Index</a>
+    </li>
+</ul>
+
 
     <h2>Financial Module</h2>
     <ul>
