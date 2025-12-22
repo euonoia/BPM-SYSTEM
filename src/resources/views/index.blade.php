@@ -44,10 +44,6 @@
     </li>
 
     <li>
-        <a href="{{ route('hr.hr2.index') }}">Go to HR2 Index</a>
-    </li>
-
-    <li>
         <a href="{{ route('hr.hr3.index') }}">Go to HR3 Index</a>
     </li>
 

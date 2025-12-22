@@ -103,11 +103,11 @@ class AuthController extends Controller
         }
 
         if ($employee->role === 'hr') {
-            return redirect()->route('hr.dashboard');
+            return redirect()->route('hr2.dashboard');
         }
 
         if ($employee->role === 'employee') {
-            return redirect()->route('hr.dashboard');
+            return redirect()->route('hr2.dashboard');
         }
 
         return redirect()->route('home');
