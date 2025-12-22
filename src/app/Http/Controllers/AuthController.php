@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
 class AuthController extends Controller
@@ -22,17 +23,17 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
+            'email'    => 'required|email',
             'password' => 'required',
         ]);
 
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
-            $user = Auth::user();
+            $employee = Auth::user();
 
             // Redirect based on role and position
-            return $this->redirectByRole($user);
+            return $this->redirectByRole($employee);
         }
 
         return back()->withErrors([
@@ -54,26 +55,31 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'firstname' => 'required|string|max:255',
-            'lastname'  => 'required|string|max:255',
-            'email'      => 'required|email|unique:users,email',
+            'first_name' => 'required|string|max:150',
+            'last_name'  => 'required|string|max:150',
+            'email'      => 'required|email|unique:employees_hr2,email',
             'password'   => 'required|confirmed|min:6',
-            'role'       => 'required|in:admin,user',
-            'position'   => 'nullable|in:employee,user,manager',
+            'role'       => 'required|in:admin,hr,employee',
+            'position'   => 'nullable|string|max:100',
+            'branch'     => 'nullable|string|max:100',
+            'hire_date'  => 'nullable|date',
         ]);
 
-        $user = User::create([
-            'firstname' => $request->firstname,
-            'lastname'  => $request->lastname,
+        $employee = User::create([
+            'first_name' => $request->first_name,
+            'last_name'  => $request->last_name,
+            'name'       => $request->first_name . ' ' . $request->last_name,
             'email'      => $request->email,
-            'password'   => $request->password, // hashed by model mutator
+            'password'   => Hash::make($request->password),
             'role'       => $request->role,
             'position'   => $request->position,
+            'branch'     => $request->branch,
+            'hire_date'  => $request->hire_date,
         ]);
 
-        Auth::login($user);
+        Auth::login($employee);
 
-        return $this->redirectByRole($user);
+        return $this->redirectByRole($employee);
     }
 
     /**
@@ -82,29 +88,26 @@ class AuthController extends Controller
     public function logout()
     {
         Auth::logout();
-        return redirect()->route('login');
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+        return redirect('/');
     }
 
     /**
      * Redirect user based on role and position
      */
-    private function redirectByRole(User $user)
+    private function redirectByRole(User $employee)
     {
-        if ($user->role === 'admin') {
+        if ($employee->role === 'admin') {
             return redirect()->route('admin.dashboard');
         }
 
-        if ($user->role === 'user') {
-            switch ($user->position) {
-                case 'employee':
-                    return redirect()->route('hr.dashboard');
-                case 'user':
-                    return redirect()->route('core.dashboard');
-                case 'manager':
-                    return redirect()->route('hr.dashboard'); // Example, can change
-                default:
-                    return redirect()->route('home');
-            }
+        if ($employee->role === 'hr') {
+            return redirect()->route('hr.dashboard');
+        }
+
+        if ($employee->role === 'employee') {
+            return redirect()->route('hr.dashboard');
         }
 
         return redirect()->route('home');

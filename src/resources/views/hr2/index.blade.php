@@ -1,27 +1,21 @@
-<?php
+@php
+    $employee = auth()->user();
+    $counts = [
+        'Competencies' => 0,
+        'Courses'      => 0,
+        'Trainings'    => 0,
+        'ESS Requests' => 0
+    ];
+@endphp
 
-$employee = [
-    'first_name' => 'Employee',
-    'last_name'  => '',
-    'role'       => 'User'
-];
-
-$counts = [
-    'Competencies' => 0,
-    'Courses'      => 0,
-    'Trainings'    => 0,
-    'ESS Requests' => 0
-];
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="{{ asset('css/hr2/example.css') }}">
-    <title>Employee Dashboard - HR1</title>
-
+    <link rel="stylesheet" href="{{ asset('css/hr2/example.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <title>Employee Dashboard - HR</title>
 </head>
 <body>
 
@@ -36,37 +30,44 @@ $counts = [
 <!-- Sidebar -->
 <div class="sidebar" id="sidebar">
     <div class="logo">
-        <img src="logo/deamns.png" alt="HR2 Logo">
+        <img src="{{ asset('logo/deamns.png') }}" alt="HR2 Logo">
     </div>
 
     <nav>
-        <a href="index.php" class="active">
+        <a href="{{ route('hr.dashboard') }}" class="active">
             <i class="bi bi-house-door"></i> <span>Dashboard</span>
         </a>
 
-        <a href="modules/hr2/user/competency.php">
+        <a href="{{ url('modules/hr2/user/competency') }}">
             <i class="bi bi-lightbulb"></i> <span>Competencies</span>
         </a>
 
-        <a href="modules/hr2/user/learning.php">
+        <a href="{{ url('modules/hr2/user/learning') }}">
             <i class="bi bi-book"></i> <span>Learning</span>
         </a>
 
-        <a href="modules/hr2/user/training.php">
+        <a href="{{ url('modules/hr2/user/training') }}">
             <i class="bi bi-mortarboard"></i> <span>Training</span>
         </a>
 
-        <a href="modules/hr2/user/succession.php">
+        <a href="{{ url('modules/hr2/user/succession') }}">
             <i class="bi bi-tree"></i> <span>Succession</span>
         </a>
 
-        <a href="modules/hr2/user/ess.php">
+        <a href="{{ url('modules/hr2/user/ess') }}">
             <i class="bi bi-pencil-square"></i> <span>ESS</span>
         </a>
 
-        <a href="logout.php">
+    
+       <!-- Logout -->
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">
+            @csrf
+        </form>
+
+        <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
             <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
         </a>
+
     </nav>
 </div>
 
@@ -74,17 +75,17 @@ $counts = [
 <div class="main">
     <div class="main-inner">
         <div class="header">
-            <h2>Welcome, <?= htmlspecialchars($employee['first_name']) ?></h2>
-            <p>Here’s your HR1 summary overview:</p>
+            <h2>Welcome, {{ $employee->first_name }}</h2>
+            <p>Here’s your HR overview:</p>
         </div>
 
         <div class="grid">
-            <?php foreach ($counts as $label => $count): ?>
+            @foreach($counts as $label => $count)
                 <div class="card">
-                    <h3><?= htmlspecialchars($label) ?></h3>
-                    <p><?= htmlspecialchars($count) ?></p>
+                    <h3>{{ $label }}</h3>
+                    <p>{{ $count }}</p>
                 </div>
-            <?php endforeach; ?>
+            @endforeach
         </div>
     </div>
 </div>

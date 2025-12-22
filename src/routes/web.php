@@ -29,7 +29,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware('auth')->group(function () {
     Route::get('/admin', fn() => view('admin.dashboard'))->name('admin.dashboard');
     Route::get('/hr', fn() => view('hr2.index'))->name('hr.dashboard');
-    Route::get('/core', fn() => view('core.dashboard'))->name('core.dashboard');
+    Route::get('/core', fn() => view('core1.index'))->name('core.dashboard');
     Route::get('/logistics', fn() => view('logistics.dashboard'))->name('logistics.dashboard');
     Route::get('/financials', fn() => view('financials.dashboard'))->name('financials.dashboard');
 });
