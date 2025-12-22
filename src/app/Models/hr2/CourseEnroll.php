@@ -8,11 +8,9 @@ class CourseEnroll extends Model
 {
     protected $table = 'course_enrolls_hr2';
 
-    protected $fillable = [
-        'course_id',
-        'employee_id',
-        'enrolled_at',
-    ];
+   
+    protected $guarded = [];
 
-    public $timestamps = false;
+    public $timestamps = false; 
 }
+ 
