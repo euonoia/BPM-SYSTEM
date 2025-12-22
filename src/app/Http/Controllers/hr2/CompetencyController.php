@@ -9,7 +9,9 @@ class CompetencyController extends Controller
 {
     public function index()
     {
+        // Fetch all competencies ordered by newest
         $competencies = Competency::orderBy('created_at', 'desc')->get();
+
         return view('hr2.competencies', compact('competencies'));
     }
 }

@@ -1,41 +1,60 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Training Sessions</h1>
-<table border="1">
+
+<h1>Available Training Sessions</h1>
+
+@if(session('message'))
+    <p style="color: green;">{{ session('message') }}</p>
+@endif
+
+<table border="1" cellpadding="6">
     <thead>
         <tr>
-            <th>Training Code</th>
-            <th>Training Title</th>
-            <th>Start Date</th>
-            <th>End Date</th>
+            <th>Title</th>
+            <th>Trainer</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Location</th>
+            <th>Capacity</th>
             <th>Status</th>
             <th>Action</th>
         </tr>
     </thead>
+
     <tbody>
         @forelse($sessions as $session)
+        @php
+            $enrolled = $session->enrolls->isNotEmpty();
+        @endphp
         <tr>
-            <td>{{ $session->training_code }}</td>
-            <td>{{ $session->training_title }}</td>
-            <td>{{ $session->start_datetime->format('Y-m-d') }}</td>
-            <td>{{ $session->end_datetime->format('Y-m-d') }}</td>
+            <td>{{ $session->title }}</td>
+            <td>{{ $session->trainer }}</td>
+            <td>{{ $session->start_datetime->format('Y-m-d H:i') }}</td>
+            <td>{{ $session->end_datetime->format('Y-m-d H:i') }}</td>
+            <td>{{ $session->location }}</td>
+            <td>{{ $session->capacity }}</td>
+
+            <td>{{ $enrolled ? 'Enrolled' : 'Not Enrolled' }}</td>
+
             <td>
-                {{ $session->enrolls->first() ? $session->enrolls->first()->status : 'Not Enrolled' }}
-            </td>
-            <td>
-                @if(!$session->enrolls->first())
-                    <a href="{{ route('hr.training.enroll', $session->training_id) }}">Enroll</a>
+                @if(!$enrolled)
+                    <form method="POST"
+                          action="{{ route('hr2.training.enroll', $session->training_id) }}">
+                        @csrf
+                        <button type="submit">Enroll</button>
+                    </form>
                 @else
-                    Enrolled
+                    —
                 @endif
             </td>
         </tr>
         @empty
         <tr>
-            <td colspan="6">No training sessions available.</td>
+            <td colspan="8" style="text-align:center;">No training sessions found.</td>
         </tr>
         @endforelse
     </tbody>
 </table>
+
 @endsection

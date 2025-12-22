@@ -13,23 +13,28 @@ class LearningController extends Controller
     {
         $employee = Auth::user();
 
-        $courses = Course::withCount(['enrolls' => fn($q) => $q->where('employee_id', $employee->employee_id)])
-                         ->orderBy('created_at', 'desc')
-                         ->get();
+        $courses = Course::with([
+            'enrolls' => function ($q) use ($employee) {
+                $q->where('employee_id', $employee->employee_id);
+            }
+        ])->get();
 
         return view('hr2.learning', compact('courses'));
     }
 
-    public function enroll(Course $course)
+    public function enroll(string $course_id)
     {
         $employee = Auth::user();
 
+        $course = Course::where('course_id', $course_id)->firstOrFail();
+
         CourseEnroll::firstOrCreate([
             'employee_id' => $employee->employee_id,
-            'course_id'   => $course->id,
+            'course_id'   => $course->course_id,
         ]);
 
-        return back()->with('success', 'You have successfully enrolled in this course.');
+        return redirect()
+            ->route('hr2.learning')
+            ->with('success', 'Successfully enrolled.');
     }
 }
-
