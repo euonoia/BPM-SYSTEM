@@ -3,7 +3,7 @@
 namespace App\Models\Hr2;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\hr2\CourseEnroll; 
+use App\Models\hr2\CourseEnroll;
 
 class Course extends Model
 {
@@ -13,23 +13,17 @@ class Course extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
-    protected $fillable = [
-        'course_id',
-        'title',
-        'created_at'
-    ];
+    protected $guarded = [];
 
+    // Relationship to course enrollments
+    public function enrolls()
+    {
+        return $this->hasMany(CourseEnroll::class, 'course_id', 'course_id');
+    }
+
+    // Use course_id for route model binding
     public function getRouteKeyName(): string
     {
         return 'course_id';
-    }
-
-    public function enrolls()
-    {
-        return $this->hasMany(
-            CourseEnroll::class,
-            'course_id',
-            'course_id'
-        );
     }
 }
