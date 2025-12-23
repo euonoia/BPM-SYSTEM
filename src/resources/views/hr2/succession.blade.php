@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.hr2.app')
 
 @section('content')
 <h1>Succession Planning</h1>
