@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.hr2.app')
 
 @section('content')
 <div class="dashboard">
