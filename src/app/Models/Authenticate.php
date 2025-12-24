@@ -7,7 +7,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 
-class User extends Authenticatable
+class Authenticate extends Authenticatable
 {
     use Notifiable;
 

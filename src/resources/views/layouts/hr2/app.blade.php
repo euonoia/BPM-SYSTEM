@@ -46,6 +46,12 @@
             <i class="bi bi-mortarboard"></i>
             <span>Training</span>
         </a>
+        
+        <a href="{{ route('hr2.succession') }}"
+            class="{{ request()->routeIs('hr2.succession') ? 'active' : '' }}">
+                <i class="bi bi-tree"></i>
+                <span>Succession</span>
+        </a>
 
         <a href="{{ route('hr2.ess') }}">
             <i class="bi bi-pencil-square"></i>
