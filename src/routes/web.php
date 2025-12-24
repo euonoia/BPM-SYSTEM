@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\hr2\DashboardController;
 
 
+
 // Homepage
 Route::get('/', fn () => view('index'));
 
@@ -29,16 +30,8 @@ Route::post('/register', [AuthController::class, 'register'])->name('register.po
 // Logout
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Optional: dashboard landing (redirect by role if needed)
-Route::middleware('auth')->group(function () {
-    Route::get('/admin', fn() => view('admin.dashboard'))->name('admin.dashboard');
-    Route::get('/core', fn() => view('core1.index'))->name('core.dashboard');
-    Route::get('/logistics', fn() => view('logistics.dashboard'))->name('logistics.dashboard');
-    Route::get('/financials', fn() => view('financials.dashboard'))->name('financials.dashboard');
-});
 
 /*
-|--------------------------------------------------------------------------
 | Modular Route Loading
 |--------------------------------------------------------------------------
 | Dynamically loads all route files from modules (nested or flat) 

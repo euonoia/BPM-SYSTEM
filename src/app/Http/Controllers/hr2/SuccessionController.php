@@ -11,9 +11,24 @@ class SuccessionController extends Controller
     public function index()
     {
         $employee = Auth::user();
-        $positions = SuccessorCandidate::with('position')
-                                        ->where('employee_id', $employee->employee_id)
-                                        ->get();
+        $employeeCode = $employee->employee_id;
+
+        $positions = SuccessorCandidate::query()
+            ->join(
+                'succession_positions_hr2 as p',
+                'p.branch_id',
+                '=',
+                'successor_candidates_hr2.branch_id'
+            )
+            ->where('successor_candidates_hr2.employee_id', $employeeCode)
+            ->orderBy('p.position_title')
+            ->select([
+                'successor_candidates_hr2.*',
+                'p.position_title',
+                'p.criticality',
+                'p.branch_id',
+            ])
+            ->get();
 
         return view('hr2.succession', compact('positions'));
     }

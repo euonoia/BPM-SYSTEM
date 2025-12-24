@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
+use App\Models\Authenticate;
 
 class AuthController extends Controller
 {
@@ -59,19 +59,19 @@ class AuthController extends Controller
             'last_name'  => 'required|string|max:150',
             'email'      => 'required|email|unique:employees_hr2,email',
             'password'   => 'required|confirmed|min:6',
-            'role'       => 'required|in:admin,hr,employee',
+            'role'       => 'required|in:hr,employee', // removed admin
             'position'   => 'nullable|string|max:100',
             'branch'     => 'nullable|string|max:100',
             'hire_date'  => 'nullable|date',
         ]);
 
-        $employee = User::create([
+        $employee = Authenticate::create([
             'first_name' => $request->first_name,
             'last_name'  => $request->last_name,
             'name'       => $request->first_name . ' ' . $request->last_name,
             'email'      => $request->email,
             'password'   => Hash::make($request->password),
-            'role'       => $request->role,
+            'role'       => $request->role, // only hr or employee allowed
             'position'   => $request->position,
             'branch'     => $request->branch,
             'hire_date'  => $request->hire_date,
@@ -96,7 +96,7 @@ class AuthController extends Controller
     /**
      * Redirect user based on role and position
      */
-    private function redirectByRole(User $employee)
+    private function redirectByRole(Authenticate $employee)
     {
         if ($employee->role === 'admin') {
             return redirect()->route('admin.dashboard');

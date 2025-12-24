@@ -43,7 +43,6 @@
             <label>Role:</label>
             <select name="role" required>
                 <option value="">--Select Role--</option>
-                <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
                 <option value="hr" {{ old('role') == 'hr' ? 'selected' : '' }}>HR</option>
                 <option value="employee" {{ old('role') == 'employee' ? 'selected' : '' }}>Employee</option>
             </select>
