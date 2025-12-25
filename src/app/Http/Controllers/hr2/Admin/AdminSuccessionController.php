@@ -42,8 +42,8 @@ class AdminSuccessionController extends Controller
     public function storeCandidate(Request $request)
     {
         $request->validate([
-            'position_id' => 'required|exists:succession_positions,branch_id',
-            'employee_id' => 'required|exists:employees,employee_id',
+            'position_id' => 'required|exists:succession_positions_hr2,branch_id',
+            'employee_id' => 'required|exists:employees_hr2,employee_id',
             'readiness' => 'required|in:ready,not_ready',
             'effective_at' => 'required|date',
             'development_plan' => 'nullable|string',

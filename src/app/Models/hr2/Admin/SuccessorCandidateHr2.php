@@ -4,7 +4,7 @@ namespace App\Models\Hr2\Admin;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Hr2\Admin\SuccessionPositionHr2;
+use App\Models\hr2\Admin\SuccessionPositionHr2;
 use App\Models\Authenticate;
 class SuccessorCandidateHr2 extends Model
 {
