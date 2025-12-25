@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Models\Hr2\Admin;
+namespace App\Models\hr2\Admin;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class CompetencyHr2 extends Model
 {
-    use HasFactory;
+    protected $table = 'competencies_hr2';
 
-    protected $table = 'competencies_hr2'; 
+    public $timestamps = false;
 
     protected $fillable = [
         'code',
