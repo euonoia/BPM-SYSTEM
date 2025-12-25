@@ -53,7 +53,6 @@ class AdminCompetencyController extends Controller
             'description' => $competency->description,
             'competency_group' => $competency->competency_group,
             'created_at' => $competency->created_at,
-            'updated_at' => now(),
         ]);
 
         $competency->delete();

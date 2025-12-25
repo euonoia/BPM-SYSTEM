@@ -4,7 +4,7 @@ namespace App\Models\Hr2\Admin;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Authenticate;
+use App\Models\hr2\Admin\EssRequestArchiveHr2;
 
 class EssRequestHr2 extends Model
 {
@@ -27,9 +27,10 @@ class EssRequestHr2 extends Model
     }
 
     // Archive request
-    public function archive()
+   public function archive()
     {
-        \DB::table('ess_request_archive')->insert([
+        // Use Eloquent instead of DB
+        EssRequestArchiveHr2::create([
             'ess_id' => $this->id,
             'employee_id' => $this->employee_id,
             'type' => $this->type,

@@ -5,50 +5,51 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\hr2\DashboardController;
 
-
-
-// Homepage
+/*
+|--------------------------------------------------------------------------
+| Homepage
+|--------------------------------------------------------------------------
+*/
 Route::get('/', fn () => view('index'));
 
 /*
 |--------------------------------------------------------------------------
 | Authentication Routes
 |--------------------------------------------------------------------------
-| Routes for login, logout, and dashboard redirection based on roles
 */
 Route::middleware('auth')->prefix('hr2')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('hr.dashboard');
 });
-// Show login form
+
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-// Process login form
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
-// Registration
+
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 
-// Logout
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-
 /*
-| Modular Route Loading
 |--------------------------------------------------------------------------
-| Dynamically loads all route files from modules (nested or flat) 
-| recursively to ensure all routes are instantly available.
+| Modular Route Loading (ARTISAN-SAFE)
+|--------------------------------------------------------------------------
 */
 
-function loadModuleRoutes(string $dir)
-{
-    if (!is_dir($dir)) return;
+if (!function_exists('loadModuleRoutes')) {
+    function loadModuleRoutes(string $dir): void
+    {
+        if (!is_dir($dir)) {
+            return;
+        }
 
-    $iterator = new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator($dir)
-    );
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($dir)
+        );
 
-    foreach ($iterator as $file) {
-        if ($file->isFile() && $file->getExtension() === 'php') {
-            require $file->getPathname();
+        foreach ($iterator as $file) {
+            if ($file->isFile() && $file->getExtension() === 'php') {
+                require_once $file->getPathname();
+            }
         }
     }
 }
@@ -60,5 +61,9 @@ foreach ($modules as $module) {
     loadModuleRoutes(__DIR__ . '/' . $module);
 }
 
-// Resource routes
+/*
+|--------------------------------------------------------------------------
+| Resource Routes
+|--------------------------------------------------------------------------
+*/
 Route::resource('patients', PatientController::class);
