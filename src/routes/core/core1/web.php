@@ -26,7 +26,7 @@ use App\Http\Controllers\core1\SettingsController;
 */
 
 // Authentication Routes
-Route::get('/', [AuthController::class, 'showLogin'])->name('login');
+// Note: Root route '/' is handled in main web.php to show index.blade.php
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 

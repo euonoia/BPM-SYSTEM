@@ -15,7 +15,7 @@ class AuthController extends Controller
             return $this->redirectToDashboard(Auth::user());
         }
         
-        return view('core1.auth.login');
+        return redirect()->route('landing.landingPage.index');
     }
 
     public function login(Request $request)
@@ -48,7 +48,7 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login');
+        return redirect()->route('landing.landingPage.index');
     }
 
     private function redirectToDashboard($user)
@@ -60,7 +60,7 @@ class AuthController extends Controller
             'patient' => redirect()->route('patient.dashboard'),
             'receptionist' => redirect()->route('receptionist.dashboard'),
             'billing' => redirect()->route('billing.dashboard'),
-            default => redirect()->route('login'),
+            default => redirect()->route('landing.landingPage.index'),
         };
     }
 
