@@ -27,7 +27,7 @@
     
     <h2>Core Modules</h2>
     <ul>
-        <li><a href="{{ route('core1Controller@index') }}">Go to Core1 Index</a></li>
+        <li><a href="{{ route('core.core1.index') }}">Go to Core1 Index</a></li>
         <li><a href="{{ route('core.core2.index') }}">Go to Core2 Index</a></li>
     </ul>
 
