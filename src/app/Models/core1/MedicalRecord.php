@@ -9,6 +9,8 @@ class MedicalRecord extends Model
 {
     use HasFactory;
 
+    protected $table = 'medical_records_core1';
+
     protected $fillable = [
         'patient_id',
         'doctor_id',

@@ -9,6 +9,8 @@ class Bill extends Model
 {
     use HasFactory;
 
+    protected $table = 'bills_core1';
+
     protected $fillable = [
         'bill_number',
         'patient_id',

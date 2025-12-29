@@ -10,6 +10,8 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    protected $table = 'users_core1';
+
     protected $fillable = [
         'name',
         'email',
