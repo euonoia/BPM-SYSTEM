@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('core1.layouts.app')
 
 @section('title', 'Register New Patient')
 
@@ -37,9 +37,9 @@
                     <select id="gender" name="gender" required
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('gender') border-red-500 @enderror">
                         <option value="">Select Gender</option>
-                        <option value="Male" {{ old('gender') === 'Male' ? 'selected' : '' }}>Male</option>
-                        <option value="Female" {{ old('gender') === 'Female' ? 'selected' : '' }}>Female</option>
-                        <option value="Other" {{ old('gender') === 'Other' ? 'selected' : '' }}>Other</option>
+                        <option value="male" {{ old('gender') === 'male' || old('gender') === 'Male' ? 'selected' : '' }}>Male</option>
+                        <option value="female" {{ old('gender') === 'female' || old('gender') === 'Female' ? 'selected' : '' }}>Female</option>
+                        <option value="other" {{ old('gender') === 'other' || old('gender') === 'Other' ? 'selected' : '' }}>Other</option>
                     </select>
                     @error('gender')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>

@@ -9,6 +9,21 @@ return Application::configure(basePath: dirname(__DIR__))
         web: __DIR__.'/../routes/web.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
+        then: function () {
+            // Route model binding for core1 Patient model
+            // This ensures the correct Patient model is used for core1 routes
+            \Illuminate\Support\Facades\Route::bind('patient', function ($value) {
+                // Try numeric ID first (most common)
+                if (is_numeric($value)) {
+                    $patient = \App\Models\core1\Patient::find($value);
+                    if ($patient) {
+                        return $patient;
+                    }
+                }
+                // Fallback: try patient_id if not found by numeric ID
+                return \App\Models\core1\Patient::where('patient_id', $value)->firstOrFail();
+            });
+        },
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([

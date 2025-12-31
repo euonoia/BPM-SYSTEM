@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('core1.layouts.app')
 
 @section('title', 'Medical Record Details')
 

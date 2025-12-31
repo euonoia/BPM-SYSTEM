@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\core1;
 
+use App\Http\Controllers\Controller;
 use App\Models\core1\Bill;
 use Illuminate\Http\Request;
 

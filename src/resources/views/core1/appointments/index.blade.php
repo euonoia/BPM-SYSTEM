@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('core1.layouts.app')
 
 @section('title', 'Appointments')
 
@@ -94,9 +94,9 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ 
                                         $appointment->status === 'completed' ? 'bg-green-100 text-green-800' :
-                                        $appointment->status === 'scheduled' ? 'bg-blue-100 text-blue-800' :
-                                        $appointment->status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                                        'bg-gray-100 text-gray-800'
+                                        ($appointment->status === 'scheduled' ? 'bg-blue-100 text-blue-800' :
+                                        ($appointment->status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                                        'bg-gray-100 text-gray-800'))
                                     }}">
                                         {{ $appointment->status }}
                                     </span>

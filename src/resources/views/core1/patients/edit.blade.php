@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('core1.layouts.app')
 
 @section('title', 'Edit Patient')
 
@@ -38,9 +38,9 @@
                     <select id="gender" name="gender" required
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('gender') border-red-500 @enderror">
                         <option value="">Select Gender</option>
-                        <option value="Male" {{ old('gender', $patient->gender) === 'Male' ? 'selected' : '' }}>Male</option>
-                        <option value="Female" {{ old('gender', $patient->gender) === 'Female' ? 'selected' : '' }}>Female</option>
-                        <option value="Other" {{ old('gender', $patient->gender) === 'Other' ? 'selected' : '' }}>Other</option>
+                        <option value="male" {{ old('gender', strtolower($patient->gender)) === 'male' ? 'selected' : '' }}>Male</option>
+                        <option value="female" {{ old('gender', strtolower($patient->gender)) === 'female' ? 'selected' : '' }}>Female</option>
+                        <option value="other" {{ old('gender', strtolower($patient->gender)) === 'other' ? 'selected' : '' }}>Other</option>
                     </select>
                     @error('gender')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
