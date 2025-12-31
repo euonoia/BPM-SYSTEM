@@ -8,7 +8,7 @@ class core1Controller extends Controller
 {
     public function index()
     {
-        return view('core1.index'); 
+        return view('core1.auth.login'); 
     }
 
     // Show policies page for Core1
