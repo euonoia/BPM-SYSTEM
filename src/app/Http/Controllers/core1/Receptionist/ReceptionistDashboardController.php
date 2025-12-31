@@ -11,7 +11,10 @@ class ReceptionistDashboardController extends Controller
 {
     public function index()
     {
-        return view('core1.receptionist.dashboard');
+        $todayAppointments = Appointment::whereDate('appointment_date', today())->count();
+        $todayRegistrations = Patient::whereDate('created_at', today())->count();
+
+        return view('core1.receptionist.dashboard', compact('todayAppointments', 'todayRegistrations'));
     }
 
     public function overview()

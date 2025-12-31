@@ -1,8 +1,8 @@
-@extends('layouts.app')
+@extends('core1.layouts.app')
 
 @section('title', 'Receptionist Dashboard')
 
 @section('content')
-    @include('receptionist.overview')
+    @include('core1.receptionist.overview')
 @endsection
 

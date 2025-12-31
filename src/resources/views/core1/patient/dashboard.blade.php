@@ -1,8 +1,8 @@
-@extends('layouts.app')
+@extends('core1.layouts.app')
 
 @section('title', 'Patient Dashboard')
 
 @section('content')
-    @include('patient.overview')
+    @include('core1.patient.overview')
 @endsection
 

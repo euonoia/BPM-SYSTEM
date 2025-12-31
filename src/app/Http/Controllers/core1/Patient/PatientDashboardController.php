@@ -11,7 +11,15 @@ class PatientDashboardController extends Controller
 {
     public function index()
     {
-        return view('core1.patient.dashboard');
+        $user = auth()->user();
+        $patient = Patient::where('email', $user->email)->first();
+        
+        $upcomingAppointments = Appointment::where('patient_id', $patient?->id ?? 0)
+            ->where('appointment_date', '>=', today())
+            ->where('status', 'scheduled')
+            ->count();
+
+        return view('core1.patient.dashboard', compact('upcomingAppointments'));
     }
 
     public function overview()

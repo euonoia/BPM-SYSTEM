@@ -1,8 +1,8 @@
-@extends('layouts.app')
+@extends('core1.layouts.app')
 
 @section('title', 'Admin Dashboard')
 
 @section('content')
-    @include('admin.overview')
+    @include('core1.admin.overview')
 @endsection
 

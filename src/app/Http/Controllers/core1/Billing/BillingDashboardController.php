@@ -10,7 +10,13 @@ class BillingDashboardController extends Controller
 {
     public function index()
     {
-        return view('core1.billing.dashboard');
+        $todayRevenue = Bill::whereDate('bill_date', today())
+            ->where('status', 'paid')
+            ->sum('total');
+        
+        $pendingBills = Bill::where('status', 'pending')->count();
+
+        return view('core1.billing.dashboard', compact('todayRevenue', 'pendingBills'));
     }
 
     public function overview()

@@ -10,7 +10,17 @@ class DoctorDashboardController extends Controller
 {
     public function index()
     {
-        return view('core1.doctor.dashboard');
+        $user = auth()->user();
+        $todayAppointments = Appointment::where('doctor_id', $user->id)
+            ->whereDate('appointment_date', today())
+            ->count();
+        
+        $upcomingAppointments = Appointment::where('doctor_id', $user->id)
+            ->where('appointment_date', '>=', today())
+            ->where('status', 'scheduled')
+            ->count();
+
+        return view('core1.doctor.dashboard', compact('todayAppointments', 'upcomingAppointments'));
     }
 
     public function overview()

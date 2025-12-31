@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\core1\AuthController;
 use App\Http\Controllers\core1\Admin\AdminDashboardController;
 use App\Http\Controllers\core1\Doctor\DoctorDashboardController;
 use App\Http\Controllers\core1\Nurse\NurseDashboardController;
@@ -27,11 +26,10 @@ use App\Http\Controllers\core1\SettingsController;
 
 // Authentication Routes
 // Note: Root route '/' is handled in main web.php to show index.blade.php
-Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+// Login and logout routes are handled by the main AuthController
 
 // Protected Routes - Require Authentication
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['multiAuth'])->group(function () {
     
     // Dashboard Routes by Role
     Route::prefix('admin')->middleware('role:admin')->group(function () {

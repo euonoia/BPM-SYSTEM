@@ -15,7 +15,7 @@
 <body class="min-h-screen bg-gray-50">
     @auth
         <div class="flex">
-            @include('components.navigation')
+            @include('core1.components.navigation')
             <div class="flex-1 overflow-auto">
                 @if(session('success'))
                     <div class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 m-4 rounded" role="alert">
