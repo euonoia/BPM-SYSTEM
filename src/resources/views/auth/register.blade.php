@@ -84,20 +84,20 @@
 </head>
 <body>
     <div class="container">
-        <h1>Register</h1>
+    <h1>Register</h1>
 
-        @if($errors->any())
+    @if($errors->any())
             <div class="error-message">
-                <ul>
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+            <ul>
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
         <form action="{{ route('register.post') }}" method="POST" id="registerForm">
-            @csrf
+        @csrf
             
             <div class="form-group">
                 <label>Subsystem:</label>
@@ -116,39 +116,39 @@
 
             <!-- HR System Name Fields -->
             <div class="form-group hr-fields subsystem-fields" id="hr-name-fields">
-                <label>First Name:</label>
+            <label>First Name:</label>
                 <input type="text" name="first_name" value="{{ old('first_name') }}">
-            </div>
+        </div>
 
             <div class="form-group hr-fields subsystem-fields" id="hr-last-name-field">
-                <label>Last Name:</label>
+            <label>Last Name:</label>
                 <input type="text" name="last_name" value="{{ old('last_name') }}">
-            </div>
+        </div>
 
             <div class="form-group">
-                <label>Email:</label>
-                <input type="email" name="email" value="{{ old('email') }}" required>
-            </div>
+            <label>Email:</label>
+            <input type="email" name="email" value="{{ old('email') }}" required>
+        </div>
 
             <div class="form-group">
-                <label>Password:</label>
-                <input type="password" name="password" required>
-            </div>
+            <label>Password:</label>
+            <input type="password" name="password" required>
+        </div>
 
             <div class="form-group">
-                <label>Confirm Password:</label>
-                <input type="password" name="password_confirmation" required>
-            </div>
+            <label>Confirm Password:</label>
+            <input type="password" name="password_confirmation" required>
+        </div>
 
             <!-- HR System Roles -->
             <div class="form-group hr-fields subsystem-fields" id="hr-role-fields">
-                <label>Role:</label>
+            <label>Role:</label>
                 <select name="role" id="hr-role">
-                    <option value="">--Select Role--</option>
-                    <option value="hr" {{ old('role') == 'hr' ? 'selected' : '' }}>HR</option>
-                    <option value="employee" {{ old('role') == 'employee' ? 'selected' : '' }}>Employee</option>
-                </select>
-            </div>
+                <option value="">--Select Role--</option>
+                <option value="hr" {{ old('role') == 'hr' ? 'selected' : '' }}>HR</option>
+                <option value="employee" {{ old('role') == 'employee' ? 'selected' : '' }}>Employee</option>
+            </select>
+        </div>
 
             <!-- Core1 System Roles -->
             <div class="form-group core1-fields subsystem-fields" id="core1-role-fields">
@@ -166,24 +166,24 @@
 
             <!-- HR System Optional Fields -->
             <div class="form-group hr-fields subsystem-fields" id="hr-optional-fields">
-                <label>Position (optional):</label>
-                <select name="position">
-                    <option value="">--Select Position--</option>
-                    <option value="employee" {{ old('position') == 'employee' ? 'selected' : '' }}>Employee</option>
-                    <option value="user" {{ old('position') == 'user' ? 'selected' : '' }}>User</option>
-                    <option value="manager" {{ old('position') == 'manager' ? 'selected' : '' }}>Manager</option>
-                </select>
-            </div>
+            <label>Position (optional):</label>
+            <select name="position">
+                <option value="">--Select Position--</option>
+                <option value="employee" {{ old('position') == 'employee' ? 'selected' : '' }}>Employee</option>
+                <option value="user" {{ old('position') == 'user' ? 'selected' : '' }}>User</option>
+                <option value="manager" {{ old('position') == 'manager' ? 'selected' : '' }}>Manager</option>
+            </select>
+        </div>
 
             <div class="form-group hr-fields subsystem-fields" id="hr-branch-field">
-                <label>Branch (optional):</label>
-                <input type="text" name="branch" value="{{ old('branch') }}">
-            </div>
+            <label>Branch (optional):</label>
+            <input type="text" name="branch" value="{{ old('branch') }}">
+        </div>
 
             <div class="form-group hr-fields subsystem-fields" id="hr-hire-date-field">
-                <label>Hire Date (optional):</label>
-                <input type="date" name="hire_date" value="{{ old('hire_date') }}">
-            </div>
+            <label>Hire Date (optional):</label>
+            <input type="date" name="hire_date" value="{{ old('hire_date') }}">
+        </div>
 
             <!-- Core1 System Optional Fields -->
             <div class="form-group core1-fields subsystem-fields" id="core1-optional-fields">
@@ -202,12 +202,12 @@
             </div>
 
             <div class="form-group">
-                <button type="submit">Register</button>
-            </div>
-        </form>
+            <button type="submit">Register</button>
+        </div>
+    </form>
 
         <div class="link">
-            <p>Already have an account? <a href="{{ route('login') }}">Login here</a></p>
+    <p>Already have an account? <a href="{{ route('login') }}">Login here</a></p>
         </div>
     </div>
 

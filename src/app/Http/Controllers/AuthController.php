@@ -202,7 +202,7 @@ class AuthController extends Controller
                 }
                 // Fallback: redirect to homepage if role doesn't match
                 return redirect('/');
-            }
+        }
 
             if ($subsystem === 'core1') {
                 $role = $user->role ?? null;
@@ -240,7 +240,7 @@ class AuthController extends Controller
                         $url = '/' . $role . '/dashboard';
                         return redirect($url);
                     }
-                }
+        }
 
                 return redirect('/')->withErrors(['error' => 'Unknown role: ' . $role]);
             }
