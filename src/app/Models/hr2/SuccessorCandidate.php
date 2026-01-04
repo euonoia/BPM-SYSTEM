@@ -17,6 +17,6 @@ class SuccessorCandidate extends Model
             SuccessionPosition::class,
             'branch_id',
             'branch_id'
-        );
+        ); 
     }
 }
