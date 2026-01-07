@@ -160,12 +160,12 @@ body {
 }
 
 .main-inner {
-    max-width: auto;
+
     width: 100%;
-    background: #fff;
+    background: white;
     border-radius: 12px;
     padding: 25px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+
 }
 
 .header {
@@ -401,8 +401,9 @@ tr:hover {
 
 /* --- GRID CARDS --- */
 .grid {
+    justify-content: center;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 40px;
 
 }
