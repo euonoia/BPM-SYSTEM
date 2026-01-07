@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Hr2\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Models\Authenticate; // Optional if admin is part of users table
+use App\Models\Authenticate; 
 use App\Models\Hr2\Admin\CompetencyHr2;
 
 class AdminDashboardController extends Controller
