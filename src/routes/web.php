@@ -66,4 +66,4 @@ foreach ($modules as $module) {
 | Resource Routes
 |--------------------------------------------------------------------------
 */
-Route::resource('patients', PatientController::class);
+// Route::resource('patients', PatientController::class);
