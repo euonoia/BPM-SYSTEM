@@ -424,6 +424,13 @@ tr:hover {
     border-top-color: var(--primary-hover);
 }
 
+
+.card.no-hover:hover {
+    transform: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    cursor: default;
+}
+
 .card h3 {
     color: var(--accent);
     margin-bottom: 10px;
