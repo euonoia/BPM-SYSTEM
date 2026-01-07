@@ -3,107 +3,103 @@
 @section('title', 'Patient Details')
 
 @section('content')
-<div class="p-8">
-    <div class="mb-8">
-        <div class="flex items-center justify-between">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-900">Patient Details</h1>
-                <p class="text-gray-600 mt-1">View patient information</p>
-            </div>
-            <div class="flex gap-4">
-                <a href="{{ route('patients.edit', $patient) }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2">
-                    <i class="fas fa-edit"></i>
-                    Edit Patient
-                </a>
-                <form action="{{ route('patients.destroy', $patient) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this patient? This action cannot be undone.');">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center gap-2">
-                        <i class="fas fa-trash"></i>
-                        Delete Patient
-                    </button>
-                </form>
-                <a href="{{ route('patients.index') }}" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2">
-                    <i class="fas fa-arrow-left"></i>
-                    Back to List
-                </a>
-            </div>
+<div class="container-padding">
+    <div class="header d-flex justify-between items-center mb-25">
+        <div>
+            <h2>Patient Details</h2>
+            <p>View patient information</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ route('patients.edit', $patient) }}" class="btn btn-primary d-flex items-center gap-2">
+                <i class="fas fa-edit"></i>
+                <span>Edit Patient</span>
+            </a>
+            <form action="{{ route('patients.destroy', $patient) }}" method="POST" class="d-flex m-0" onsubmit="return confirm('Are you sure you want to delete this patient? This action cannot be undone.');">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-danger d-flex items-center gap-2">
+                    <i class="fas fa-trash"></i>
+                    <span>Delete Patient</span>
+                </button>
+            </form>
+            <a href="{{ route('patients.index') }}" class="btn btn-outline d-flex items-center gap-2">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to List</span>
+            </a>
         </div>
     </div>
 
-    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="card no-hover text-left max-w-900">
+        <div class="grid-2-col">
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Patient ID</label>
-                <p class="text-gray-900 font-semibold">{{ $patient->patient_id }}</p>
+                <h3>Patient ID</h3>
+                <p>{{ $patient->patient_id }}</p>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                <p class="text-gray-900 font-semibold">{{ $patient->name }}</p>
+                <h3>Name</h3>
+                <p>{{ $patient->name }}</p>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
-                <p class="text-gray-900">{{ $patient->date_of_birth->format('M d, Y') }}</p>
+                <h3>Date of Birth</h3>
+                <p>{{ $patient->date_of_birth->format('M d, Y') }}</p>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Age</label>
-                <p class="text-gray-900">{{ $patient->age ?? 'N/A' }} years</p>
+                <h3>Age</h3>
+                <p>{{ $patient->age ?? 'N/A' }} years</p>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Gender</label>
-                <p class="text-gray-900 capitalize">{{ $patient->gender }}</p>
+                <h3>Gender</h3>
+                <p>{{ ucfirst($patient->gender) }}</p>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                <p class="text-gray-900">{{ $patient->phone }}</p>
+                <h3>Phone</h3>
+                <p>{{ $patient->phone }}</p>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                <p class="text-gray-900">{{ $patient->email }}</p>
+                <h3>Email</h3>
+                <p>{{ $patient->email }}</p>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ 
-                    $patient->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' 
-                }}">
-                    {{ $patient->status }}
+                <h3>Status</h3>
+                <span class="badge {{ $patient->status === 'active' ? 'badge-active' : 'badge-inactive' }}">
+                    {{ ucfirst($patient->status) }}
                 </span>
             </div>
             @if($patient->address)
-            <div class="md:col-span-2">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
-                <p class="text-gray-900">{{ $patient->address }}</p>
+            <div class="col-span-2">
+                <h3>Address</h3>
+                <p>{{ $patient->address }}</p>
             </div>
             @endif
             @if($patient->blood_type)
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Blood Type</label>
-                <p class="text-gray-900">{{ $patient->blood_type }}</p>
+                <h3>Blood Type</h3>
+                <p>{{ $patient->blood_type }}</p>
             </div>
             @endif
             @if($patient->allergies)
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Allergies</label>
-                <p class="text-gray-900">{{ $patient->allergies }}</p>
+                <h3>Allergies</h3>
+                <p>{{ $patient->allergies }}</p>
             </div>
             @endif
             @if($patient->last_visit)
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Last Visit</label>
-                <p class="text-gray-900">{{ $patient->last_visit->format('M d, Y') }}</p>
+                <h3>Last Visit</h3>
+                <p>{{ $patient->last_visit->format('M d, Y') }}</p>
             </div>
             @endif
         </div>
     </div>
 
-    <div class="mt-6 flex gap-4">
-        <a href="{{ route('appointments.create', ['patient_id' => $patient->id]) }}" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2">
+    <div class="d-flex gap-4 mt-25">
+        <a href="{{ route('appointments.create', ['patient_id' => $patient->id]) }}" class="btn btn-success d-flex items-center gap-2">
             <i class="fas fa-calendar-plus"></i>
-            Book Appointment
+            <span>Book Appointment</span>
         </a>
-        <a href="{{ route('medical-records.index', ['patient' => $patient->id]) }}" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center gap-2">
+        <a href="{{ route('medical-records.index', ['patient' => $patient->id]) }}" class="btn icon-purple d-flex items-center gap-2 text-purple-600 bg-transparent border-none">
             <i class="fas fa-file-medical"></i>
-            View Medical Records
+            <span>View Medical Records</span>
         </a>
     </div>
 </div>

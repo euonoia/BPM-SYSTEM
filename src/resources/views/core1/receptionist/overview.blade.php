@@ -25,9 +25,9 @@
     </div>
 </div>
 
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; margin-top: 30px;">
+<div class="dashboard-grid">
     <!-- Today's Appointments -->
-    <div class="card no-hover" style="text-align: left; border-top: none; height: 500px; overflow-y: auto;">
+    <div class="card no-hover card-scrollable">
         <div class="header">
             <h2>Today's Appointments</h2>
         </div>
@@ -50,7 +50,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="4" class="text-center" style="text-align: center; padding: 20px; color: #6b7280;">No appointments scheduled for today.</td>
+                    <td colspan="4" class="empty-state-cell">No appointments scheduled for today.</td>
                 </tr>
                 @endforelse
             </tbody>
@@ -58,7 +58,7 @@
     </div>
 
     <!-- Recent Registrations -->
-    <div class="card no-hover" style="text-align: left; border-top: none; height: 500px; overflow-y: auto;">
+    <div class="card no-hover card-scrollable">
         <div class="header">
             <h2>Recent Registrations</h2>
         </div>
@@ -81,7 +81,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="4" class="text-center" style="text-align: center; padding: 20px; color: #6b7280;">No recent patient registrations found.</td>
+                    <td colspan="4" class="empty-state-cell">No recent patient registrations found.</td>
                 </tr>
                 @endforelse
             </tbody>

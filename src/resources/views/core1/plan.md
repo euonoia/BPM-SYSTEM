@@ -1,56 +1,59 @@
-You are a senior Laravel engineer working on a Hospital Management System.
+/plan
 
-Your task is to IMPROVE the **Receptionist Appointment Management** feature ONLY.
-Do NOT modify other subsystems (billing, medical records, inpatient, OPD, auth, or UI design tokens).
+You are a senior Laravel frontend engineer performing a SAFE UI refactor.
 
-PROJECT CONTEXT:
-- Framework: Laravel (Blade + Controllers + Models)
-- System: Hospital Management System
-- Role: Receptionist
-- Module: Doctor Appointment System
-
-GOAL:
-Enhance the receptionist’s ability to efficiently manage appointments with better flow, validation, and usability.
-
-SCOPE (DO NOT GO OUTSIDE THIS):
-1. Appointment creation by receptionist
-2. Appointment rescheduling & cancellation
-3. Doctor availability checking
-4. Waiting list & no-show handling
-5. Real-time appointment status updates
-
-REQUIREMENTS:
-- Use Laravel best practices (routes, controllers, request validation, models)
-- Use Form Request validation (no inline validation)
-- Use Eloquent relationships (Patient, Doctor, Appointment)
-- Ensure collision-safe appointment IDs
-- Prevent double-booking of doctors
-- Respect doctor working hours & leave schedules
-- Handle time slot conflicts correctly
-- Record receptionist actions (basic audit trail)
-
-FUNCTIONAL FLOW (RECEPTIONIST):
-- Search or select existing patient
-- Select doctor
-- View doctor availability (date + time slots)
-- Book / reschedule / cancel appointment
-- Mark no-show
-- Move patient to waiting list
-- Notify next patient when slot opens
-
-OUTPUT EXPECTATIONS:
-- Updated Controller logic
-- Clean, minimal Blade updates (no UI redesign)
-- Route definitions (only if missing)
-- Clear comments explaining receptionist-specific logic
-- Database logic only where necessary (no migrations unless required)
+OBJECTIVE:
+Refactor ALL inline CSS styles in the Core1 module and move them into a single external stylesheet named `example.css`.
 
 STRICT RULES:
-- Do NOT modify authentication or role system
-- Do NOT change database schema unless unavoidable
-- Do NOT refactor unrelated files
-- Do NOT introduce new UI libraries
-- Do NOT change other roles’ appointment flows
+- ❌ DO NOT change any HTML structure unless required to attach class names
+- ❌ DO NOT modify business logic, routes, controllers, or models
+- ❌ DO NOT change UI behavior or layout outcome
+- ❌ DO NOT touch other subsystems (HR1, etc.)
+- ❌ DO NOT add new features or redesign UI
+- ✅ ONLY refactor inline `style=""` attributes into CSS classes
 
-DELIVERABLE:
-Provide production-ready Laravel code snippets and explanations focused ONLY on improving the receptionist appointment workflow.
+SCOPE:
+1. Identify all inline CSS within:
+   - Core1 Blade views
+   - Core1 components / partials
+   - Core1 layouts
+
+2. Refactoring rules:
+   - Replace each inline style with a semantic, reusable CSS class
+   - Group repeated styles into shared utility classes
+   - Preserve exact visual appearance (pixel-perfect)
+   - Remove all `style=""` attributes after migration
+
+3. CSS FILE RULES:
+   - Create `/public/css/example.css`
+   - Use CSS variables for colors, spacing, fonts where repetition exists
+   - Organize sections clearly:
+     - Layout
+     - Typography
+     - Buttons
+     - Cards
+     - Tables
+     - Utilities
+   - No unused or dead CSS
+
+4. Linking rules:
+   - Load `example.css` ONLY in Core1 layouts
+   - Do NOT affect global app styling
+
+5. Naming conventions:
+   - Use `core1-` prefix for all class names
+   - Class names must describe purpose, not appearance
+     (e.g., `core1-dashboard-card`, not `blue-box`)
+
+DELIVERABLES:
+- All inline CSS removed from Core1
+- `example.css` fully contains equivalent styles
+- Core1 UI looks exactly the same as before
+- Clean, readable, maintainable CSS
+
+FINAL VALIDATION:
+- Search for `style="` inside Core1 → must return ZERO results
+- Visual regression must be NONE
+
+If any logic, behavior, or UI changes occur → FAIL the task.

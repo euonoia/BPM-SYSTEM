@@ -25,46 +25,52 @@
     </div>
 </div>
 
-@if(isset($recentActivities) && count($recentActivities) > 0)
-<div style="margin-top: 30px;">
-    <div class="header">
-        <h2>Recent Activities</h2>
-    </div>
-    <table>
-        <thead>
-            <tr>
-                <th>Action</th>
-                <th>Patient</th>
-                <th>Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($recentActivities as $activity)
-            <tr>
-                <td>{{ $activity['action'] ?? 'N/A' }}</td>
-                <td>{{ $activity['patient'] ?? 'N/A' }}</td>
-                <td>{{ $activity['time'] ?? 'N/A' }}</td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-</div>
-@endif
-
-@if(isset($alerts) && count($alerts) > 0)
-<div style="margin-top: 30px;">
-    <div class="header">
-        <h2>Alerts & Notifications</h2>
-    </div>
-    <div style="display: flex; flex-direction: column; gap: 10px;">
-        @foreach($alerts as $alert)
-        <div class="alert {{ 
-            $alert['priority'] === 'high' ? 'alert-error' : 
-            ($alert['priority'] === 'medium' ? 'alert-warning' : 'alert-info') 
-        }}">
-            {{ $alert['message'] ?? 'N/A' }}
+<div class="dashboard-grid">
+    <!-- Recent Activities -->
+    <div class="card no-hover card-scrollable">
+        <div class="header">
+            <h2>Recent Activities</h2>
         </div>
-        @endforeach
+        <table>
+            <thead>
+                <tr>
+                    <th>Action</th>
+                    <th>Patient</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($recentActivities as $activity)
+                <tr>
+                    <td>{{ $activity['action'] ?? 'N/A' }}</td>
+                    <td>{{ $activity['patient'] ?? 'N/A' }}</td>
+                    <td>{{ $activity['time'] ?? 'N/A' }}</td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="3" class="empty-state-cell">No recent activities found.</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Alerts & Notifications -->
+    <div class="card no-hover card-scrollable">
+        <div class="header">
+            <h2>Alerts & Notifications</h2>
+        </div>
+        <div class="alert-stack">
+            @forelse($alerts as $alert)
+            <div class="alert {{ 
+                $alert['priority'] === 'high' ? 'alert-error' : 
+                ($alert['priority'] === 'medium' ? 'alert-warning' : 'alert-info') 
+            }}">
+                {{ $alert['message'] ?? 'N/A' }}
+            </div>
+            @empty
+            <div class="empty-state-cell">No new alerts.</div>
+            @endforelse
+        </div>
     </div>
 </div>
-@endif
