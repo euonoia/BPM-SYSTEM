@@ -10,6 +10,11 @@ use App\Http\Controllers\OnboardingController_hr1;
 use App\Http\Controllers\LearningModuleController_hr1;
 use App\Http\Controllers\EvaluationController_hr1;
 
+// HR1 Index Route
+Route::prefix('hr/hr1')->name('hr.hr1.')->group(function () {
+    Route::get('/', fn () => view('hr1.index'))->name('index');
+});
+
 Route::get('/dashboard_hr1', [DashboardController_hr1::class, 'index'])->middleware('auth')->name('dashboard_hr1');
 
 // API Routes
