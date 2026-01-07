@@ -3,88 +3,90 @@
 @section('title', 'Patient Details')
 
 @section('content')
-<div class="container-padding">
-    <div class="header d-flex justify-between items-center mb-25">
+<div class="core1-container">
+    <div class="core1-flex-between core1-header">
         <div>
-            <h2>Patient Details</h2>
-            <p>View patient information</p>
+            <h2 class="core1-title">Patient Details</h2>
+            <p class="core1-subtitle">View patient information</p>
         </div>
-        <div class="d-flex gap-2">
-            <a href="{{ route('patients.edit', $patient) }}" class="btn btn-primary d-flex items-center gap-2">
+        <div class="core1-flex-gap-2">
+            <a href="{{ route('patients.edit', $patient) }}" class="core1-btn core1-btn-primary">
                 <i class="fas fa-edit"></i>
-                <span>Edit Patient</span>
+                <span class="pl-20">Edit Patient</span>
             </a>
-            <form action="{{ route('patients.destroy', $patient) }}" method="POST" class="d-flex m-0" onsubmit="return confirm('Are you sure you want to delete this patient? This action cannot be undone.');">
+            <form action="{{ route('patients.destroy', $patient) }}" method="POST" class="core1-flex m-0" onsubmit="return confirm('Are you sure you want to delete this patient? This action cannot be undone.');">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="btn btn-danger d-flex items-center gap-2">
+                <button type="submit" class="core1-btn core1-btn-danger">
                     <i class="fas fa-trash"></i>
-                    <span>Delete Patient</span>
+                    <span class="pl-20">Delete Patient</span>
                 </button>
             </form>
-            <a href="{{ route('patients.index') }}" class="btn btn-outline d-flex items-center gap-2">
+            <a href="{{ route('patients.index') }}" class="core1-btn core1-btn-outline">
                 <i class="fas fa-arrow-left"></i>
-                <span>Back to List</span>
+                <span class="pl-20">Back to List</span>
             </a>
         </div>
     </div>
 
-    <div class="card no-hover text-left max-w-900">
-        <div class="grid-2-col">
-            <div>
+    <div class="core1-card core1-card-compact">
+        <div class="core1-info-grid">
+            <div class="core1-info-item">
                 <h3>Patient ID</h3>
                 <p>{{ $patient->patient_id }}</p>
             </div>
-            <div>
+            <div class="core1-info-item">
                 <h3>Name</h3>
                 <p>{{ $patient->name }}</p>
             </div>
-            <div>
+            <div class="core1-info-item">
                 <h3>Date of Birth</h3>
                 <p>{{ $patient->date_of_birth->format('M d, Y') }}</p>
             </div>
-            <div>
+            <div class="core1-info-item">
                 <h3>Age</h3>
                 <p>{{ $patient->age ?? 'N/A' }} years</p>
             </div>
-            <div>
+            <div class="core1-info-item">
                 <h3>Gender</h3>
                 <p>{{ ucfirst($patient->gender) }}</p>
             </div>
-            <div>
+            <div class="core1-info-item">
                 <h3>Phone</h3>
                 <p>{{ $patient->phone }}</p>
             </div>
-            <div>
+            <div class="core1-info-item">
                 <h3>Email</h3>
                 <p>{{ $patient->email }}</p>
             </div>
-            <div>
+            <div class="core1-info-item">
                 <h3>Status</h3>
-                <span class="badge {{ $patient->status === 'active' ? 'badge-active' : 'badge-inactive' }}">
-                    {{ ucfirst($patient->status) }}
-                </span>
+                <div>
+                    <span class="core1-badge {{ $patient->status === 'active' ? 'core1-badge-active' : 'core1-badge-inactive' }}">
+                        {{ ucfirst($patient->status) }}
+                    </span>
+                </div>
             </div>
             @if($patient->address)
-            <div class="col-span-2">
+            <div class="core1-info-item core1-col-span-2">
                 <h3>Address</h3>
                 <p>{{ $patient->address }}</p>
             </div>
             @endif
             @if($patient->blood_type)
-            <div>
+            <div class="core1-info-item">
                 <h3>Blood Type</h3>
                 <p>{{ $patient->blood_type }}</p>
             </div>
             @endif
             @if($patient->allergies)
-            <div>
+            <div class="core1-info-item">
                 <h3>Allergies</h3>
                 <p>{{ $patient->allergies }}</p>
             </div>
             @endif
             @if($patient->last_visit)
-            <div>
+            <div class="core1-info-item">
                 <h3>Last Visit</h3>
                 <p>{{ $patient->last_visit->format('M d, Y') }}</p>
             </div>
@@ -92,16 +94,17 @@
         </div>
     </div>
 
-    <div class="d-flex gap-4 mt-25">
-        <a href="{{ route('appointments.create', ['patient_id' => $patient->id]) }}" class="btn btn-success d-flex items-center gap-2">
+    <div class="core1-form-actions">
+        <a href="{{ route('appointments.create', ['patient_id' => $patient->id]) }}" class="core1-btn core1-btn-success">
             <i class="fas fa-calendar-plus"></i>
-            <span>Book Appointment</span>
+            <span class="pl-20">Book Appointment</span>
         </a>
-        <a href="{{ route('medical-records.index', ['patient' => $patient->id]) }}" class="btn icon-purple d-flex items-center gap-2 text-purple-600 bg-transparent border-none">
+        <a href="{{ route('medical-records.index', ['patient' => $patient->id]) }}" class="core1-btn core1-btn-outline">
             <i class="fas fa-file-medical"></i>
-            <span>View Medical Records</span>
+            <span class="pl-20">View Medical Records</span>
         </a>
     </div>
 </div>
 @endsection
+
 

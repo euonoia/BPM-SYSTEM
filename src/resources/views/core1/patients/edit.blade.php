@@ -3,89 +3,79 @@
 @section('title', 'Edit Patient')
 
 @section('content')
-@extends('core1.layouts.app')
-
-@section('title', 'Edit Patient')
-
-@section('content')
-@extends('core1.layouts.app')
-
-@section('title', 'Edit Patient')
-
-@section('content')
-<div class="container-padding">
-    <div class="header">
-        <h2>Edit Patient</h2>
-        <p>Update patient information</p>
+<div class="core1-container">
+    <div class="core1-header">
+        <h2 class="core1-title">Edit Patient</h2>
+        <p class="core1-subtitle">Update patient information</p>
     </div>
 
-    <div class="card no-hover text-left max-w-900">
+    <div class="core1-card core1-card-compact">
         <form action="{{ route('patients.update', $patient) }}" method="POST">
             @csrf
             @method('PUT')
             
-            <div class="grid-2-col">
-                <div>
-                    <h3>Full Name *</h3>
+            <div class="core1-form-grid">
+                <div class="core1-form-group">
+                    <label for="name" class="core1-label">Full Name *</label>
                     <input type="text" id="name" name="name" value="{{ old('name', $patient->name) }}" required
-                           class="form-input {{ $errors->has('name') ? 'form-input-error' : '' }}">
+                           class="core1-input @error('name') core1-input-error @enderror">
                     @error('name')
-                        <p class="text-red text-sm mt-4">{{ $message }}</p>
+                        <p class="core1-error-text">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <div>
-                    <h3>Date of Birth *</h3>
+                <div class="core1-form-group">
+                    <label for="date_of_birth" class="core1-label">Date of Birth *</label>
                     <input type="date" id="date_of_birth" name="date_of_birth" value="{{ old('date_of_birth', $patient->date_of_birth->format('Y-m-d')) }}" required
-                           class="form-input {{ $errors->has('date_of_birth') ? 'form-input-error' : '' }}">
+                           class="core1-input @error('date_of_birth') core1-input-error @enderror">
                     @error('date_of_birth')
-                        <p class="text-red text-sm mt-4">{{ $message }}</p>
+                        <p class="core1-error-text">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <div>
-                    <h3>Gender *</h3>
+                <div class="core1-form-group">
+                    <label for="gender" class="core1-label">Gender *</label>
                     <select id="gender" name="gender" required
-                            class="form-input {{ $errors->has('gender') ? 'form-input-error' : '' }}">
+                            class="core1-input @error('gender') core1-input-error @enderror">
                         <option value="">Select Gender</option>
                         <option value="male" {{ old('gender', strtolower($patient->gender)) === 'male' ? 'selected' : '' }}>Male</option>
                         <option value="female" {{ old('gender', strtolower($patient->gender)) === 'female' ? 'selected' : '' }}>Female</option>
                         <option value="other" {{ old('gender', strtolower($patient->gender)) === 'other' ? 'selected' : '' }}>Other</option>
                     </select>
                     @error('gender')
-                        <p class="text-red text-sm mt-4">{{ $message }}</p>
+                        <p class="core1-error-text">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <div>
-                    <h3>Phone Number *</h3>
+                <div class="core1-form-group">
+                    <label for="phone" class="core1-label">Phone Number *</label>
                     <input type="tel" id="phone" name="phone" value="{{ old('phone', $patient->phone) }}" required
-                           class="form-input {{ $errors->has('phone') ? 'form-input-error' : '' }}">
+                           class="core1-input @error('phone') core1-input-error @enderror">
                     @error('phone')
-                        <p class="text-red text-sm mt-4">{{ $message }}</p>
+                        <p class="core1-error-text">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <div class="col-span-2">
-                    <h3>Email Address *</h3>
+                <div class="core1-form-group core1-col-span-2">
+                    <label for="email" class="core1-label">Email Address *</label>
                     <input type="email" id="email" name="email" value="{{ old('email', $patient->email) }}" required
-                           class="form-input {{ $errors->has('email') ? 'form-input-error' : '' }}">
+                           class="core1-input @error('email') core1-input-error @enderror">
                     @error('email')
-                        <p class="text-red text-sm mt-4">{{ $message }}</p>
+                        <p class="core1-error-text">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <div class="col-span-2">
-                    <h3>Address</h3>
-                    <input type="text" id="address" name="address" value="{{ old('address', $patient->address) }}" class="form-input">
+                <div class="core1-form-group core1-col-span-2">
+                    <label for="address" class="core1-label">Address</label>
+                    <input type="text" id="address" name="address" value="{{ old('address', $patient->address) }}" class="core1-input">
                 </div>
             </div>
 
-            <div class="d-flex gap-4 mt-25">
-                <button type="submit" class="btn btn-primary">
+            <div class="core1-form-actions">
+                <button type="submit" class="core1-btn core1-btn-primary">
                     Update Patient
                 </button>
-                <a href="{{ route('patients.show', $patient) }}" class="btn btn-outline">
+                <a href="{{ route('patients.show', $patient) }}" class="core1-btn core1-btn-outline">
                     Cancel
                 </a>
             </div>
@@ -93,5 +83,5 @@
     </div>
 </div>
 @endsection
-@endsection
+
 
