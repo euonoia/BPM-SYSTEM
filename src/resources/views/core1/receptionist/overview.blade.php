@@ -27,10 +27,9 @@
 
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; margin-top: 30px;">
     <!-- Today's Appointments -->
-    <div class="card no-hover" style="text-align: left; border-top: none;">
+    <div class="card no-hover" style="text-align: left; border-top: none; height: 500px; overflow-y: auto;">
         <div class="header">
             <h2>Today's Appointments</h2>
-            <p>Appointments scheduled for today</p>
         </div>
         <table>
             <thead>
@@ -59,10 +58,9 @@
     </div>
 
     <!-- Recent Registrations -->
-    <div class="card no-hover" style="text-align: left; border-top: none;">
+    <div class="card no-hover" style="text-align: left; border-top: none; height: 500px; overflow-y: auto;">
         <div class="header">
             <h2>Recent Registrations</h2>
-            <p>Newly registered patients</p>
         </div>
         <table>
             <thead>
