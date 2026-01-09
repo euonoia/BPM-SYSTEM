@@ -6,11 +6,16 @@
     <title>Login</title>
 </head>
 <body>
-    <h1>Login</h1>
-        
-    <h1>CORE</h1>
+    <h1>employee</h1>
 
-   <form action="{{ route('core.login.post') }}" method="POST">
+    @if($errors->any())
+        <div style="color:red;">
+            {{ $errors->first() }}
+        </div>
+    @endif
+
+
+   <form action="{{ route('portal.login.submit') }}" method="POST">
     @csrf
     <input type="email" name="email" required>
     <input type="password" name="password" required>
@@ -18,6 +23,5 @@
 </form>
 
 
-    <p>Don't have an account? <a href="{{ route('core.register') }}">Register here</a></p>
 </body>
 </html>

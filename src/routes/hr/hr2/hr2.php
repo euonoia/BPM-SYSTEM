@@ -19,9 +19,7 @@ use App\Http\Controllers\hr2\Admin\AdminSuccessionController;
 use App\Http\Controllers\hr2\Admin\AdminEssController;
 
 // ---------------- User Routes ----------------
-Route::middleware('auth')->prefix('hr2')->group(function () {
-
-    // Dashboard
+Route::middleware('auth:employee')->prefix('hr2')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('hr2.dashboard');
 
     // Modules
@@ -38,7 +36,8 @@ Route::middleware('auth')->prefix('hr2')->group(function () {
 });
 
 // ---------------- Admin Routes ----------------
-Route::prefix('hr2/admin')->middleware('auth')->group(function () {
+Route::prefix('hr2/admin')->middleware('auth:employee')->group(function () {
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
     // Dashboard
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');

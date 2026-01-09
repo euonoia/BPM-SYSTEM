@@ -21,8 +21,8 @@
 
     <h2>Authentication</h2>
     <ul>
-        <li><a href="{{ route('login') }}">Login</a></li>
-        <li><a href="{{ route('register') }}">Register</a></li>
+        <li><a href="{{ route('core.login') }}">Login</a></li>
+        <li><a href="{{ route('core.register') }}">Register</a></li>
     </ul>
     
     <h2>Core Modules</h2>
@@ -55,12 +55,6 @@
     <h2>Financial Module</h2>
     <ul>
         <li><a href="{{ route('financials.index') }}">Go to Financials Index</a></li>
-    </ul>
-
-    <h2>Other Modules</h2>
-    <ul>
-        <li><a href="{{ route('patients.index') }}">Go to Patients</a></li>
-        <li><a href="{{ url('/') }}">Back to Home</a></li>
     </ul>
 </body>
 </html>
