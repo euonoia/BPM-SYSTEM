@@ -19,7 +19,7 @@
         onclick="document.querySelector('.sidebar').classList.toggle('show')">
         ☰
     </button>
-    <div class="title">Core1</div>
+    <div class="title">Concord</div>
 </div>
 
 <!-- Sidebar -->

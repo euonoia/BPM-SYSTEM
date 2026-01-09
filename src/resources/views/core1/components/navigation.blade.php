@@ -23,9 +23,8 @@
 
 <div class="sidebar" id="sidebar">
     <div class="logo">
-        <img src="{{ asset('images/logo.png') }}" alt="Core1 Logo" onerror="this.classList.add('d-none'); this.nextElementSibling.classList.remove('d-none');">
-        <div class="logo-text d-none">Core1</div>
-        <div class="logo-text">Core1</div>
+        <img src="{{ asset('images/Concord (1).png') }}" alt="Concord Logo" onerror="this.classList.add('d-none'); this.nextElementSibling.classList.remove('d-none');">
+        <div class="logo-text d-none">Core 1</div>
     </div>
 
     <nav>
