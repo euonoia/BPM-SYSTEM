@@ -37,12 +37,12 @@
             </a>
         @endforeach
 
-        <form id="logout-form" method="POST" action="{{ route('logout') }}" class="d-none">
+       <form id="logout-form" method="POST" action="{{ route('core.logout') }}" class="d-none">
             @csrf
         </form>
 
         <a href="#"
-           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
             <i class="bi bi-box-arrow-right"></i>
             <span>Logout</span>
         </a>
