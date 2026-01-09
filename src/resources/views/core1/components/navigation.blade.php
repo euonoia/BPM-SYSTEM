@@ -11,7 +11,7 @@
         ['id' => 'medical-records', 'label' => 'Medical Records', 'icon' => 'bi-file-text', 'roles' => ['admin', 'doctor', 'nurse', 'patient'], 'route' => 'medical-records.index'],
         ['id' => 'billing', 'label' => 'Billing & Payments', 'icon' => 'bi-credit-card', 'roles' => ['admin', 'billing', 'patient'], 'route' => 'billing.index'],
         ['id' => 'discharge', 'label' => 'Discharge Management', 'icon' => 'bi-clipboard-check', 'roles' => ['admin', 'doctor', 'nurse', 'billing'], 'route' => 'discharge.index'],
-        ['id' => 'reports', 'label' => 'Reports & Analytics', 'icon' => 'bi-graph-up', 'roles' => ['admin', 'doctor'], 'route' => 'reports.index'],
+        ['id' => 'reports', 'label' => 'Reports & Analytics', 'icon' => 'bi-graph-up', 'roles' => ['admin'], 'route' => 'reports.index'],
         ['id' => 'staff', 'label' => 'Staff Management', 'icon' => 'bi-person-gear', 'roles' => ['admin'], 'route' => 'staff.index'],
         ['id' => 'settings', 'label' => 'Settings', 'icon' => 'bi-gear', 'roles' => ['admin', 'doctor', 'nurse', 'patient', 'receptionist', 'billing'], 'route' => 'settings.index'],
     ];
