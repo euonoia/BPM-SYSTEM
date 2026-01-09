@@ -27,31 +27,34 @@ Route::prefix('portal')->group(function () {
 | Core Authentication
 |--------------------------------------------------------------------------
 */
-Route::get('/login', [CoreAuthController::class, 'showLogin'])->name('core.login');
-Route::post('/login', [CoreAuthController::class, 'login'])->name('core.login.post');
-Route::get('/register', [CoreAuthController::class, 'showRegistrationForm'])->name('core.register');
-Route::post('/register', [CoreAuthController::class, 'register'])->name('core.register.post');
-Route::post('/logout', [CoreAuthController::class, 'logout'])->name('core.logout');
-/*
+Route::prefix('core')->group(function () {
+    // Login
+    Route::get('/login', [CoreAuthController::class, 'showLogin'])->name('core.login');
+    Route::post('/login', [CoreAuthController::class, 'login'])->name('core.login.submit');
 
-/*
-|--------------------------------------------------------------------------
-| Core Post-Login Router
-|--------------------------------------------------------------------------
-*/
-Route::middleware('auth:core')->get('/core', function () {
-    $user = auth('core')->user();
+    // Register
+    Route::get('/register', [CoreAuthController::class, 'showRegistrationForm'])->name('core.register');
+    Route::post('/register', [CoreAuthController::class, 'register'])->name('core.register.submit');
 
-    return match ($user->role) {
-        'admin'         => redirect()->route('admin.dashboard'),
-        'doctor'        => redirect()->route('doctor.dashboard'),
-        'nurse'         => redirect()->route('nurse.dashboard'),
-        'patient'       => redirect()->route('patient.dashboard'),
-        'receptionist'  => redirect()->route('receptionist.dashboard'),
-        'billing'       => redirect()->route('billing.dashboard'),
-        default         => abort(403),
-    };
-})->name('core.home');
+    // Logout
+    Route::post('/logout', [CoreAuthController::class, 'logout'])->name('core.logout');
+
+    // Post-login redirect
+    Route::middleware('auth:core')->get('/', function () {
+        $user = auth('core')->user();
+
+        return match ($user->role) {
+            'admin'         => redirect()->route('admin.dashboard'),
+            'doctor'        => redirect()->route('doctor.dashboard'),
+            'nurse'         => redirect()->route('nurse.dashboard'),
+            'patient'       => redirect()->route('patient.dashboard'),
+            'receptionist'  => redirect()->route('receptionist.dashboard'),
+            'billing'       => redirect()->route('billing.dashboard'),
+            default         => abort(403),
+        };
+    })->name('core.home');
+});
+
 
 /*
 |--------------------------------------------------------------------------

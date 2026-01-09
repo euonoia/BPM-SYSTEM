@@ -17,7 +17,7 @@ class Core1RoleMiddleware
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
         // Try to get user from auth first
-        $user = auth()->user();
+        $user = auth('core')->user();
         
         // If auth()->user() returns null, try to get from session (for Core1User)
         if (!$user) {
@@ -39,4 +39,3 @@ class Core1RoleMiddleware
         return $next($request);
     }
 }
-

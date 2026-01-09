@@ -19,11 +19,12 @@
         </li>
     </ul>
 
-    <h2>Authentication</h2>
+   <h2>Core Authentication</h2>
     <ul>
         <li><a href="{{ route('core.login') }}">Login</a></li>
         <li><a href="{{ route('core.register') }}">Register</a></li>
     </ul>
+
     
     <h2>Core Modules</h2>
     <ul>

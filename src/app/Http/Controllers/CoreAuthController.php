@@ -99,6 +99,6 @@ class CoreAuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('core.login'); // matches web.php
+        return redirect()->route('core.login'); 
     }
 }
