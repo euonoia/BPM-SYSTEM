@@ -29,8 +29,7 @@
     <!-- Today's Appointments -->
     <div class="card no-hover card-scrollable">
         <div class="header">
-            <h2>Today's Appointments</h2>
-            <p>Your scheduled appointments for today</p>
+            <h2>Today's Schedules</h2>
         </div>
         <table>
             <thead>
@@ -61,29 +60,28 @@
     <!-- Upcoming Appointments -->
     <div class="card no-hover card-scrollable">
         <div class="header">
-            <h2>Upcoming Appointments</h2>
-            <p>Your next scheduled appointments</p>
+            <h2>Inpatients Under Care</h2>
         </div>
         <table>
             <thead>
                 <tr>
-                    <th>Patient</th>
-                    <th>Date</th>
-                    <th>Time</th>
+                    <th>Patient ID</th>
+                    <th>Patient Name</th>
+                    <th>Bed</th>
                     <th>Status</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($upcomingAppointments as $appointment)
                 <tr>
+                    <td>{{ $appointment->patient->id ?? 'N/A' }}</td>
                     <td>{{ $appointment->patient->name ?? 'N/A' }}</td>
-                    <td>{{ $appointment->appointment_date ? \Carbon\Carbon::parse($appointment->appointment_date)->format('M d, Y') : 'N/A' }}</td>
-                    <td>{{ $appointment->appointment_time ? \Carbon\Carbon::parse($appointment->appointment_time)->format('h:i A') : 'N/A' }}</td>
+                    <td>{{ $appointment->bed ?? 'N/A' }}</td>
                     <td><span class="status-{{ $appointment->status }}">{{ ucfirst($appointment->status) }}</span></td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="4" class="empty-state-cell">No upcoming appointments found.</td>
+                    <td colspan="4" class="empty-state-cell">No patients under care found.</td>
                 </tr>
                 @endforelse
             </tbody>
