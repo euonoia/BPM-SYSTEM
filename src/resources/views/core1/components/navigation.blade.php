@@ -11,7 +11,7 @@
         ['id' => 'medical-records', 'label' => 'Medical Records', 'icon' => 'bi-file-text', 'roles' => ['admin', 'doctor', 'nurse', 'patient'], 'route' => 'medical-records.index'],
         ['id' => 'billing', 'label' => 'Billing & Payments', 'icon' => 'bi-credit-card', 'roles' => ['admin', 'billing', 'patient'], 'route' => 'billing.index'],
         ['id' => 'discharge', 'label' => 'Discharge Management', 'icon' => 'bi-clipboard-check', 'roles' => ['admin', 'doctor', 'nurse', 'billing'], 'route' => 'discharge.index'],
-        ['id' => 'reports', 'label' => 'Reports & Analytics', 'icon' => 'bi-graph-up', 'roles' => ['admin', 'doctor'], 'route' => 'reports.index'],
+        ['id' => 'reports', 'label' => 'Reports & Analytics', 'icon' => 'bi-graph-up', 'roles' => ['admin'], 'route' => 'reports.index'],
         ['id' => 'staff', 'label' => 'Staff Management', 'icon' => 'bi-person-gear', 'roles' => ['admin'], 'route' => 'staff.index'],
         ['id' => 'settings', 'label' => 'Settings', 'icon' => 'bi-gear', 'roles' => ['admin', 'doctor', 'nurse', 'patient', 'receptionist', 'billing'], 'route' => 'settings.index'],
     ];
@@ -23,15 +23,17 @@
 
 <div class="sidebar" id="sidebar">
     <div class="logo">
-        <img src="{{ asset('images/logo.png') }}" alt="Core1 Logo" onerror="this.classList.add('d-none'); this.nextElementSibling.classList.remove('d-none');">
-        <div class="logo-text d-none">Core1</div>
-        <div class="logo-text">Core1</div>
+        <img src="{{ asset('images/Concord (1).png') }}" alt="Concord Logo" onerror="this.classList.add('d-none'); this.nextElementSibling.classList.remove('d-none');">
+        <div class="logo-text d-none">Core 1</div>
     </div>
 
     <nav>
         @foreach($filteredNavItems as $item)
             <a href="{{ route($item['route']) }}" 
-               class="{{ $currentRoute === $item['route'] || str_contains($currentRoute, $item['id']) ? 'active' : '' }}">
+               class="{{ $currentRoute === $item['route'] 
+                         || ($item['id'] !== 'dashboard' && str_starts_with($currentRoute, $item['id'] . '.') && !str_ends_with($currentRoute, '.dashboard') && !str_ends_with($currentRoute, '.overview')) 
+                         || ($item['id'] === 'dashboard' && (str_ends_with($currentRoute, '.dashboard') || str_ends_with($currentRoute, '.overview'))) 
+                         ? 'active' : '' }}">
                 <i class="bi {{ $item['icon'] }}"></i>
                 <span>{{ $item['label'] }}</span>
             </a>

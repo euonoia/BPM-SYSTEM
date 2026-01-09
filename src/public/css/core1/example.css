@@ -367,11 +367,17 @@ body {
 }
 
 .sidebar .logo img {
-    width: 60px;
+    max-width: 180px;
     height: auto;
-    border-radius: 10px;
-    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.25);
-    margin-bottom: 8px;
+    max-height: 50px;
+    object-fit: contain;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.sidebar.collapsed .logo img {
+    max-width: 50px;
+    max-height: 40px;
 }
 
 .logo-text {
@@ -401,6 +407,15 @@ body {
     white-space: nowrap;
 }
 
+.sidebar nav a i {
+    font-size: 1.2rem;
+    width: 24px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .sidebar nav a:hover {
     background: var(--primary);
     color: var(--white);
@@ -412,9 +427,13 @@ body {
     font-weight: 600;
 }
 
+.sidebar.collapsed nav a {
+    justify-content: center;
+    padding: 12px 0;
+}
+
 .collapsed nav a span {
-    opacity: 0;
-    visibility: hidden;
+    display: none;
 }
 
 .topbar {
@@ -648,6 +667,18 @@ tr:hover {
     border-color: #ef4444;
 }
 
+.alert-warning {
+    background: var(--warning-light);
+    color: #92400e;
+    border-color: #f59e0b;
+}
+
+.alert-info {
+    background: var(--info-light);
+    color: #1e40af;
+    border-color: #3b82f6;
+}
+
 .status-pending {
     color: var(--warning);
     font-weight: bold;
@@ -789,4 +820,520 @@ tr:hover {
     .text-xl {
         font-size: 24px;
     }
+}
+
+/* --- 6. INPATIENT MANAGEMENT --- */
+
+/* Tabs */
+.core1-tabs-header {
+    display: flex;
+    gap: 0;
+    background: #fcfcfc;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.core1-tab-btn {
+    padding: 15px 25px;
+    border: none;
+    background: none;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-light);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.core1-tab-btn:hover {
+    color: var(--primary);
+    background: #f3f4f6;
+}
+
+.core1-tab-btn.active {
+    color: var(--info);
+    border-bottom-color: var(--info);
+    background: var(--white);
+}
+
+.core1-tab-pane {
+    display: none;
+}
+
+.core1-tab-pane.active {
+    display: block;
+    animation: core1FadeIn 0.3s ease;
+}
+
+@keyframes core1FadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Bed Grid */
+.core1-bed-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+}
+
+.core1-bed-card {
+    padding: 15px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    background: var(--white);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.core1-bed-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Backgrounds based on Occupancy/Status */
+.core1-bed-card.critical,
+.core1-bed-card.stable,
+.core1-bed-card.recovering {
+    background-color: #fff5f5;
+    border-color: #feb2b2;
+}
+
+.core1-bed-card.available {
+    background-color: #f0fff4;
+    border-color: #9ae6b4;
+}
+
+.core1-bed-card.cleaning {
+    background-color: #fffaf0;
+    border-color: #fbd38d;
+}
+
+/* Status Tags */
+.core1-status-tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: var(--radius-full);
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.core1-tag-critical {
+    background: #feb2b2;
+    color: #9b2c2c;
+}
+
+.core1-tag-stable {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.core1-tag-recovering {
+    background: #bee3f8;
+    color: #2a4365;
+}
+
+.core1-tag-available {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.core1-tag-cleaning {
+    background: #feebc8;
+    color: #744210;
+}
+
+.core1-tag-administered {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.core1-tag-pending {
+    background: #feebc8;
+    color: #744210;
+}
+
+/* Patient List */
+.core1-patient-list-card {
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    margin-bottom: 15px;
+}
+
+.core1-btn-sm {
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+
+/* UTILITIES */
+.ml-10 {
+    margin-left: 10px;
+}
+
+.mr-5 {
+    margin-right: 5px;
+}
+
+.text-blue {
+    color: #2563eb;
+}
+
+.text-red {
+    color: #ef4444;
+}
+
+.text-green {
+    color: #10b981;
+}
+
+.text-orange {
+    color: #f59e0b;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+.text-md {
+    font-size: 16px;
+}
+
+.mt-15 {
+    margin-top: 15px;
+}
+
+.mt-30 {
+    margin-top: 30px;
+}
+
+.mb-0 {
+    margin-bottom: 0 !important;
+}
+
+.mb-5 {
+    margin-bottom: 5px !important;
+}
+
+.mb-10 {
+    margin-bottom: 10px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+.p-0 {
+    padding: 0 !important;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.border-bottom {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.shadow-none {
+    box-shadow: none !important;
+}
+
+.border {
+    border: 1px solid var(--border-color);
+}
+
+.justify-end {
+    justify-content: flex-end;
+}
+
+.core1-badge-teal {
+    background: #e6fffa;
+    color: #234e52;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.text-success {
+    color: #38a169 !important;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* 2.9 Avatars & Icon Boxes */
+.core1-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    background: var(--info-light);
+    color: var(--info);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.core1-icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.core1-icon-blue {
+    background: #eff6ff;
+    color: #3b82f6;
+}
+
+.core1-icon-green {
+    background: #f0fdf4;
+    color: #22c55e;
+}
+
+.core1-icon-purple {
+    background: #faf5ff;
+    color: #a855f7;
+}
+
+.core1-icon-orange {
+    background: #fff7ed;
+    color: #f97316;
+}
+
+.core1-icon-action {
+    padding: 8px;
+    border-radius: var(--radius-sm);
+    color: var(--text-light);
+    transition: all 0.2s;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.core1-icon-action:hover {
+    background: #f3f4f6;
+    color: var(--primary);
+}
+
+.core1-icon-action.text-blue:hover {
+    color: #2563eb;
+    background: #eff6ff;
+}
+
+.core1-icon-action.text-red:hover {
+    color: #dc2626;
+    background: #fef2f2;
+}
+
+.core1-icon-action.text-orange:hover {
+    color: #ea580c;
+    background: #fff7ed;
+}
+
+.core1-icon-action.text-purple:hover {
+    color: #9333ea;
+    background: #faf5ff;
+}
+
+/* 2.10 UI Components (Doctor/Clinical) */
+.core1-icon-stats {
+    font-size: 24px;
+}
+
+.core1-section-title {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.core1-toolbar-search {
+    position: relative;
+    width: 300px;
+}
+
+.core1-toolbar-search i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-gray);
+}
+
+.core1-toolbar-search input {
+    width: 100%;
+    padding: 8px 12px 8px 35px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+}
+
+.core1-tag-neutral {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+/* 2.11 Specialized Layouts */
+.core1-dashboard-split {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.core1-scroll-card {
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+.core1-scroll-area {
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* 2.12 Improved Card Elements */
+.core1-card-header {
+    background: #fcfcfc;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.core1-card.overflow-hidden {
+    overflow: hidden;
+}
+
+.core1-card.has-header {
+    padding: 0;
+    border-top: 4px solid var(--accent);
+}
+
+/* 2.13 Authentication Styles */
+.core1-auth-body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to bottom right, #eff6ff, #e0e7ff);
+    padding: 20px;
+}
+
+.core1-auth-card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 32px;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: var(--shadow-md);
+}
+
+.core1-role-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.core1-role-btn {
+    padding: 12px;
+    border-radius: 8px;
+    border: 2px solid #e5e7eb;
+    background: var(--white);
+    color: #374151;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+}
+
+.core1-role-btn.active.admin {
+    background: #8b5cf6;
+    color: white;
+    border-color: transparent;
+}
+
+.core1-role-btn.active.doctor {
+    background: #3b82f6;
+    color: white;
+    border-color: transparent;
+}
+
+.core1-role-btn.active.nurse {
+    background: #22c55e;
+    color: white;
+    border-color: transparent;
+}
+
+.core1-role-btn.active.patient {
+    background: #f97316;
+    color: white;
+    border-color: transparent;
+}
+
+.core1-role-btn.active.receptionist {
+    background: #ec4899;
+    color: white;
+    border-color: transparent;
+}
+
+.core1-role-btn.active.billing {
+    background: #14b8a6;
+    color: white;
+    border-color: transparent;
+}
+
+.core1-auth-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.core1-auth-btn:hover {
+    background: var(--primary-hover);
+}
+
+.core1-icon-xl {
+    font-size: 32px;
+}
+
+.core1-auth-notice {
+    margin-top: 25px;
+    padding: 15px;
+    background: #f3f4f6;
+    color: #374151;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 12px;
 }

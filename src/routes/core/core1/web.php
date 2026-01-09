@@ -105,7 +105,7 @@ Route::middleware(['multiAuth'])->group(function () {
         Route::post('/staff', [StaffManagementController::class, 'store'])->name('staff.store');
     });
     
-    Route::middleware('role:admin,doctor')->group(function () {
+    Route::middleware('role:admin')->group(function () {
         Route::get('/reports', [ReportsController::class, 'index'])->name('reports.index');
     });
     

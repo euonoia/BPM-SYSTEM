@@ -1,134 +1,115 @@
-<div class="header">
-    <h2>Welcome, {{ auth()->user()->name }}</h2>
-    <p>Billing Dashboard</p>
+<div class="core1-header">
+    <h2 class="core1-title">Billing & Financial Overview</h2>
+    <p class="core1-subtitle">Monitor revenue, pending invoices, and payment statuses</p>
 </div>
 
-<div class="grid">
-    <div class="card">
-        <h3>Today's Revenue</h3>
-        <p>${{ number_format($stats['today_revenue'] ?? 0, 2) }}</p>
+<div class="core1-stats-grid">
+    <div class="core1-stat-card">
+        <div class="d-flex flex-col items-center w-full">
+            <h3 class="core1-info-item h3 text-center mb-10">Today's Revenue</h3>
+            <p class="core1-title text-green">₱{{ number_format($stats['today_revenue'], 2) }}</p>
+        </div>
     </div>
 
-    <div class="card">
-        <h3>Monthly Revenue</h3>
-        <p>${{ number_format($stats['monthly_revenue'] ?? 0, 2) }}</p>
+    <div class="core1-stat-card">
+        <div class="d-flex flex-col items-center w-full">
+            <h3 class="core1-info-item h3 text-center mb-10">Monthly Revenue</h3>
+            <p class="core1-title text-blue">₱{{ number_format($stats['monthly_revenue'], 2) }}</p>
+        </div>
     </div>
 
-    <div class="card">
-        <h3>Pending Bills</h3>
-        <p>{{ $stats['pending_bills'] ?? 0 }}</p>
+    <div class="core1-stat-card">
+        <div class="d-flex flex-col items-center w-full">
+            <h3 class="core1-info-item h3 text-center mb-10">Pending Bills</h3>
+            <p class="core1-title text-orange">{{ $stats['pending_bills'] }}</p>
+        </div>
     </div>
 
-    <div class="card">
-        <h3>Overdue Bills</h3>
-        <p>{{ $stats['overdue_bills'] ?? 0 }}</p>
-    </div>
-
-    <div class="card">
-        <h3>Total Bills</h3>
-        <p>{{ $stats['total_bills'] ?? 0 }}</p>
-    </div>
-
-    <div class="card">
-        <h3>Paid Bills</h3>
-        <p>{{ $stats['paid_bills'] ?? 0 }}</p>
+    <div class="core1-stat-card">
+        <div class="d-flex flex-col items-center w-full">
+            <h3 class="core1-info-item h3 text-center mb-10">Overdue Bills</h3>
+            <p class="core1-title text-red">{{ $stats['overdue_bills'] }}</p>
+        </div>
     </div>
 </div>
 
-<div class="dashboard-grid">
-    <!-- Pending Bills -->
-    <div class="card no-hover card-scrollable">
-        <div class="header">
-            <h2>Pending Bills</h2>
-            <p>Bills awaiting payment</p>
+<div class="core1-dashboard-split">
+    <!-- Pending Invoices -->
+    <div class="core1-card no-hover has-header overflow-hidden core1-scroll-card">
+        <div class="core1-card-header">
+            <h2 class="core1-title core1-section-title mb-0">Pending Invoices</h2>
         </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Bill Number</th>
-                    <th>Patient</th>
-                    <th>Amount</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($pendingBills as $bill)
-                <tr>
-                    <td>{{ $bill->bill_number ?? 'N/A' }}</td>
-                    <td>{{ $bill->patient->name ?? 'N/A' }}</td>
-                    <td>${{ number_format($bill->total ?? 0, 2) }}</td>
-                    <td><span class="status-{{ $bill->status }}">{{ ucfirst($bill->status) }}</span></td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="4" class="empty-state-cell">No pending bills found.</td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+        <div class="core1-table-container shadow-none core1-scroll-area">
+            <table class="core1-table">
+                <thead>
+                    <tr>
+                        <th>Bill #</th>
+                        <th>Patient</th>
+                        <th>Amount</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($pendingBills as $bill)
+                    <tr>
+                        <td class="text-xs font-mono">{{ $bill->bill_number }}</td>
+                        <td class="font-bold text-blue">{{ $bill->patient->name ?? 'N/A' }}</td>
+                        <td class="font-bold">₱{{ number_format($bill->total, 2) }}</td>
+                        <td>{{ \Carbon\Carbon::parse($bill->due_date)->format('M d, Y') }}</td>
+                        <td>
+                            <span class="core1-status-tag tag-pending">Pending</span>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="empty-state-cell text-center p-40">No pending invoices found.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <!-- Overdue Bills -->
-    <div class="card no-hover card-scrollable">
-        <div class="header">
-            <h2>Overdue Bills</h2>
-            <p>Bills past due date</p>
+    <!-- Recent Payments -->
+    <div class="core1-card no-hover has-header overflow-hidden core1-scroll-card">
+        <div class="core1-card-header">
+            <h2 class="core1-title core1-section-title mb-0">Recent Transactions</h2>
         </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Bill Number</th>
-                    <th>Patient</th>
-                    <th>Due Date</th>
-                    <th>Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($overdueBills as $bill)
-                <tr>
-                    <td>{{ $bill->bill_number ?? 'N/A' }}</td>
-                    <td>{{ $bill->patient->name ?? 'N/A' }}</td>
-                    <td>{{ $bill->due_date ? \Carbon\Carbon::parse($bill->due_date)->format('M d, Y') : 'N/A' }}</td>
-                    <td>${{ number_format($bill->total ?? 0, 2) }}</td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="4" class="empty-state-cell">No overdue bills found.</td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Recent Bills -->
-    <div class="card no-hover card-scrollable">
-        <div class="header">
-            <h2>Recent Bills</h2>
-            <p>Latest bill transactions</p>
+        <div class="core1-table-container shadow-none core1-scroll-area">
+            <table class="core1-table">
+                <thead>
+                    <tr>
+                        <th>Bill #</th>
+                        <th>Patient</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($recentBills as $bill)
+                    <tr>
+                        <td class="text-xs font-mono">{{ $bill->bill_number }}</td>
+                        <td class="font-bold text-blue">{{ $bill->patient->name ?? 'N/A' }}</td>
+                        <td class="font-bold">₱{{ number_format($bill->total, 2) }}</td>
+                        <td>{{ \Carbon\Carbon::parse($bill->bill_date)->format('M d, Y') }}</td>
+                        <td>
+                            @php
+                                $statusClass = 'tag-pending';
+                                if($bill->status == 'paid') $statusClass = 'core1-tag-stable';
+                                if($bill->status == 'overdue') $statusClass = 'tag-red';
+                            @endphp
+                            <span class="core1-status-tag {{ $statusClass }}">{{ ucfirst($bill->status) }}</span>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="empty-state-cell text-center p-40">No recent transactions.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Bill Number</th>
-                    <th>Patient</th>
-                    <th>Date</th>
-                    <th>Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($recentBills as $bill)
-                <tr>
-                    <td>{{ $bill->bill_number ?? 'N/A' }}</td>
-                    <td>{{ $bill->patient->name ?? 'N/A' }}</td>
-                    <td>{{ $bill->bill_date ? \Carbon\Carbon::parse($bill->bill_date)->format('M d, Y') : 'N/A' }}</td>
-                    <td>${{ number_format($bill->total ?? 0, 2) }}</td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="4" class="empty-state-cell">No recent bills found.</td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
     </div>
 </div>
