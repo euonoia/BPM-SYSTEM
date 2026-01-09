@@ -2,54 +2,61 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use App\Models\Employee;
 
 class EmployeeAuthController extends Controller
 {
+    /**
+     * Show login page
+     */
     public function showLogin()
     {
         return view('portal.login');
     }
-public function login(Request $request)
-{
-    $credentials = $request->validate([
-        'email'    => 'required|email',
-        'password' => 'required',
-    ]);
 
-    if (Auth::guard('employee')->attempt($credentials)) {
+    /**
+     * Handle login request
+     */
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'email'    => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        // Attempt login with employee guard
+        if (!Auth::guard('employee')->attempt($credentials)) {
+            throw ValidationException::withMessages([
+                'email' => 'Invalid credentials.',
+            ]);
+        }
+
+        // Regenerate session
         $request->session()->regenerate();
 
+        /** @var Employee $employee */
         $employee = Auth::guard('employee')->user();
 
-        // Safety check
-        if (!$employee instanceof \App\Models\Employee) {
+        if (!$employee instanceof Employee) {
             Auth::guard('employee')->logout();
-            abort(403, 'Unauthorized access.');
+            abort(403, 'Invalid user model.');
         }
 
-        // Redirect based on role only
+        // ---------------- Redirect based on role ----------------
         if ($employee->isAdmin()) {
-            return redirect()->route('admin.dashboard'); // HR2 admin
+            return redirect()->route('hr2.admin.dashboard');
         }
 
-        if ($employee->isHr()) {
-            return redirect()->route('hr2.dashboard'); // HR2 user
-        }
-
-        // Unknown role
-        Auth::guard('employee')->logout();
-        abort(403, 'Unauthorized role.');
+        // Default employee dashboard
+        return redirect()->route('hr2.dashboard');
     }
 
-    throw ValidationException::withMessages([
-        'email' => 'Invalid credentials.',
-    ]);
-}
-
+    /**
+     * Logout
+     */
     public function logout(Request $request)
     {
         Auth::guard('employee')->logout();
