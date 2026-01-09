@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -18,12 +17,13 @@ class EmployeeAuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email' => 'required|email',
+            'email'    => 'required|email',
             'password' => 'required',
         ]);
 
-        if (Auth::guard('employee')->attempt($credentials, $request->boolean('remember'))) {
+        if (Auth::guard('employee')->attempt($credentials)) {
             $request->session()->regenerate();
+
             $employee = Auth::guard('employee')->user();
 
             return match ($employee->department) {
@@ -35,13 +35,14 @@ class EmployeeAuthController extends Controller
         }
 
         throw ValidationException::withMessages([
-            'email' => 'Invalid credentials for employee.',
+            'email' => 'Invalid credentials.',
         ]);
     }
 
     public function logout(Request $request)
     {
         Auth::guard('employee')->logout();
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

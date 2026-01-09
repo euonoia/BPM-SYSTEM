@@ -13,28 +13,18 @@ use App\Http\Controllers\CoreAuthController;
 Route::get('/', fn () => view('index'));
 /*
 |--------------------------------------------------------------------------
-| Employee Portal Routes
+| Employee Portal
 |--------------------------------------------------------------------------
 */
 Route::prefix('portal')->group(function () {
     Route::get('/', [EmployeeAuthController::class, 'showLogin'])->name('portal.login');
     Route::post('/login', [EmployeeAuthController::class, 'login'])->name('portal.login.submit');
     Route::post('/logout', [EmployeeAuthController::class, 'logout'])->name('portal.logout');
-
-    Route::middleware('auth:employee')->get('/dashboard', function () {
-        $employee = auth('employee')->user();
-
-        return match ($employee->department) {
-            'hr'         => redirect()->route('hr.dashboard'),
-            'logistics'  => redirect()->route('logistics.dashboard'),
-            'financials' => redirect()->route('financials.dashboard'),
-            default      => abort(403),
-        };
-    })->name('portal.dashboard');
 });
+
 /*
 |--------------------------------------------------------------------------
-| Core Authentication (Public Users / Patients)
+| Core Authentication
 |--------------------------------------------------------------------------
 */
 Route::get('/login', [CoreAuthController::class, 'showLogin'])->name('login');
@@ -44,6 +34,26 @@ Route::post('/register', [CoreAuthController::class, 'register'])->name('registe
 Route::post('/logout', [CoreAuthController::class, 'logout'])->name('logout');
 
 /*
+
+/*
+|--------------------------------------------------------------------------
+| Core Post-Login Router
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth:core')->get('/core', function () {
+    $user = auth('core')->user();
+
+    return match ($user->role) {
+        'admin'         => redirect()->route('admin.dashboard'),
+        'doctor'        => redirect()->route('doctor.dashboard'),
+        'nurse'         => redirect()->route('nurse.dashboard'),
+        'patient'       => redirect()->route('patient.dashboard'),
+        'receptionist'  => redirect()->route('receptionist.dashboard'),
+        'billing'       => redirect()->route('billing.dashboard'),
+        default         => abort(403),
+    };
+})->name('core.home');
+
 /*
 |--------------------------------------------------------------------------
 | Modular Route Loading (ARTISAN-SAFE)

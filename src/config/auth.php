@@ -25,20 +25,20 @@ return [
     |
     */
 
-    'guards' => [
+  'guards' => [
     'web' => [
         'driver' => 'session',
         'provider' => 'users',
     ],
 
-    'employee' => [
-        'driver' => 'session',
-        'provider' => 'employees', 
-    ],
-
     'core' => [
         'driver' => 'session',
-        'provider' => 'core_users', 
+        'provider' => 'core_users',
+    ],
+
+    'employee' => [
+        'driver' => 'session',
+        'provider' => 'employees',
     ],
 ],
 
@@ -51,22 +51,21 @@ return [
     |
     */
     'providers' => [
-        'users' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\core1\User::class,
-        ],
-
-        'employees' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\Employee::class,
-        ],
-
-        'core_users' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\core1\User::class,
-        ],
+    'users' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\core1\User::class,
     ],
 
+    'core_users' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\core1\User::class,
+    ],
+
+    'employees' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\Employee::class,
+    ],
+],
     /*
     |--------------------------------------------------------------------------
     | Resetting Passwords
