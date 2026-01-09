@@ -1,50 +1,95 @@
 @extends('core1.layouts.app')
 
+@push('styles')
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css' rel='stylesheet' />
+<style>
+    .fc {
+        max-width: 100%;
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    .fc-header-toolbar {
+        margin-bottom: 2rem !important;
+    }
+    .fc-button-primary {
+        background-color: var(--primary-color, #2563eb) !important;
+        border-color: var(--primary-color, #2563eb) !important;
+    }
+    .fc-event {
+        cursor: pointer;
+        padding: 2px 5px;
+        border-radius: 4px;
+        border: none;
+    }
+    .fc-event-title {
+        font-weight: 500;
+        font-size: 0.85rem;
+    }
+    .fc-daygrid-event {
+        white-space: normal !important;
+    }
+</style>
+@endpush
+
+
 @section('title', 'Appointments')
 
 @section('content')
 <div class="core1-container">
     <div class="core1-flex-between core1-header">
         <div>
-            <h1 class="core1-title">
-                {{ $view === 'patients' ? 'Patient Management' : 'Appointments' }}
-            </h1>
-            <p class="core1-subtitle">
-                {{ $view === 'patients' ? 'Manage registered patients' : 'Manage and schedule appointments' }}
-            </p>
+            <h1 class="core1-title">Appointments</h1>
+            <p class="core1-subtitle">Manage and schedule appointments</p>
         </div>
-        @if($view === 'patients')
-            <a href="{{ route('patients.create') }}" class="core1-btn core1-btn-primary">
-                <i class="fas fa-plus"></i>
-                <span class="pl-20">Add Patient</span>
-            </a>
-        @else
-            <a href="{{ route('appointments.create') }}" class="core1-btn core1-btn-primary">
-                <i class="fas fa-plus"></i>
-                <span class="pl-20">Book Appointment</span>
-            </a>
-        @endif
+        <a href="{{ route('appointments.create') }}" class="core1-btn core1-btn-primary">
+            <i class="fas fa-plus"></i>
+            <span class="pl-20">Book Appointment</span>
+        </a>
     </div>
 
     <!-- View Controls -->
     <div class="core1-card mb-30">
         <div class="core1-flex-between">
             <div class="core1-flex-gap-2">
-                <a href="?view={{ $view }}&date={{ date('Y-m', strtotime($currentDate . ' -1 month')) }}" class="core1-btn core1-btn-outline" style="padding: 8px;">
+                @php
+                    $carbonDate = \Carbon\Carbon::parse($currentDate);
+                    $prevDate = $carbonDate->copy();
+                    $nextDate = $carbonDate->copy();
+
+                    if ($view === 'day') {
+                        $prevDate->subDay();
+                        $nextDate->addDay();
+                    } elseif ($view === 'week') {
+                        $prevDate->subWeek();
+                        $nextDate->addWeek();
+                    } else {
+                        $prevDate->subMonth();
+                        $nextDate->addMonth();
+                    }
+                @endphp
+                <a href="?view={{ $view }}&date={{ $prevDate->format('Y-m-d') }}" class="core1-btn core1-btn-outline" style="padding: 8px;">
                     <i class="fas fa-chevron-left"></i>
                 </a>
-                <h2 class="core1-title" style="font-size: 20px;">
-                    {{ date('F Y', strtotime($currentDate)) }}
+                <h2 class="core1-title" style="font-size: 20px; min-width: 150px; text-align: center;">
+                    @if($view === 'day')
+                        {{ $carbonDate->format('M d, Y') }}
+                    @elseif($view === 'week')
+                        Week of {{ $carbonDate->startOfWeek()->format('M d') }}
+                    @else
+                        {{ $carbonDate->format('F Y') }}
+                    @endif
                 </h2>
-                <a href="?view={{ $view }}&date={{ date('Y-m', strtotime($currentDate . ' +1 month')) }}" class="core1-btn core1-btn-outline" style="padding: 8px;">
+                <a href="?view={{ $view }}&date={{ $nextDate->format('Y-m-d') }}" class="core1-btn core1-btn-outline" style="padding: 8px;">
                     <i class="fas fa-chevron-right"></i>
                 </a>
-                <a href="?view={{ $view }}&date={{ date('Y-m') }}" class="core1-btn core1-btn-outline">
+                <a href="?view={{ $view }}&date={{ date('Y-m-d') }}" class="core1-btn core1-btn-outline">
                     Today
                 </a>
             </div>
             <div class="core1-flex-gap-2">
-                @foreach(['month', 'week', 'day', 'list', 'patients'] as $v)
+                @foreach(['month', 'week', 'day', 'list'] as $v)
                     <a href="?view={{ $v }}&date={{ $currentDate }}" 
                        class="core1-btn {{ $view === $v ? 'core1-btn-primary' : 'core1-btn-outline' }}"
                        style="text-transform: capitalize;">
@@ -130,65 +175,69 @@
                 </tbody>
             </table>
         </div>
-    @elseif($view === 'patients')
-        <div class="core1-table-container">
-            <table class="core1-table">
-                <thead>
-                    <tr>
-                        <th>Patient Details</th>
-                        <th>Contact Information</th>
-                        <th>Status</th>
-                        <th class="text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($patients as $patient)
-                        <tr>
-                            <td>
-                                <div class="d-flex items-center gap-3">
-                                    <div class="avatar">
-                                        {{ substr($patient->name, 0, 1) }}
-                                    </div>
-                                    <div>
-                                        <div class="text-sm font-medium text-dark">{{ $patient->name }}</div>
-                                        <div class="text-xs text-gray">ID: {{ $patient->patient_id ?? '#' . $patient->id }}</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="text-sm text-dark"><i class="fas fa-envelope text-gray mr-2"></i>{{ $patient->email }}</div>
-                                <div class="text-sm text-gray"><i class="fas fa-phone text-gray mr-2"></i>{{ $patient->phone }}</div>
-                            </td>
-                            <td>
-                                <span class="core1-badge core1-badge-active">Active</span>
-                            </td>
-                            <td>
-                                <div class="d-flex items-center justify-center gap-2">
-                                    <a href="{{ route('patients.show', $patient->id) }}" class="btn-icon-action text-blue-500">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('patients.edit', $patient->id) }}" class="btn-icon-action text-yellow-600">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="4" class="text-center p-40 text-gray">
-                                No patients found. Click "Add Patient" to create one.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
     @else
-        <div class="core1-card">
-            <p class="text-center text-gray">Calendar view implementation would go here</p>
+        <div class="core1-card" style="padding: 0; overflow: hidden;">
+            <div id="calendar"></div>
         </div>
     @endif
 </div>
 @endsection
+
+@push('scripts')
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const calendarEl = document.getElementById('calendar');
+        if (!calendarEl) return;
+
+        const viewMap = {
+            'month': 'dayGridMonth',
+            'week': 'timeGridWeek',
+            'day': 'timeGridDay'
+        };
+
+        const currentView = '{{ $view }}';
+        const initialView = viewMap[currentView] || 'dayGridMonth';
+        const initialDate = '{{ $currentDate }}';
+
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: initialView,
+            initialDate: initialDate.includes('-') && initialDate.split('-').length === 2 ? initialDate + '-01' : initialDate,
+            headerToolbar: false, // We use our own header
+            themeSystem: 'standard',
+            events: [
+                @foreach($appointments as $appointment)
+                {
+                    id: '{{ $appointment->id }}',
+                    title: '{{ $appointment->patient->name }} - {{ $appointment->doctor->name }}',
+                    start: '{{ $appointment->appointment_time->toIso8601String() }}',
+                    end: '{{ $appointment->appointment_time->addMinutes(30)->toIso8601String() }}',
+                    extendedProps: {
+                        status: '{{ $appointment->status }}',
+                        type: '{{ $appointment->type }}',
+                        patient: '{{ $appointment->patient->name }}',
+                        doctor: '{{ $appointment->doctor->name }}'
+                    },
+                    backgroundColor: '{{ 
+                        $appointment->status === 'completed' ? '#10b981' : 
+                        ($appointment->status === 'cancelled' ? '#ef4444' : '#3b82f6') 
+                    }}',
+                    borderColor: 'transparent'
+                },
+                @endforeach
+            ],
+            eventClick: function(info) {
+                window.location.href = `/appointments/${info.event.id}`;
+            },
+            height: 'auto',
+            allDaySlot: false,
+            slotMinTime: '08:00:00',
+            slotMaxTime: '19:00:00',
+        });
+
+        calendar.render();
+    });
+</script>
+@endpush
 
 

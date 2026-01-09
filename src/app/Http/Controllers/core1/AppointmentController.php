@@ -16,23 +16,33 @@ class AppointmentController extends Controller
     public function index(Request $request)
     {
         $view = $request->get('view', 'month');
-        $currentDate = $request->get('date', now()->format('Y-m'));
+        $dateParam = $request->get('date', now()->format('Y-m-d'));
+        
+        // Ensure $currentDate is a valid date string for calculations
+        try {
+            $date = Carbon::parse($dateParam);
+        } catch (\Exception $e) {
+            $date = now();
+        }
+        $currentDate = $date->format('Y-m-d');
         
         $query = Appointment::with(['patient', 'doctor']);
         
         if ($view === 'month') {
-            $query->whereYear('appointment_date', date('Y', strtotime($currentDate)))
-                  ->whereMonth('appointment_date', date('m', strtotime($currentDate)));
+            $query->whereYear('appointment_date', $date->year)
+                  ->whereMonth('appointment_date', $date->month);
+        } elseif ($view === 'week') {
+            $query->whereBetween('appointment_date', [
+                $date->copy()->startOfWeek(),
+                $date->copy()->endOfWeek()
+            ]);
         } elseif ($view === 'day') {
-            $query->whereDate('appointment_date', $currentDate);
+            $query->whereDate('appointment_date', $date->toDateString());
         }
         
         $appointments = $query->orderBy('appointment_time')->get();
         
-        $patients = Patient::all();
-        $doctors = User::where('role', 'doctor')->get();
-        
-        return view('core1.appointments.index', compact('appointments', 'view', 'currentDate', 'patients', 'doctors'));
+        return view('core1.appointments.index', compact('appointments', 'view', 'currentDate'));
     }
 
     public function create()
