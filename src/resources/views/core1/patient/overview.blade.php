@@ -26,65 +26,73 @@
     </div>
 </div>
 
-@if(isset($upcomingAppointments) && $upcomingAppointments->count() > 0)
-<div style="margin-top: 30px;">
-    <div class="header">
-        <h2>Upcoming Appointments</h2>
-        <p>Your scheduled appointments</p>
+<div class="dashboard-grid">
+    <!-- Upcoming Appointments -->
+    <div class="card no-hover card-scrollable">
+        <div class="header">
+            <h2>Upcoming Appointments</h2>
+            <p>Your scheduled appointments</p>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Doctor</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($upcomingAppointments as $appointment)
+                <tr>
+                    <td>{{ $appointment->doctor->name ?? 'N/A' }}</td>
+                    <td>{{ $appointment->appointment_date ? \Carbon\Carbon::parse($appointment->appointment_date)->format('M d, Y') : 'N/A' }}</td>
+                    <td>{{ $appointment->appointment_time ? \Carbon\Carbon::parse($appointment->appointment_time)->format('h:i A') : 'N/A' }}</td>
+                    <td><span class="status-{{ $appointment->status }}">{{ ucfirst($appointment->status) }}</span></td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="4" class="empty-state-cell">No upcoming appointments found.</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
-    <table>
-        <thead>
-            <tr>
-                <th>Doctor</th>
-                <th>Date</th>
-                <th>Time</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($upcomingAppointments as $appointment)
-            <tr>
-                <td>{{ $appointment->doctor->name ?? 'N/A' }}</td>
-                <td>{{ $appointment->appointment_date ? \Carbon\Carbon::parse($appointment->appointment_date)->format('M d, Y') : 'N/A' }}</td>
-                <td>{{ $appointment->appointment_time ? \Carbon\Carbon::parse($appointment->appointment_time)->format('h:i A') : 'N/A' }}</td>
-                <td><span class="status-{{ $appointment->status }}">{{ ucfirst($appointment->status) }}</span></td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-</div>
-@endif
 
-@if(isset($pendingBills) && $pendingBills->count() > 0)
-<div style="margin-top: 30px;">
-    <div class="header">
-        <h2>Pending Bills</h2>
-        <p>Bills awaiting payment</p>
+    <!-- Pending Bills -->
+    <div class="card no-hover card-scrollable">
+        <div class="header">
+            <h2>Pending Bills</h2>
+            <p>Bills awaiting payment</p>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Bill Number</th>
+                    <th>Date</th>
+                    <th>Due Date</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($pendingBills as $bill)
+                <tr>
+                    <td>{{ $bill->bill_number ?? 'N/A' }}</td>
+                    <td>{{ $bill->bill_date ? \Carbon\Carbon::parse($bill->bill_date)->format('M d, Y') : 'N/A' }}</td>
+                    <td>{{ $bill->due_date ? \Carbon\Carbon::parse($bill->due_date)->format('M d, Y') : 'N/A' }}</td>
+                    <td>${{ number_format($bill->total ?? 0, 2) }}</td>
+                    <td><span class="status-{{ $bill->status }}">{{ ucfirst($bill->status) }}</span></td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="5" class="empty-state-cell">No pending bills found.</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
-    <table>
-        <thead>
-            <tr>
-                <th>Bill Number</th>
-                <th>Date</th>
-                <th>Due Date</th>
-                <th>Amount</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($pendingBills as $bill)
-            <tr>
-                <td>{{ $bill->bill_number ?? 'N/A' }}</td>
-                <td>{{ $bill->bill_date ? \Carbon\Carbon::parse($bill->bill_date)->format('M d, Y') : 'N/A' }}</td>
-                <td>{{ $bill->due_date ? \Carbon\Carbon::parse($bill->due_date)->format('M d, Y') : 'N/A' }}</td>
-                <td>${{ number_format($bill->total ?? 0, 2) }}</td>
-                <td><span class="status-{{ $bill->status }}">{{ ucfirst($bill->status) }}</span></td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
 </div>
-@endif
 
 @else
 <div class="header">

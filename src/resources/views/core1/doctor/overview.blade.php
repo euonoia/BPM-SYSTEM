@@ -25,60 +25,68 @@
     </div>
 </div>
 
-@if(isset($todayAppointments) && $todayAppointments->count() > 0)
-<div style="margin-top: 30px;">
-    <div class="header">
-        <h2>Today's Appointments</h2>
-        <p>Your scheduled appointments for today</p>
+<div class="dashboard-grid">
+    <!-- Today's Appointments -->
+    <div class="card no-hover card-scrollable">
+        <div class="header">
+            <h2>Today's Appointments</h2>
+            <p>Your scheduled appointments for today</p>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Time</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($todayAppointments as $appointment)
+                <tr>
+                    <td>{{ $appointment->patient->name ?? 'N/A' }}</td>
+                    <td>{{ $appointment->appointment_time ? \Carbon\Carbon::parse($appointment->appointment_time)->format('h:i A') : 'N/A' }}</td>
+                    <td>{{ ucfirst($appointment->type ?? 'N/A') }}</td>
+                    <td><span class="status-{{ $appointment->status }}">{{ ucfirst($appointment->status) }}</span></td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="4" class="empty-state-cell">No appointments scheduled for today.</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
-    <table>
-        <thead>
-            <tr>
-                <th>Patient</th>
-                <th>Time</th>
-                <th>Type</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($todayAppointments as $appointment)
-            <tr>
-                <td>{{ $appointment->patient->name ?? 'N/A' }}</td>
-                <td>{{ $appointment->appointment_time ? \Carbon\Carbon::parse($appointment->appointment_time)->format('h:i A') : 'N/A' }}</td>
-                <td>{{ ucfirst($appointment->type ?? 'N/A') }}</td>
-                <td><span class="status-{{ $appointment->status }}">{{ ucfirst($appointment->status) }}</span></td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-</div>
-@endif
 
-@if(isset($upcomingAppointments) && $upcomingAppointments->count() > 0)
-<div style="margin-top: 30px;">
-    <div class="header">
-        <h2>Upcoming Appointments</h2>
-        <p>Your next scheduled appointments</p>
+    <!-- Upcoming Appointments -->
+    <div class="card no-hover card-scrollable">
+        <div class="header">
+            <h2>Upcoming Appointments</h2>
+            <p>Your next scheduled appointments</p>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($upcomingAppointments as $appointment)
+                <tr>
+                    <td>{{ $appointment->patient->name ?? 'N/A' }}</td>
+                    <td>{{ $appointment->appointment_date ? \Carbon\Carbon::parse($appointment->appointment_date)->format('M d, Y') : 'N/A' }}</td>
+                    <td>{{ $appointment->appointment_time ? \Carbon\Carbon::parse($appointment->appointment_time)->format('h:i A') : 'N/A' }}</td>
+                    <td><span class="status-{{ $appointment->status }}">{{ ucfirst($appointment->status) }}</span></td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="4" class="empty-state-cell">No upcoming appointments found.</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
-    <table>
-        <thead>
-            <tr>
-                <th>Patient</th>
-                <th>Date</th>
-                <th>Time</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($upcomingAppointments as $appointment)
-            <tr>
-                <td>{{ $appointment->patient->name ?? 'N/A' }}</td>
-                <td>{{ $appointment->appointment_date ? \Carbon\Carbon::parse($appointment->appointment_date)->format('M d, Y') : 'N/A' }}</td>
-                <td>{{ $appointment->appointment_time ? \Carbon\Carbon::parse($appointment->appointment_time)->format('h:i A') : 'N/A' }}</td>
-                <td><span class="status-{{ $appointment->status }}">{{ ucfirst($appointment->status) }}</span></td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
 </div>
-@endif

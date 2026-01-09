@@ -74,6 +74,7 @@ Route::middleware(['multiAuth'])->group(function () {
     });
     
     Route::middleware('role:admin,doctor,patient,receptionist')->group(function () {
+        Route::get('/appointments/check-availability', [AppointmentController::class, 'checkAvailability'])->name('appointments.check-availability');
         Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
         Route::get('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
         Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');

@@ -23,8 +23,8 @@
 
 <div class="sidebar" id="sidebar">
     <div class="logo">
-        <img src="{{ asset('images/logo.png') }}" alt="Core1 Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-        <div class="logo-text" style="display: none;">Core1</div>
+        <img src="{{ asset('images/logo.png') }}" alt="Core1 Logo" onerror="this.classList.add('d-none'); this.nextElementSibling.classList.remove('d-none');">
+        <div class="logo-text d-none">Core1</div>
         <div class="logo-text">Core1</div>
     </div>
 
@@ -37,7 +37,7 @@
             </a>
         @endforeach
 
-        <form id="logout-form" method="POST" action="{{ route('logout') }}" style="display:none;">
+        <form id="logout-form" method="POST" action="{{ route('logout') }}" class="d-none">
             @csrf
         </form>
 
