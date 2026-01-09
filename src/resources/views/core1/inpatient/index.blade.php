@@ -6,148 +6,148 @@
 <div class="core1-container">
     <div class="core1-flex-between core1-header">
         <div>
-            <h1 class="core1-title">Inpatient Care</h1>
-            <p class="core1-subtitle">Monitor admissions, bed availability, and patient waiting lists</p>
-        </div>
-        <div class="core1-flex-gap-2">
-            <button class="core1-btn core1-btn-outline">
-                <i class="bi bi-printer"></i>
-                <span class="ml-10">Export Report</span>
-            </button>
-            <button class="core1-btn core1-btn-primary">
-                <i class="bi bi-plus-lg"></i>
-                <span class="ml-10">New Admission</span>
-            </button>
+            <h1 class="core1-title">Inpatient Management</h1>
+            <p class="core1-subtitle">Manage admitted patients and bed allocation</p>
         </div>
     </div>
 
-    <!-- Quick Stats -->
+    <!-- Stats Section -->
     <div class="core1-stats-grid">
         <div class="core1-stat-card">
-            <div>
-                <p class="text-sm text-gray mb-5">Total Admitted</p>
-                <p class="core1-title">{{ $stats['total_patients'] }}</p>
-            </div>
-            <div class="icon-box" style="background: #e0f2fe; color: #0369a1;">
-                <i class="bi bi-person-check"></i>
+            <div class="d-flex flex-col">
+                <i class="bi bi-door-closed text-blue mb-10" style="font-size: 24px;"></i>
+                <p class="core1-title">{{ $stats['current_inpatients'] }}</p>
+                <p class="text-xs text-gray">Current Inpatients</p>
             </div>
         </div>
         
         <div class="core1-stat-card">
-            <div>
-                <p class="text-sm text-gray mb-5">Admissions Today</p>
-                <p class="core1-title text-green">{{ $stats['admissions_today'] }}</p>
-            </div>
-            <div class="icon-box" style="background: #dcfce7; color: #15803d;">
-                <i class="bi bi-box-arrow-in-right"></i>
+            <div class="d-flex flex-col">
+                <i class="bi bi-activity text-red mb-10" style="font-size: 24px;"></i>
+                <p class="core1-title">{{ $stats['occupied'] }}</p>
+                <p class="text-xs text-gray">Bed Occupancies</p>
             </div>
         </div>
         
         <div class="core1-stat-card">
-            <div>
-                <p class="text-sm text-gray mb-5">Available Beds</p>
-                <p class="core1-title text-orange">{{ $stats['available_beds'] }}</p>
-            </div>
-            <div class="icon-box" style="background: #ffedd5; color: #c2410c;">
-                <i class="bi bi-hospital"></i>
-            </div>
-        </div>
-        
-        <div class="core1-stat-card">
-            <div>
-                <p class="text-sm text-gray mb-5">On Waiting List</p>
-                <p class="core1-title text-purple">{{ $stats['on_waiting_list'] }}</p>
-            </div>
-            <div class="icon-box" style="background: #f3e8ff; color: #7e22ce;">
-                <i class="bi bi-hourglass-split"></i>
+            <div class="d-flex flex-col">
+                <i class="bi bi-bed-front text-green mb-10" style="font-size: 24px;"></i>
+                <p class="core1-title">{{ $stats['discharges_today'] }}</p>
+                <p class="text-xs text-gray">Discharges Today</p>
             </div>
         </div>
     </div>
+    <div class="d-flex justify-end mt-15">
+        <button class="core1-btn core1-btn-primary">
+            <i class="bi bi-plus"></i>
+            <span class="ml-10">Admit Patient</span>
+        </button>
+    </div>
 
-    <div class="dashboard-grid">
-        <!-- Waiting List -->
-        <div class="core1-card no-hover">
-            <div class="core1-flex-between mb-20">
-                <h3 class="m-0" style="text-align: left;">Waiting list</h3>
-                <span class="core1-badge core1-badge-active">{{ count($waitingList) }} Pending</span>
-            </div>
-            <div class="core1-table-container shadow-none border-0">
-                <table class="core1-table">
-                    <thead>
-                        <tr>
-                            <th>Patient</th>
-                            <th>Preferred Date</th>
-                            <th>Priority</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($waitingList as $entry)
-                            <tr>
-                                <td>
-                                    <div class="text-sm font-medium">{{ $entry->patient->name }}</div>
-                                    <div class="text-xs text-gray">{{ $entry->patient->patient_id }}</div>
-                                </td>
-                                <td>{{ $entry->preferred_date ? $entry->preferred_date->format('M d, Y') : 'Anytime' }}</td>
-                                <td><span class="text-orange">Medium</span></td>
-                                <td>
-                                    <span class="core1-badge core1-badge-inactive">
-                                        {{ ucfirst($entry->status) }}
-                                    </span>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="4" class="empty-state-cell p-40">
-                                    <i class="bi bi-inbox text-gray mb-10" style="font-size: 2rem; display: block;"></i>
-                                    No patients on the waiting list.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+    <!-- Tabs Section -->
+    <div class="core1-card no-hover p-0 overflow-hidden mt-30">
+        <div class="core1-tabs-header border-bottom">
+            <button class="core1-tab-btn active" onclick="switchTab(event, 'inpatient-list')">
+                <i class="bi bi-person-lines-fill mr-5"></i> Inpatient List
+            </button>
+            <button class="core1-tab-btn" onclick="switchTab(event, 'bed-allocation')">
+                <i class="bi bi-bed-front mr-5"></i> Bed Allocation
+            </button>
         </div>
 
-        <!-- Recent Activity Placeholder -->
-        <div class="core1-card no-hover">
-            <div class="core1-flex-between mb-20">
-                <h3 class="m-0" style="text-align: left;">Room Status</h3>
-                <a href="#" class="text-sm text-blue">View All Rooms</a>
-            </div>
-            <div class="room-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
-                @for($i = 101; $i <= 116; $i++)
-                    <div style="padding: 10px; border-radius: 8px; border: 1px solid #e5e7eb; text-align: center; background: {{ $i % 3 == 0 ? '#fee2e2' : '#f0fdf4' }}">
-                        <div class="text-xs font-bold">{{ $i }}</div>
-                        <i class="bi bi-safe2 {{ $i % 3 == 0 ? 'text-red' : 'text-green' }}"></i>
-                    </div>
-                @endfor
-            </div>
-            <div class="mt-20 d-flex gap-4">
-                <div class="d-flex items-center gap-2 text-xs">
-                    <span style="width: 10px; height: 10px; border-radius: 2px; background: #f0fdf4;"></span> Available
+        <div class="tab-content p-25">
+            <!-- Inpatient List Tab -->
+            <div id="inpatient-list" class="core1-tab-pane active">
+                <h3 class="mb-20 text-sm font-bold">Admitted Patients</h3>
+                <div class="core1-table-container shadow-none border">
+                    <table class="core1-table">
+                        <thead>
+                            <tr>
+                                <th>Inpatient ID</th>
+                                <th>Patient</th>
+                                <th>Bed</th>
+                                <th>Admission Date</th>
+                                <th>Doctor</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                                <th class="text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($inpatients as $inp)
+                                <tr>
+                                    <td>{{ $inp['inpatient_id'] }}</td>
+                                    <td><a href="#" class="text-blue">{{ $inp['patient'] }}</a></td>
+                                    <td>
+                                        <span class="core1-badge-teal">
+                                            {{ $inp['bed'] }}
+                                        </span>
+                                    </td>
+                                    <td>{{ $inp['admission_date'] }}</td>
+                                    <td>{{ $inp['doctor'] }}</td>
+                                    <td>{{ $inp['reason'] }}</td>
+                                    <td>
+                                        <span class="text-success font-bold">{{ $inp['status'] }}</span>
+                                    </td>
+                                    <td class="text-right">
+                                        <i class="bi bi-eye text-blue mr-10 cursor-pointer"></i>
+                                        <i class="bi bi-file-earmark-text text-gray cursor-pointer"></i>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
-                <div class="d-flex items-center gap-2 text-xs">
-                    <span style="width: 10px; height: 10px; border-radius: 2px; background: #fee2e2;"></span> Occupied
+            </div>
+
+            <!-- Bed Allocation Tab -->
+            <div id="bed-allocation" class="core1-tab-pane">
+                <h3 class="mb-20 text-sm font-bold">Bed Status Overview</h3>
+                <div class="core1-bed-grid">
+                    @foreach($beds as $bed)
+                        <div class="core1-bed-card {{ $bed['bg'] }}">
+                            <div class="d-flex justify-between items-start mb-10">
+                                <div>
+                                    <div class="font-bold text-sm">{{ $bed['id'] }}</div>
+                                    <div class="text-xs text-gray">{{ $bed['type'] }}</div>
+                                </div>
+                                <i class="bi bi-bed-front text-gray"></i>
+                            </div>
+                            
+                            @if($bed['status'] !== 'available' && $bed['status'] !== 'cleaning')
+                                <div class="text-sm font-medium">{{ $bed['patient'] }}</div>
+                                <div class="text-xs text-gray mb-10">{{ $bed['patient_id'] }}</div>
+                                <span class="core1-status-tag core1-tag-{{ $bed['status'] }}">{{ ucfirst($bed['status']) }}</span>
+                            @else
+                                <div class="text-center mt-10">
+                                    <span class="core1-status-tag core1-tag-{{ $bed['status'] }}">{{ ucfirst($bed['status']) }}</span>
+                                </div>
+                            @endif
+                        </div>
+                    @endforeach
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<style>
-.ml-10 { margin-left: 10px; }
-.text-blue { color: #2563eb; text-decoration: none; }
-.text-blue:hover { text-decoration: underline; }
-.room-grid i { font-size: 1.2rem; }
-.icon-box {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
+<script>
+function switchTab(evt, tabId) {
+    // Hide all tab panes
+    const tabPanes = document.getElementsByClassName('core1-tab-pane');
+    for (let i = 0; i < tabPanes.length; i++) {
+        tabPanes[i].classList.remove('active');
+    }
+
+    // Remove active class from all buttons
+    const tabBtns = document.getElementsByClassName('core1-tab-btn');
+    for (let i = 0; i < tabBtns.length; i++) {
+        tabBtns[i].classList.remove('active');
+    }
+
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById(tabId).classList.add('active');
+    evt.currentTarget.classList.add('active');
 }
-</style>
+</script>
 @endsection
