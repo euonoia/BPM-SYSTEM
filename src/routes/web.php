@@ -19,7 +19,7 @@ Route::get('/', fn () => view('index'));
 Route::prefix('portal')->group(function () {
     Route::get('/', [EmployeeAuthController::class, 'showLogin'])->name('portal.login');
     Route::post('/login', [EmployeeAuthController::class, 'login'])->name('portal.login.submit');
-    Route::post('/logout', [EmployeeAuthController::class, 'logout'])->name('portal.logout');
+    Route::match(['get', 'post'], '/logout', [EmployeeAuthController::class, 'logout'])->name('portal.logout');
 });
 
 /*
@@ -31,7 +31,7 @@ Route::get('/login', [CoreAuthController::class, 'showLogin'])->name('core.login
 Route::post('/login', [CoreAuthController::class, 'login'])->name('core.login.post');
 Route::get('/register', [CoreAuthController::class, 'showRegistrationForm'])->name('core.register');
 Route::post('/register', [CoreAuthController::class, 'register'])->name('core.register.post');
-Route::post('/logout', [CoreAuthController::class, 'logout'])->name('core.logout');
+Route::match(['get', 'post'], '/logout', [CoreAuthController::class, 'logout'])->name('core.logout');
 /*
 
 /*
