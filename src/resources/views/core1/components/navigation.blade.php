@@ -30,7 +30,10 @@
     <nav>
         @foreach($filteredNavItems as $item)
             <a href="{{ route($item['route']) }}" 
-               class="{{ $currentRoute === $item['route'] || str_contains($currentRoute, $item['id']) ? 'active' : '' }}">
+               class="{{ $currentRoute === $item['route'] 
+                         || ($item['id'] !== 'dashboard' && str_starts_with($currentRoute, $item['id'] . '.') && !str_ends_with($currentRoute, '.dashboard') && !str_ends_with($currentRoute, '.overview')) 
+                         || ($item['id'] === 'dashboard' && (str_ends_with($currentRoute, '.dashboard') || str_ends_with($currentRoute, '.overview'))) 
+                         ? 'active' : '' }}">
                 <i class="bi {{ $item['icon'] }}"></i>
                 <span>{{ $item['label'] }}</span>
             </a>

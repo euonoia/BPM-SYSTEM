@@ -50,28 +50,43 @@ class CoreAuthController extends Controller
     }
 
     /**
-     * Show registration form or handle registration
+     * Show the Core registration page
+     */
+    public function showRegistrationForm()
+    {
+        return view('auth.register');
+    }
+
+    /**
+     * Handle registration request for Core users
      */
     public function register(Request $request)
     {
         $data = $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users_core1,email',
-            'password' => 'required|min:8|confirmed',
+            'name'           => 'required|string|max:255',
+            'email'          => 'required|email|unique:users_core1,email',
+            'password'       => 'required|min:8|confirmed',
+            'role'           => 'required|string|in:admin,doctor,nurse,receptionist,patient,billing',
+            'phone'          => 'nullable|string|max:20',
+            'department'     => 'nullable|string|max:255',
+            'specialization' => 'nullable|string|max:255',
         ]);
 
         $user = CoreUser::create([
-            'name'     => $data['name'],
-            'email'    => $data['email'],
-            'password' => Hash::make($data['password']),
-            'role'     => 'patient',
-            'status'   => 'active',
+            'name'           => $data['name'],
+            'email'          => $data['email'],
+            'password'       => Hash::make($data['password']),
+            'role'           => $data['role'],
+            'phone'          => $data['phone'] ?? null,
+            'department'     => $data['department'] ?? null,
+            'specialization' => $data['specialization'] ?? null,
+            'status'         => 'active',
         ]);
 
         Auth::guard('core')->login($user);
         $request->session()->regenerate();
 
-        return redirect()->route('patient.dashboard');
+        return redirect()->route('core.home');
     }
 
     /**

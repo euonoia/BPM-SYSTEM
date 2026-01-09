@@ -29,7 +29,7 @@ Route::prefix('portal')->group(function () {
 */
 Route::get('/login', [CoreAuthController::class, 'showLogin'])->name('core.login');
 Route::post('/login', [CoreAuthController::class, 'login'])->name('core.login.post');
-Route::get('/register', [CoreAuthController::class, 'register'])->name('core.register');
+Route::get('/register', [CoreAuthController::class, 'showRegistrationForm'])->name('core.register');
 Route::post('/register', [CoreAuthController::class, 'register'])->name('core.register.post');
 Route::post('/logout', [CoreAuthController::class, 'logout'])->name('core.logout');
 /*
