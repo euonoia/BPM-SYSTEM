@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\JobPosting_hr1;
+use App\Http\Controllers\Controller;
+use App\Models\hr1\JobPosting_hr1;
 use App\Services\GeminiService_hr1;
 use Illuminate\Http\Request;
 

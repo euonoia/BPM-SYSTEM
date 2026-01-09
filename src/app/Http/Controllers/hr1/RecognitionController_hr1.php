@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Recognition_hr1;
+use App\Http\Controllers\Controller;
+use App\Models\hr1\Recognition_hr1;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 

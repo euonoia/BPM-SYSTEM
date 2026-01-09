@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\LearningModule_hr1;
-use App\Models\User;
+use App\Http\Controllers\Controller;
+use App\Models\hr1\LearningModule_hr1;
+use App\Models\hr1\User;
 use Illuminate\Http\Request;
 
 class LearningModuleController_hr1 extends Controller

@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Application_hr1;
-use App\Models\JobPosting_hr1;
+use App\Http\Controllers\Controller;
+use App\Models\hr1\Application_hr1;
+use App\Models\hr1\JobPosting_hr1;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;

@@ -1,9 +1,9 @@
-@extends('layouts.app')
+@extends('hr1.layouts.app')
 
 @section('content')
 <div class="flex min-h-screen bg-[#f8fafc]" x-data="dashboard()">
-    @include('user_hr1.shared.sidebar')
-    @include('user_hr1.shared.header')
+    @include('hr1.user_hr1.shared.sidebar')
+    @include('hr1.user_hr1.shared.header')
 
     <main :class="`flex-1 transition-all duration-500 overflow-x-hidden ${sidebarOpen ? 'ml-[280px]' : 'ml-[100px]'}`">
         <div class="p-8 md:p-16 max-w-[1600px] mx-auto">
@@ -55,7 +55,7 @@
     </main>
 </div>
 
-@include('user_hr1.shared.modals')
+@include('hr1.user_hr1.shared.modals')
 @endsection
 
 @push('scripts')

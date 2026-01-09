@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\OnboardingTask_hr1;
+use App\Http\Controllers\Controller;
+use App\Models\hr1\OnboardingTask_hr1;
 use Illuminate\Http\Request;
 
 class OnboardingController_hr1 extends Controller

@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\hr1;
 
-use App\Models\User;
-use App\Models\JobPosting_hr1;
-use App\Models\Application_hr1;
-use App\Models\Recognition_hr1;
-use App\Models\OnboardingTask_hr1;
-use App\Models\EvaluationCriterion_hr1;
-use App\Models\AwardCategory_hr1;
-use App\Models\LearningModule_hr1;
+use App\Http\Controllers\Controller;
+use App\Models\hr1\User;
+use App\Models\hr1\JobPosting_hr1;
+use App\Models\hr1\Application_hr1;
+use App\Models\hr1\Recognition_hr1;
+use App\Models\hr1\OnboardingTask_hr1;
+use App\Models\hr1\EvaluationCriterion_hr1;
+use App\Models\hr1\AwardCategory_hr1;
+use App\Models\hr1\LearningModule_hr1;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,7 +20,9 @@ class DashboardController_hr1 extends Controller
     {
         // Get role from authenticated user, fallback to 'admin' if not authenticated
         $user = Auth::user();
-        $role = $user ? $user->role : 'admin';
+        // Change FROM:
+        $role = $request->get('role', $user ? $user->role : 'admin');
+        
         $tab = $request->get('tab', 'dashboard');
 
         // Validate role
@@ -40,7 +43,7 @@ class DashboardController_hr1 extends Controller
         ];
 
         // Return role-specific dashboard view
-        return view("user_hr1.{$role}.dashboard", $data);
+        return view("hr1.user_hr1.{$role}.dashboard", $data);
     }
 }
 

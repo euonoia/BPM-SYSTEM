@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\EvaluationCriterion_hr1;
+use App\Http\Controllers\Controller;
+use App\Models\hr1\EvaluationCriterion_hr1;
 use Illuminate\Http\Request;
 
 class EvaluationController_hr1 extends Controller

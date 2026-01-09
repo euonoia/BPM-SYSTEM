@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Application_hr1;
+use App\Models\hr1\User;
+use App\Models\hr1\Application_hr1;
 use Illuminate\Http\Request;
 
 class ApplicantController_hr1 extends Controller

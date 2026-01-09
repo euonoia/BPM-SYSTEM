@@ -1,15 +1,17 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\hr1;
 
+use App\Models\hr1\Application_hr1;
+use App\Models\hr1\LearningModule_hr1;
+use App\Models\hr1\OnboardingTask_hr1;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasFactory, Notifiable;
 
     protected $table = 'users_hr1';
 

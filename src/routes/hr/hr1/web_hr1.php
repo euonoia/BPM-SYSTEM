@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DashboardController_hr1;
+use App\Http\Controllers\hr1\DashboardController_hr1;
 use App\Http\Controllers\ApplicantController_hr1;
 use App\Http\Controllers\JobController_hr1;
 use App\Http\Controllers\ApplicationController_hr1;
@@ -15,7 +15,8 @@ Route::prefix('hr/hr1')->name('hr.hr1.')->group(function () {
     Route::get('/', fn () => view('hr1.index'))->name('index');
 });
 
-Route::get('/dashboard_hr1', [DashboardController_hr1::class, 'index'])->middleware('auth')->name('dashboard_hr1');
+// Change FROM:
+Route::get('/dashboard_hr1', [DashboardController_hr1::class, 'index'])->name('dashboard_hr1');
 
 // API Routes
 Route::prefix('api/hr1')->group(function () {
