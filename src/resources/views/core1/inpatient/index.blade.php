@@ -15,7 +15,7 @@
     <div class="core1-stats-grid">
         <div class="core1-stat-card">
             <div class="d-flex flex-col">
-                <i class="bi bi-door-closed text-blue mb-10" style="font-size: 24px;"></i>
+                <i class="bi bi-door-closed text-blue mb-10 core1-icon-stats"></i>
                 <p class="core1-title">{{ $stats['current_inpatients'] }}</p>
                 <p class="text-xs text-gray">Current Inpatients</p>
             </div>
@@ -23,7 +23,7 @@
         
         <div class="core1-stat-card">
             <div class="d-flex flex-col">
-                <i class="bi bi-activity text-red mb-10" style="font-size: 24px;"></i>
+                <i class="bi bi-activity text-red mb-10 core1-icon-stats"></i>
                 <p class="core1-title">{{ $stats['occupied'] }}</p>
                 <p class="text-xs text-gray">Bed Occupancies</p>
             </div>
@@ -31,7 +31,7 @@
         
         <div class="core1-stat-card">
             <div class="d-flex flex-col">
-                <i class="bi bi-bed-front text-green mb-10" style="font-size: 24px;"></i>
+                <i class="bi bi-bed-front text-green mb-10 core1-icon-stats"></i>
                 <p class="core1-title">{{ $stats['discharges_today'] }}</p>
                 <p class="text-xs text-gray">Discharges Today</p>
             </div>

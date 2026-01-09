@@ -3,7 +3,7 @@
 You are a senior Laravel frontend engineer performing a SAFE UI refactor.
 
 OBJECTIVE:
-Refactor ALL inline CSS styles in the Core1 module and move them into a single external stylesheet named `example.css`.
+Refactor ALL CSS styles in the Core1 module and move them into a single external stylesheet named `example.css`.
 
 STRICT RULES:
 - ❌ DO NOT change any HTML structure unless required to attach class names
@@ -47,7 +47,7 @@ SCOPE:
      (e.g., `core1-dashboard-card`, not `blue-box`)
 
 DELIVERABLES:
-- All inline CSS removed from Core1
+- All  CSS removed from Core1
 - `example.css` fully contains equivalent styles
 - Core1 UI looks exactly the same as before
 - Clean, readable, maintainable CSS

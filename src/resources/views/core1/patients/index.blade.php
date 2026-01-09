@@ -35,7 +35,7 @@
                 <p class="text-sm text-gray mb-5">Total Patients</p>
                 <p class="core1-title">{{ $stats['total'] }}</p>
             </div>
-            <div class="icon-box icon-blue">
+            <div class="core1-icon-box core1-icon-blue">
                 <i class="fas fa-users"></i>
             </div>
         </div>
@@ -45,7 +45,7 @@
                 <p class="text-sm text-gray mb-5">Active Patients</p>
                 <p class="core1-title text-green">{{ $stats['active'] }}</p>
             </div>
-            <div class="icon-box icon-green">
+            <div class="core1-icon-box core1-icon-green">
                 <i class="fas fa-user-check"></i>
             </div>
         </div>
@@ -55,7 +55,7 @@
                 <p class="text-sm text-gray mb-5">New Today</p>
                 <p class="core1-title text-purple">{{ $stats['new_today'] }}</p>
             </div>
-            <div class="icon-box icon-purple">
+            <div class="core1-icon-box core1-icon-purple">
                 <i class="fas fa-user-plus"></i>
             </div>
         </div>
@@ -65,7 +65,7 @@
                 <p class="text-sm text-gray mb-5">This Month</p>
                 <p class="core1-title text-orange">{{ $stats['new_this_month'] }}</p>
             </div>
-            <div class="icon-box icon-orange">
+            <div class="core1-icon-box core1-icon-orange">
                 <i class="fas fa-calendar-alt"></i>
             </div>
         </div>
@@ -116,7 +116,7 @@
                     <tr>
                         <td>
                             <div class="d-flex items-center gap-3">
-                                <div class="avatar">
+                                <div class="core1-avatar">
                                     {{ strtoupper(substr($patient->name, 0, 2)) }}
                                 </div>
                                 <div>
@@ -161,17 +161,17 @@
                         <td>
                             <div class="d-flex items-center justify-center gap-2">
                                 <a href="{{ route('patients.show', $patient) }}" 
-                                   class="btn-icon-action text-blue-500"
+                                   class="core1-icon-action text-blue"
                                    title="View Details">
                                     <i class="fas fa-eye"></i>
                                 </a>
                                 <a href="{{ route('patients.edit', $patient) }}" 
-                                   class="btn-icon-action text-yellow-600"
+                                   class="core1-icon-action text-orange"
                                    title="Edit Patient">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 <a href="{{ route('appointments.create', ['patient_id' => $patient->id]) }}" 
-                                   class="btn-icon-action text-purple-600"
+                                   class="core1-icon-action text-purple"
                                    title="Book Appointment">
                                     <i class="fas fa-calendar-plus"></i>
                                 </a>
@@ -182,7 +182,7 @@
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" 
-                                            class="btn-icon-action text-red-600"
+                                            class="core1-icon-action text-red"
                                             title="Delete Patient">
                                         <i class="fas fa-trash"></i>
                                     </button>

@@ -25,7 +25,7 @@
     <div class="core1-stats-grid">
         <div class="core1-stat-card">
             <div class="d-flex flex-col">
-                <i class="bi bi-calendar-check text-blue mb-10" style="font-size: 24px;"></i>
+                <i class="bi bi-calendar-check text-blue mb-10 core1-icon-stats"></i>
                 <p class="core1-title">{{ $stats['my_appointments'] }}</p>
                 <p class="text-xs text-gray">My Appointments</p>
             </div>
@@ -33,7 +33,7 @@
         
         <div class="core1-stat-card">
             <div class="d-flex flex-col">
-                <i class="bi bi-person-check text-green mb-10" style="font-size: 24px;"></i>
+                <i class="bi bi-person-check text-green mb-10 core1-icon-stats"></i>
                 <p class="core1-title">{{ $stats['consulted'] }}</p>
                 <p class="text-xs text-gray">Patients Consulted Today</p>
             </div>
@@ -41,7 +41,7 @@
         
         <div class="core1-stat-card">
             <div class="d-flex flex-col">
-                <i class="bi bi-clipboard-pulse text-orange mb-10" style="font-size: 24px;"></i>
+                <i class="bi bi-clipboard-pulse text-orange mb-10 core1-icon-stats"></i>
                 <p class="core1-title">{{ $stats['pending_results'] }}</p>
                 <p class="text-xs text-gray">Pending Lab Results</p>
             </div>
@@ -49,7 +49,7 @@
 
         <div class="core1-stat-card">
             <div class="d-flex flex-col">
-                <i class="bi bi-stopwatch text-blue mb-10" style="font-size: 24px;"></i>
+                <i class="bi bi-stopwatch text-blue mb-10 core1-icon-stats"></i>
                 <p class="core1-title">{{ $stats['avg_consultation_time'] }}</p>
                 <p class="text-xs text-gray">Avg. Consultation</p>
             </div>
@@ -80,11 +80,10 @@
             <!-- Consultation Tracking Tab -->
             <div id="consultation-tracking" class="core1-tab-pane active">
                 <div class="d-flex justify-between items-center mb-20">
-                    <h3 class="core1-title" style="font-size: 18px;">Active Queue</h3>
-                    <div style="position: relative; width: 300px;">
-                        <i class="bi bi-search" style="position: absolute; left: 12px; top: 10px; color: #9ca3af;"></i>
-                        <input type="text" placeholder="Search my patients..." 
-                            style="width: 100%; padding: 8px 12px 8px 35px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 14px;">
+                    <h3 class="core1-title core1-section-title">Active Queue</h3>
+                    <div class="core1-toolbar-search">
+                        <i class="bi bi-search"></i>
+                        <input type="text" placeholder="Search my patients...">
                     </div>
                 </div>
                 <div class="core1-table-container shadow-none border">
@@ -107,7 +106,7 @@
                                         <div class="text-xs text-gray">{{ $apt['id'] }}</div>
                                     </td>
                                     <td>
-                                        <span class="core1-status-tag" style="background: #f3f4f6; color: #374151;">
+                                        <span class="core1-status-tag core1-tag-neutral">
                                             {{ ucfirst($apt['type']) }}
                                         </span>
                                     </td>
@@ -170,7 +169,7 @@
             <!-- Prescription Recording Tab -->
             <div id="prescription-recording" class="core1-tab-pane">
                 <div class="d-flex justify-between items-center mb-20">
-                    <h3 class="core1-title" style="font-size: 18px;">Record Prescriptions</h3>
+                    <h3 class="core1-title core1-section-title">Record Prescriptions</h3>
                     <button class="core1-btn core1-btn-primary">
                         <i class="bi bi-pencil-square"></i> New e-Prescription
                     </button>
@@ -207,7 +206,7 @@
             <!-- Diagnostic Orders Tab -->
             <div id="diagnostic-orders" class="core1-tab-pane">
                 <div class="d-flex justify-between items-center mb-20">
-                    <h3 class="core1-title" style="font-size: 18px;">Laboratory & Diagnostic Management</h3>
+                    <h3 class="core1-title core1-section-title">Laboratory & Diagnostic Management</h3>
                     <button class="core1-btn core1-btn-primary">
                         <i class="bi bi-plus-circle"></i> Create Lab Order
                     </button>
@@ -251,7 +250,7 @@
             <!-- Follow Up Tab -->
             <div id="follow-up" class="core1-tab-pane">
                 <div class="d-flex justify-between items-center mb-20">
-                    <h3 class="core1-title" style="font-size: 18px;">Planned Follow-up Visits</h3>
+                    <h3 class="core1-title core1-section-title">Planned Follow-up Visits</h3>
                 </div>
                 <div class="core1-table-container shadow-none border">
                     <table class="core1-table">
