@@ -667,6 +667,18 @@ tr:hover {
     border-color: #ef4444;
 }
 
+.alert-warning {
+    background: var(--warning-light);
+    color: #92400e;
+    border-color: #f59e0b;
+}
+
+.alert-info {
+    background: var(--info-light);
+    color: #1e40af;
+    border-color: #3b82f6;
+}
+
 .status-pending {
     color: var(--warning);
     font-weight: bold;
