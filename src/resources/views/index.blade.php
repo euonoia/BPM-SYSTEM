@@ -56,11 +56,5 @@
     <ul>
         <li><a href="{{ route('financials.index') }}">Go to Financials Index</a></li>
     </ul>
-
-    <h2>Other Modules</h2>
-    <ul>
-        <li><a href="{{ route('patients.index') }}">Go to Patients</a></li>
-        <li><a href="{{ url('/') }}">Back to Home</a></li>
-    </ul>
 </body>
 </html>

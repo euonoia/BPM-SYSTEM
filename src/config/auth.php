@@ -26,16 +26,21 @@ return [
     */
 
     'guards' => [
-        'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
-
-        'admin' => [
-            'driver' => 'session',
-            'provider' => 'admins',
-        ],
+    'web' => [
+        'driver' => 'session',
+        'provider' => 'users',
     ],
+
+    'employee' => [
+        'driver' => 'session',
+        'provider' => 'employees', 
+    ],
+
+    'core' => [
+        'driver' => 'session',
+        'provider' => 'core_users', 
+    ],
+],
 
     /*
     |--------------------------------------------------------------------------
@@ -45,16 +50,20 @@ return [
     | Define how users and admins are retrieved from the database.
     |
     */
-
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\Authenticate::class),
+            'model' => App\Models\core1\User::class,
         ],
 
-        'admins' => [
+        'employees' => [
             'driver' => 'eloquent',
-            'model' => App\Models\Authenticate::class,
+            'model' => App\Models\Employee::class,
+        ],
+
+        'core_users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\core1\User::class,
         ],
     ],
 

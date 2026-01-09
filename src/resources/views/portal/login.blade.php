@@ -6,15 +6,14 @@
     <title>Login</title>
 </head>
 <body>
-    <h1>Login</h1>
+    <h1>employee</h1>
 
     @if($errors->any())
         <div style="color:red;">
             {{ $errors->first() }}
         </div>
     @endif
-        
-    <h1>CORE</h1>
+
 
     <form action="{{ route('login.post') }}" method="POST">
         @csrf
