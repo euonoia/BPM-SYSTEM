@@ -21,8 +21,8 @@
 
     <h2>Authentication</h2>
     <ul>
-        <li><a href="{{ route('login') }}">Login</a></li>
-        <li><a href="{{ route('register') }}">Register</a></li>
+        <li><a href="{{ route('core.login') }}">Login</a></li>
+        <li><a href="{{ route('core.register') }}">Register</a></li>
     </ul>
     
     <h2>Core Modules</h2>

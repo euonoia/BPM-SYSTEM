@@ -53,7 +53,7 @@ return [
     'providers' => [
     'users' => [
         'driver' => 'eloquent',
-        'model' => App\Models\core1\User::class,
+        'model' => App\Models\Employee::class,
     ],
 
     'core_users' => [

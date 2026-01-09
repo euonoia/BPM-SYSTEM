@@ -27,9 +27,8 @@ class Employee extends Authenticatable
         'phone',
         'password',
 
-        // Access control (future-proof)
-        'department', // hr | logistics | financials (nullable for now)
-        'role',       // hr | employee | admin
+        // Access control
+        'role', // hr | employee | admin
 
         // HR metadata
         'position',
@@ -67,9 +66,8 @@ class Employee extends Authenticatable
             $employee->created_at ??= $now;
             $employee->updated_at ??= $now;
 
-            // Default department for now
-            $employee->department ??= 'hr';
             $employee->status ??= 'active';
+            $employee->role ??= 'employee'; // default role if missing
         });
 
         static::updating(function ($employee) {
@@ -94,12 +92,17 @@ class Employee extends Authenticatable
 
     /*
     |--------------------------------------------------------------------------
-    | Authorization Helpers (Non-breaking)
+    | Authorization Helpers (Role-based)
     |--------------------------------------------------------------------------
     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
     public function isHr(): bool
     {
-        return $this->department === 'hr';
+        return $this->role === 'hr';
     }
 
     public function isEmployee(): bool

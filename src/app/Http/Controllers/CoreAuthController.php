@@ -10,11 +10,17 @@ use App\Models\core1\User as CoreUser;
 
 class CoreAuthController extends Controller
 {
+    /**
+     * Show the Core login page
+     */
     public function showLogin()
     {
         return view('auth.login');
     }
 
+    /**
+     * Handle login request for Core users
+     */
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -24,9 +30,9 @@ class CoreAuthController extends Controller
 
         if (Auth::guard('core')->attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
-
             $user = Auth::guard('core')->user();
 
+            // Redirect based on role
             return match ($user->role) {
                 'admin'        => redirect()->route('admin.dashboard'),
                 'doctor'       => redirect()->route('doctor.dashboard'),
@@ -43,6 +49,9 @@ class CoreAuthController extends Controller
         ]);
     }
 
+    /**
+     * Show registration form or handle registration
+     */
     public function register(Request $request)
     {
         $data = $request->validate([
@@ -65,6 +74,9 @@ class CoreAuthController extends Controller
         return redirect()->route('patient.dashboard');
     }
 
+    /**
+     * Handle logout for Core users
+     */
     public function logout(Request $request)
     {
         Auth::guard('core')->logout();
@@ -72,6 +84,6 @@ class CoreAuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login');
+        return redirect()->route('core.login'); // matches web.php
     }
 }

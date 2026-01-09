@@ -13,31 +13,42 @@ class EmployeeAuthController extends Controller
     {
         return view('portal.login');
     }
+public function login(Request $request)
+{
+    $credentials = $request->validate([
+        'email'    => 'required|email',
+        'password' => 'required',
+    ]);
 
-    public function login(Request $request)
-    {
-        $credentials = $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required',
-        ]);
+    if (Auth::guard('employee')->attempt($credentials)) {
+        $request->session()->regenerate();
 
-        if (Auth::guard('employee')->attempt($credentials)) {
-            $request->session()->regenerate();
+        $employee = Auth::guard('employee')->user();
 
-            $employee = Auth::guard('employee')->user();
-
-            return match ($employee->department) {
-                'hr'         => redirect()->route('hr.dashboard'),
-                'logistics'  => redirect()->route('logistics.dashboard'),
-                'financials' => redirect()->route('financials.dashboard'),
-                default      => abort(403),
-            };
+        // Safety check
+        if (!$employee instanceof \App\Models\Employee) {
+            Auth::guard('employee')->logout();
+            abort(403, 'Unauthorized access.');
         }
 
-        throw ValidationException::withMessages([
-            'email' => 'Invalid credentials.',
-        ]);
+        // Redirect based on role only
+        if ($employee->isAdmin()) {
+            return redirect()->route('admin.dashboard'); // HR2 admin
+        }
+
+        if ($employee->isHr()) {
+            return redirect()->route('hr2.dashboard'); // HR2 user
+        }
+
+        // Unknown role
+        Auth::guard('employee')->logout();
+        abort(403, 'Unauthorized role.');
     }
+
+    throw ValidationException::withMessages([
+        'email' => 'Invalid credentials.',
+    ]);
+}
 
     public function logout(Request $request)
     {

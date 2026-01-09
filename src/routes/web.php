@@ -27,12 +27,11 @@ Route::prefix('portal')->group(function () {
 | Core Authentication
 |--------------------------------------------------------------------------
 */
-Route::get('/login', [CoreAuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [CoreAuthController::class, 'login'])->name('login.post');
-Route::get('/register', [CoreAuthController::class, 'register'])->name('register');
-Route::post('/register', [CoreAuthController::class, 'register'])->name('register.post');
-Route::post('/logout', [CoreAuthController::class, 'logout'])->name('logout');
-
+Route::get('/login', [CoreAuthController::class, 'showLogin'])->name('core.login');
+Route::post('/login', [CoreAuthController::class, 'login'])->name('core.login.post');
+Route::get('/register', [CoreAuthController::class, 'register'])->name('core.register');
+Route::post('/register', [CoreAuthController::class, 'register'])->name('core.register.post');
+Route::post('/logout', [CoreAuthController::class, 'logout'])->name('core.logout');
 /*
 
 /*

@@ -10,7 +10,7 @@
         
     <h1>CORE</h1>
 
-   <form action="{{ route('login.post') }}" method="POST">
+   <form action="{{ route('core.login.post') }}" method="POST">
     @csrf
     <input type="email" name="email" required>
     <input type="password" name="password" required>
@@ -18,6 +18,6 @@
 </form>
 
 
-    <p>Don't have an account? <a href="{{ route('register') }}">Register here</a></p>
+    <p>Don't have an account? <a href="{{ route('core.register') }}">Register here</a></p>
 </body>
 </html>
