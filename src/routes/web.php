@@ -34,24 +34,29 @@ Route::post('/register', [CoreAuthController::class, 'register'])->name('core.re
 Route::match(['get', 'post'], '/logout', [CoreAuthController::class, 'logout'])->name('core.logout');
 /*
 
-/*
-|--------------------------------------------------------------------------
-| Core Post-Login Router
-|--------------------------------------------------------------------------
-*/
-Route::middleware('auth:core')->get('/core', function () {
-    $user = auth('core')->user();
+    // Register
+    Route::get('/register', [CoreAuthController::class, 'showRegistrationForm'])->name('core.register');
+    Route::post('/register', [CoreAuthController::class, 'register'])->name('core.register.submit');
 
-    return match ($user->role) {
-        'admin'         => redirect()->route('admin.dashboard'),
-        'doctor'        => redirect()->route('doctor.dashboard'),
-        'nurse'         => redirect()->route('nurse.dashboard'),
-        'patient'       => redirect()->route('patient.dashboard'),
-        'receptionist'  => redirect()->route('receptionist.dashboard'),
-        'billing'       => redirect()->route('billing.dashboard'),
-        default         => abort(403),
-    };
-})->name('core.home');
+    // Logout
+    Route::post('/logout', [CoreAuthController::class, 'logout'])->name('core.logout');
+
+    // Post-login redirect
+    Route::middleware('auth:core')->get('/', function () {
+        $user = auth('core')->user();
+
+        return match ($user->role) {
+            'admin'         => redirect()->route('admin.dashboard'),
+            'doctor'        => redirect()->route('doctor.dashboard'),
+            'nurse'         => redirect()->route('nurse.dashboard'),
+            'patient'       => redirect()->route('patient.dashboard'),
+            'receptionist'  => redirect()->route('receptionist.dashboard'),
+            'billing'       => redirect()->route('billing.dashboard'),
+            default         => abort(403),
+        };
+    })->name('core.home');
+});
+
 
 /*
 |--------------------------------------------------------------------------

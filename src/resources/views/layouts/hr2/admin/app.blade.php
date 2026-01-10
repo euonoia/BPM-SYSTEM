@@ -23,13 +23,13 @@
     <div class="navbar">
         <div><strong>HR2 Admin</strong></div>
         <div>
-            <a href="{{ route('admin.dashboard') }}">Dashboard</a>
+            <a href="{{ route('hr2.admin.dashboard') }}">Dashboard</a>
             <a href="{{ route('admin.add') }}">Add Admin</a>
-            <a href="{{ route('admin.competency') }}">Competency</a>
-            <a href="{{ route('admin.learning') }}">Learning</a>
-            <a href="{{ route('admin.training') }}">Training</a>
-            <a href="{{ route('admin.succession') }}">Succession</a>
-            <a href="{{ route('admin.ess') }}">ESS</a>
+            <a href="{{ route('hr2.admin.competency') }}">Competency</a>
+            <a href="{{ route('hr2.admin.learning') }}">Learning</a>
+            <a href="{{ route('hr2.admin.training') }}">Training</a>
+            <a href="{{ route('hr2.admin.succession') }}">Succession</a>
+            <a href="{{ route('hr2.admin.ess') }}">ESS</a>
 
             <!-- Logout Form -->
             <form id="logout-form" action="{{ route('portal.logout') }}" method="POST" style="display:none;">
