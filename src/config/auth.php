@@ -25,17 +25,22 @@ return [
     |
     */
 
-    'guards' => [
-        'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
-
-        'admin' => [
-            'driver' => 'session',
-            'provider' => 'admins',
-        ],
+  'guards' => [
+    'web' => [
+        'driver' => 'session',
+        'provider' => 'users',
     ],
+
+    'core' => [
+        'driver' => 'session',
+        'provider' => 'core_users',
+    ],
+
+    'employee' => [
+        'driver' => 'session',
+        'provider' => 'employees',
+    ],
+],
 
     /*
     |--------------------------------------------------------------------------
@@ -45,19 +50,22 @@ return [
     | Define how users and admins are retrieved from the database.
     |
     */
-
     'providers' => [
-        'users' => [
-            'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\Authenticate::class),
-        ],
-
-        'admins' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\Authenticate::class,
-        ],
+    'users' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\Employee::class,
     ],
 
+    'core_users' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\core1\User::class,
+    ],
+
+    'employees' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\Employee::class,
+    ],
+],
     /*
     |--------------------------------------------------------------------------
     | Resetting Passwords

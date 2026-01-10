@@ -4,44 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Hospital Management System</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ asset('css/core1/example.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-    <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
-        <div class="flex items-center justify-center mb-8">
-            <i class="fas fa-hospital text-blue-600 text-3xl mr-3"></i>
+<body class="core1-auth-body">
+    <div class="core1-auth-card">
+        <div class="core1-flex-gap-2 mb-20 justify-center">
+            <i class="fas fa-hospital text-blue core1-icon-xl"></i>
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">HMS Portal</h1>
-                <p class="text-sm text-gray-600">Hospital Management System</p>
+                <h1 class="core1-title">HMS Portal</h1>
+                <p class="core1-subtitle">Hospital Management System</p>
             </div>
         </div>
 
-        <form action="{{ route('login.submit') }}" method="POST" class="space-y-6">
+        <form action="{{ route('login.submit') }}" method="POST" class="d-flex flex-col gap-4">
             @csrf
             
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Select Role
-                </label>
-                <div class="grid grid-cols-2 gap-3">
+                <label class="core1-label">Select Role</label>
+                <div class="core1-role-grid">
                     @php
                         $roles = [
-                            ['value' => 'admin', 'label' => 'Administrator', 'color' => 'bg-purple-500'],
-                            ['value' => 'doctor', 'label' => 'Doctor', 'color' => 'bg-blue-500'],
-                            ['value' => 'nurse', 'label' => 'Nurse', 'color' => 'bg-green-500'],
-                            ['value' => 'patient', 'label' => 'Patient', 'color' => 'bg-orange-500'],
-                            ['value' => 'receptionist', 'label' => 'Receptionist', 'color' => 'bg-pink-500'],
-                            ['value' => 'billing', 'label' => 'Billing Officer', 'color' => 'bg-teal-500'],
+                            ['value' => 'admin', 'label' => 'Administrator'],
+                            ['value' => 'doctor', 'label' => 'Doctor'],
+                            ['value' => 'nurse', 'label' => 'Nurse'],
+                            ['value' => 'patient', 'label' => 'Patient'],
+                            ['value' => 'receptionist', 'label' => 'Receptionist'],
+                            ['value' => 'billing', 'label' => 'Billing Officer'],
                         ];
                     @endphp
                     @foreach($roles as $role)
                         <button
                             type="button"
-                            onclick="document.getElementById('role').value='{{ $role['value'] }}'; updateRoleSelection('{{ $role['value'] }}');"
-                            class="role-btn p-3 rounded-lg border-2 transition-all bg-white text-gray-700 border-gray-200 hover:border-gray-300"
+                            onclick="document.getElementById('role').value='{{ $role['value'] }}'; updateRoleSelection(this, '{{ $role['value'] }}');"
+                            class="core1-role-btn {{ $role['value'] }}"
                             data-role="{{ $role['value'] }}"
-                            data-color="{{ $role['color'] }}"
                         >
                             {{ $role['label'] }}
                         </button>
@@ -51,74 +48,62 @@
             </div>
 
             <div>
-                <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                    Email Address
-                </label>
+                <label for="email" class="core1-label">Email Address</label>
                 <input
                     type="email"
                     id="email"
                     name="email"
                     value="{{ old('email') }}"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('email') border-red-500 @enderror"
+                    class="core1-input @error('email') core1-input-error @enderror"
                     placeholder="Enter your email"
                     required
                 >
                 @error('email')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    <p class="core1-error-text">{{ $message }}</p>
                 @enderror
             </div>
 
             <div>
-                <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
-                    Password
-                </label>
+                <label for="password" class="core1-label">Password</label>
                 <input
                     type="password"
                     id="password"
                     name="password"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('password') border-red-500 @enderror"
+                    class="core1-input @error('password') core1-input-error @enderror"
                     placeholder="Enter your password"
                     required
                 >
                 @error('password')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    <p class="core1-error-text">{{ $message }}</p>
                 @enderror
             </div>
 
-            <button
-                type="submit"
-                class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
-            >
+            <button type="submit" class="core1-auth-btn">
                 <i class="fas fa-sign-in-alt"></i>
                 Sign In
             </button>
         </form>
 
-        <div class="mt-6 p-4 bg-blue-50 rounded-lg">
-            <p class="text-xs text-blue-800 text-center">
+        <div class="core1-auth-notice">
+            <p>
                 Demo Mode: Select any role and click Sign In to access the dashboard
             </p>
         </div>
     </div>
 
     <script>
-        function updateRoleSelection(selectedRole) {
-            document.querySelectorAll('.role-btn').forEach(btn => {
-                const role = btn.getAttribute('data-role');
-                const color = btn.getAttribute('data-color');
-                if (role === selectedRole) {
-                    btn.classList.remove('bg-white', 'text-gray-700', 'border-gray-200');
-                    btn.classList.add(color, 'text-white', 'border-transparent');
-                } else {
-                    btn.classList.remove(color, 'text-white', 'border-transparent');
-                    btn.classList.add('bg-white', 'text-gray-700', 'border-gray-200');
-                }
+        function updateRoleSelection(btn, selectedRole) {
+            document.querySelectorAll('.core1-role-btn').forEach(b => {
+                b.classList.remove('active');
             });
+            btn.classList.add('active');
         }
         
         // Initialize with admin selected
-        updateRoleSelection('admin');
+        window.onload = function() {
+            const adminBtn = document.querySelector('.core1-role-btn.admin');
+            if(adminBtn) updateRoleSelection(adminBtn, 'admin');
+        };
     </script>
 </body>
 </html>
-

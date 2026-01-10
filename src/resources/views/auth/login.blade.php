@@ -2,33 +2,78 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital System Portal - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
 </head>
 <body>
-    <h1>Login</h1>
+    <div class="portal-container">
+        <!-- Image / Hero Side -->
+        <div class="hero-side">
+            <div class="hero-content">
+                <h1 class="hero-title">Your Health,<br>Our Priority</h1>
+                <p class="hero-subtitle">
+                    Providing compassionate care with advanced medical expertise and state-of-the-art facilities
+                </p>
+            </div>
+        </div>
 
-    @if($errors->any())
-        <div style="color:red;">
-            {{ $errors->first() }}
-        </div>
-    @endif
+        <!-- Login Side -->
+        <div class="login-side">
+            <h2 class="hospital-title">Hospital System</h2>
+            
+            <div class="login-card">
+                <h3 class="portal-heading">Patient Portal</h3>
 
-    <form action="{{ route('login.post') }}" method="POST">
-        @csrf
-        <div>
-            <label>Email:</label>
-            <input type="email" name="email" value="{{ old('email') }}" required>
-        </div>
-        <div>
-            <label>Password:</label>
-            <input type="password" name="password" required>
-        </div>
-        <div>
-            <button type="submit">Login</button>
-        </div>
-    </form>
+                <!-- Display Validation Errors -->
+                @if ($errors->any())
+                    <div class="alert-error">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
-    <p>Don't have an account? <a href="{{ route('register') }}">Register here</a></p>
+                <!-- Login Form -->
+                <form action="{{ route('core.login.submit') }}" method="POST">
+                    @csrf
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            placeholder="Enter email" 
+                            required 
+                            value="{{ old('email') }}"
+                            autofocus
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            placeholder="Enter password" 
+                            required
+                        >
+                    </div>
+                    
+                    <button type="submit" class="login-btn">Login</button>
+                </form>
+
+                <!-- Footer -->
+                <div class="login-footer">
+                    Don't have an account? 
+                    <a href="{{ route('core.register') }}" class="login-link">Register</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

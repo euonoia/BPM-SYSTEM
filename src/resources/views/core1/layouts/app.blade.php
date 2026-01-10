@@ -19,7 +19,7 @@
         onclick="document.querySelector('.sidebar').classList.toggle('show')">
         ☰
     </button>
-    <div class="title">Core1</div>
+    <div class="title">Concord</div>
 </div>
 
 <!-- Sidebar -->
@@ -40,7 +40,7 @@
         @endif
         @if(isset($errors) && $errors->any())
             <div class="alert alert-error">
-                <ul style="margin: 0; padding-left: 20px;">
+                <ul class="m-0 pl-20">
                     @foreach($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
@@ -90,7 +90,7 @@ document.addEventListener('click', (e) => {
     @endif
     @if(isset($errors) && $errors->any())
         <div class="alert alert-error">
-            <ul style="margin: 0; padding-left: 20px;">
+            <ul class="m-0 pl-20">
                 @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach

@@ -96,7 +96,7 @@
         </div>
     @endif
 
-        <form action="{{ route('register.post') }}" method="POST" id="registerForm">
+        <form action="{{ route('core.register.post') }}" method="POST" id="registerForm">
         @csrf
             
             <div class="form-group">
@@ -207,7 +207,7 @@
     </form>
 
         <div class="link">
-    <p>Already have an account? <a href="{{ route('login') }}">Login here</a></p>
+    <p>Already have an account? <a href="{{ route('core.login') }}">Login here</a></p>
         </div>
     </div>
 

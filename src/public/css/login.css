@@ -1,0 +1,199 @@
+:root {
+    --primary-blue: #2c7da0;
+    --light-blue: #8ecae6;
+    --border-color: #d1e9f5;
+    --text-gray: #6b7280;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background-color: #f0f7ff;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.portal-container {
+    width: 100%;
+    max-width: 1000px;
+    background: #fff;
+    border-radius: 12px;
+    display: flex;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color);
+    min-height: 600px;
+}
+
+.hero-side {
+    flex: 1;
+    position: relative;
+    /* Note: Blade synthesis was used here. Standard path used for external CSS. */
+    background-image: url('/nurse_patient_care_1767953087368.png');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 40px;
+    color: #fff;
+}
+
+.hero-side::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 50%);
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    color: #2c7da0;
+    margin-bottom: 20px;
+    text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
+}
+
+.hero-subtitle {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #2c7da0;
+    max-width: 400px;
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.login-side {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+}
+
+.hospital-title {
+    color: #2c7da0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 380px;
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    text-align: center;
+}
+
+.portal-heading {
+    color: #2c7da0;
+    font-size: 1.4rem;
+    margin-bottom: 30px;
+    font-weight: 500;
+}
+
+.form-group {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #e1e9f0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+    border-color: #2c7da0;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #2c7da0;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    margin-top: 10px;
+}
+
+.login-btn:hover {
+    background-color: #246583;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(44, 125, 160, 0.2);
+}
+
+.alert-error {
+    background-color: #fef2f2;
+    color: #991b1b;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-size: 0.85rem;
+    text-align: left;
+}
+
+@media (max-width: 768px) {
+    .portal-container {
+        flex-direction: column;
+        min-height: auto;
+    }
+
+    .hero-side {
+        min-height: 250px;
+    }
+}
+
+.login-footer {
+    margin-top: 25px;
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
+.login-link {
+    color: #2c7da0;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.login-link:hover {
+    text-decoration: underline;
+}

@@ -1,40 +1,66 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PatientController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\hr2\DashboardController;
+use App\Http\Controllers\EmployeeAuthController;
+use App\Http\Controllers\CoreAuthController;
+
 
 /*
 |--------------------------------------------------------------------------
-| Homepage
+| Homepage (Public / Core)
 |--------------------------------------------------------------------------
 */
 Route::get('/', fn () => view('index'));
+/*
+|--------------------------------------------------------------------------
+| Employee Portal
+|--------------------------------------------------------------------------
+*/
+Route::prefix('portal')->group(function () {
+    Route::get('/', [EmployeeAuthController::class, 'showLogin'])->name('portal.login');
+    Route::post('/login', [EmployeeAuthController::class, 'login'])->name('portal.login.submit');
+    Route::post('/logout', [EmployeeAuthController::class, 'logout'])->name('portal.logout');
+});
 
 /*
 |--------------------------------------------------------------------------
-| Authentication Routes
+| Core Authentication
 |--------------------------------------------------------------------------
 */
-Route::middleware('auth')->prefix('hr2')->group(function () {
-    Route::get('/', [DashboardController::class, 'index'])->name('hr.dashboard');
+Route::prefix('core')->group(function () {
+    // Login
+    Route::get('/login', [CoreAuthController::class, 'showLogin'])->name('core.login');
+    Route::post('/login', [CoreAuthController::class, 'login'])->name('core.login.submit');
+
+    // Register
+    Route::get('/register', [CoreAuthController::class, 'showRegistrationForm'])->name('core.register');
+    Route::post('/register', [CoreAuthController::class, 'register'])->name('core.register.submit');
+
+    // Logout
+    Route::post('/logout', [CoreAuthController::class, 'logout'])->name('core.logout');
+
+    // Post-login redirect
+    Route::middleware('auth:core')->get('/', function () {
+        $user = auth('core')->user();
+
+        return match ($user->role) {
+            'admin'         => redirect()->route('admin.dashboard'),
+            'doctor'        => redirect()->route('doctor.dashboard'),
+            'nurse'         => redirect()->route('nurse.dashboard'),
+            'patient'       => redirect()->route('patient.dashboard'),
+            'receptionist'  => redirect()->route('receptionist.dashboard'),
+            'billing'       => redirect()->route('billing.dashboard'),
+            default         => abort(403),
+        };
+    })->name('core.home');
 });
 
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.post');
-
-Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-Route::post('/register', [AuthController::class, 'register'])->name('register.post');
-
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 /*
 |--------------------------------------------------------------------------
 | Modular Route Loading (ARTISAN-SAFE)
 |--------------------------------------------------------------------------
 */
-
 if (!function_exists('loadModuleRoutes')) {
     function loadModuleRoutes(string $dir): void
     {
@@ -66,4 +92,4 @@ foreach ($modules as $module) {
 | Resource Routes
 |--------------------------------------------------------------------------
 */
-Route::resource('patients', PatientController::class);
+// Route::resource('patients', PatientController::class);
