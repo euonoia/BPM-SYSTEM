@@ -1,0 +1,289 @@
+@extends('hr1.layouts.app')
+
+@section('content')
+<div x-data="dashboard()" style="display: flex; min-height: 100vh;">
+    <!-- Mobile Topbar -->
+    <div class="topbar">
+        <button class="menu-toggle" @click="document.querySelector('.sidebar').classList.toggle('show')">
+            ☰
+        </button>
+        <div class="title">MedCore HR1</div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" 
+         id="sidebar"
+         x-init="
+            // Desktop hover collapse
+            $el.addEventListener('mouseenter', () => {
+                if (window.innerWidth > 768 && $el.classList.contains('collapsed')) {
+                    $el.classList.remove('collapsed');
+                }
+            });
+            $el.addEventListener('mouseleave', () => {
+                if (window.innerWidth > 768) {
+                    $el.classList.add('collapsed');
+                }
+            });
+            // Default collapsed on desktop
+            if (window.innerWidth > 768) {
+                $el.classList.add('collapsed');
+            }
+            // Auto-close on mobile
+            document.addEventListener('click', (e) => {
+                const toggle = document.querySelector('.menu-toggle');
+                if (!$el.contains(e.target) && toggle && !toggle.contains(e.target)) {
+                    $el.classList.remove('show');
+                }
+            });
+         ">
+        <div class="logo">
+            <img src="{{ asset('images/hr1/logo.png') }}" alt="HR1 Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div style="display:none; width: 60px; height: 60px; background: var(--accent); border-radius: 10px; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 24px;">HR1</div>
+            <div class="logo-text">MedCore HR1</div>
+        </div>
+
+        <nav>
+            <template x-for="item in navItems" :key="item.id">
+                <a href="#" 
+                   @click.prevent="activeTab = item.id" 
+                   :class="{ 'active': activeTab === item.id }"
+                   class="nav-link">
+                    <i :class="getIconClass(item.icon)"></i>
+                    <span x-text="item.label"></span>
+                    <span class="tooltip" x-text="item.label"></span>
+                </a>
+            </template>
+        </nav>
+    </div>
+
+    <main class="main-content">
+        <div class="p-8 md:p-16 max-w-[1600px] mx-auto" style="width: 100%;">
+            <div class="mb-16">
+                <h1 class="text-6xl font-black text-primary tracking-tighter capitalize mb-6">Dashboard</h1>
+                <div class="text-[15px] font-medium text-text-light/80 max-w-4xl leading-relaxed">
+                    Hospital Command Center: <span class="text-accent font-black uppercase bg-accent/5 px-3 py-1 rounded-xl">Admin Context</span>.
+                </div>
+            </div>
+            
+            <!-- Admin Dashboard Content -->
+            <div x-show="activeTab === 'dashboard'" class="space-y-6">
+                <div class="main-inner bg-primary text-white p-10 rounded-3xl flex justify-between items-center !w-full !max-w-none">
+                    <div>
+                        <h2 class="text-3xl font-black mb-2">MedCore Analytics: Admin</h2>
+                        <p class="text-highlight">Complete overview of recruitment, performance, and system metrics.</p>
+                    </div>
+                    <i data-lucide="bar-chart-2" class="w-16 h-16 text-highlight opacity-50"></i>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="card !w-full">
+                        <h4 class="text-[10px] font-black text-accent uppercase tracking-widest mb-1">Total Applicants</h4>
+                        <div class="text-3xl font-black text-primary" x-text="applicants.length"></div>
+                    </div>
+                    <div class="card !w-full">
+                        <h4 class="text-[10px] font-black text-accent uppercase tracking-widest mb-1">Offer Acceptance</h4>
+                        <div class="text-3xl font-black text-primary">82%</div>
+                    </div>
+                    <div class="card !w-full">
+                        <h4 class="text-[10px] font-black text-accent uppercase tracking-widest mb-1">Avg. Time to Hire</h4>
+                        <div class="text-3xl font-black text-primary">18 Days</div>
+                    </div>
+                    <div class="card !w-full">
+                        <h4 class="text-[10px] font-black text-accent uppercase tracking-widest mb-1">Training Compliance</h4>
+                        <div class="text-3xl font-black text-primary">94%</div>
+                    </div>
+                </div>
+
+                <!-- Additional Admin Metrics -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="card !w-full">
+                        <h4 class="text-[10px] font-black text-accent uppercase tracking-widest mb-1">Active Job Postings</h4>
+                        <div class="text-3xl font-black text-primary" x-text="jobs.length"></div>
+                    </div>
+                    <div class="card !w-full">
+                        <h4 class="text-[10px] font-black text-accent uppercase tracking-widest mb-1">Pending Tasks</h4>
+                        <div class="text-3xl font-black text-primary" x-text="tasks.filter(t => !t.completed).length"></div>
+                    </div>
+                    <div class="card !w-full">
+                        <h4 class="text-[10px] font-black text-accent uppercase tracking-widest mb-1">Recognitions</h4>
+                        <div class="text-3xl font-black text-primary" x-text="recognitions.length"></div>
+                    </div>
+                </div>
+
+                <!-- Recruitment Performance Chart -->
+                <div class="main-inner !w-full !max-w-none">
+                    <h3 class="text-xl font-black text-primary mb-6">Recruitment Performance</h3>
+                    <div class="h-64">
+                        <canvas id="recruitmentChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Applicants Tab -->
+            <div x-show="activeTab === 'applicant'" class="main-inner !w-full !max-w-none mt-8">
+                <h3 class="text-xl font-black text-primary mb-6">Applicants Overview</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" x-show="applicants.length">
+                    <template x-for="applicant in applicants" :key="applicant.id">
+                        <div class="p-4 bg-bg rounded-2xl border border-gray-100 flex justify-between items-center">
+                            <div>
+                                <div class="text-sm font-black text-accent" x-text="applicant.name"></div>
+                                <div class="text-xs text-text-light" x-text="applicant.position"></div>
+                            </div>
+                            <span class="text-[10px] font-bold uppercase px-3 py-1 rounded-full bg-primary/5 text-primary"
+                                  x-text="applicant.status"></span>
+                        </div>
+                    </template>
+                </div>
+                <div x-show="!applicants.length" class="text-sm text-text-light">
+                    No applicants found.
+                </div>
+            </div>
+
+            <!-- Recruitment Tab -->
+            <div x-show="activeTab === 'recruitment'" class="main-inner !w-full !max-w-none mt-8">
+                <h3 class="text-xl font-black text-primary mb-6">Recruitment Pipeline</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" x-show="jobs.length">
+                    <template x-for="job in jobs" :key="job.id">
+                        <div class="p-4 bg-bg rounded-2xl border border-gray-100 flex flex-col gap-2">
+                            <div class="text-sm font-black text-accent" x-text="job.title"></div>
+                            <div class="text-xs text-text-light" x-text="job.department"></div>
+                            <div class="text-[11px] text-text-light/80">
+                                Applications:
+                                <span class="font-bold text-primary" x-text="job.applications_hr1 ? job.applications_hr1.length : 0"></span>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                <div x-show="!jobs.length" class="text-sm text-text-light">
+                    No active job postings.
+                </div>
+            </div>
+
+            <!-- Onboarding Tab -->
+            <div x-show="activeTab === 'onboarding'" class="main-inner !w-full !max-w-none mt-8">
+                <h3 class="text-xl font-black text-primary mb-6">Onboarding Tasks</h3>
+                <div class="flex flex-col gap-3" x-show="tasks.length">
+                    <template x-for="task in tasks" :key="task.id">
+                        <div class="p-3 bg-bg rounded-xl border border-gray-100 flex justify-between items-center">
+                            <div>
+                                <div class="text-sm font-medium text-primary" x-text="task.title"></div>
+                                <div class="text-xs text-text-light" x-text="task.department"></div>
+                            </div>
+                            <span class="text-[10px] font-bold uppercase px-3 py-1 rounded-full"
+                                  :class="task.completed ? 'bg-green-50 text-green-700' : 'bg-yellow-50 text-yellow-700'">
+                                <span x-text="task.completed ? 'Completed' : 'Pending'"></span>
+                            </span>
+                        </div>
+                    </template>
+                </div>
+                <div x-show="!tasks.length" class="text-sm text-text-light">
+                    No onboarding tasks configured.
+                </div>
+            </div>
+
+            <!-- Performance Tab -->
+            <div x-show="activeTab === 'performance'" class="main-inner !w-full !max-w-none mt-8">
+                <h3 class="text-xl font-black text-primary mb-2">Performance Analytics</h3>
+                <p class="text-sm text-text-light">Performance analytics and KPIs will appear here.</p>
+            </div>
+
+            <!-- Recognition Tab -->
+            <div x-show="activeTab === 'recognition'" class="main-inner !w-full !max-w-none mt-8">
+                <h3 class="text-xl font-black text-primary mb-2">Recognition & Culture</h3>
+                <p class="text-sm text-text-light">Recognition programs and culture initiatives will appear here.</p>
+            </div>
+
+            <!-- Profile Tab -->
+            <div x-show="activeTab === 'profile'" class="main-inner !w-full !max-w-none mt-8">
+                <h3 class="text-xl font-black text-primary mb-2">Admin Profile</h3>
+                <p class="text-sm text-text-light">Profile details and settings will appear here.</p>
+            </div>
+        </div>
+    </main>
+</div>
+
+@include('hr1.user_hr1.shared.modals')
+@endsection
+
+@push('scripts')
+<script>
+// Make getIconClass available globally
+window.getIconClass = function(iconName) {
+    const iconMap = {
+        'layout-dashboard': 'bi bi-house-door',
+        'users': 'bi bi-people',
+        'briefcase': 'bi bi-briefcase',
+        'user-plus': 'bi bi-person-plus',
+        'trending-up': 'bi bi-graph-up',
+        'award': 'bi bi-trophy',
+        'user-circle': 'bi bi-person-circle',
+        'clipboard-list': 'bi bi-clipboard-check',
+        'check-square': 'bi bi-check-square',
+        'target': 'bi bi-bullseye',
+        'star': 'bi bi-star'
+    };
+    return iconMap[iconName] || 'bi bi-circle';
+};
+
+function dashboard() {
+    return {
+        role: 'admin',
+        activeTab: 'dashboard',
+        sidebarOpen: true,
+        modalType: null,
+        selectedJob: null,
+        selectedApplicant: null,
+        applicants: @json($applicants ?? []),
+        jobs: @json($jobs ?? []),
+        recognitions: @json($recognitions ?? []),
+        tasks: @json($tasks ?? []),
+        awardCategories: @json($awardCategories ?? []),
+        evalCriteria: @json($evalCriteria ?? []),
+        availableModules: @json($availableModules ?? []),
+        
+        get navItems() {
+            return [
+                { id: 'dashboard', label: 'Dashboard', icon: 'layout-dashboard' },
+                { id: 'applicant', label: 'Applicants', icon: 'users' },
+                { id: 'recruitment', label: 'Recruitment', icon: 'briefcase' },
+                { id: 'onboarding', label: 'Onboarding', icon: 'user-plus' },
+                { id: 'performance', label: 'Performance', icon: 'trending-up' },
+                { id: 'recognition', label: 'Recognition', icon: 'award' },
+                { id: 'profile', label: 'Profile', icon: 'user-circle' }
+            ];
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    lucide.createIcons();
+    
+    // Initialize chart
+    const ctx = document.getElementById('recruitmentChart');
+    if (ctx && typeof Chart !== 'undefined') {
+        const jobsData = @json($jobs ?? []);
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: jobsData.map(job => job.title),
+                datasets: [{
+                    label: 'Applications',
+                    data: jobsData.map(job => job.applications_hr1 ? job.applications_hr1.length : 0),
+                    backgroundColor: '#1B3C53',
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    }
+});
+</script>
+@endpush
+
