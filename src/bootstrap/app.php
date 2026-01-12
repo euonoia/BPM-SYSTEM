@@ -26,6 +26,11 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->validateCsrfTokens(except: [
+            '/logout',
+            '/portal/logout',
+        ]);
+
         $middleware->alias([
             'role' => \App\Http\Middleware\Core1RoleMiddleware::class,
             'multiAuth' => \App\Http\Middleware\MultiAuthMiddleware::class,

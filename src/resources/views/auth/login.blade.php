@@ -9,13 +9,11 @@
 </head>
 <body>
     <div class="portal-container">
-        <!-- Image / Hero Side -->
+        <!-- Image Side -->
         <div class="hero-side">
             <div class="hero-content">
                 <h1 class="hero-title">Your Health,<br>Our Priority</h1>
-                <p class="hero-subtitle">
-                    Providing compassionate care with advanced medical expertise and state-of-the-art facilities
-                </p>
+                <p class="hero-subtitle">Providing compassionate care with advanced medical expertise and state-of-the-art facilities</p>
             </div>
         </div>
 
@@ -26,51 +24,29 @@
             <div class="login-card">
                 <h3 class="portal-heading">Patient Portal</h3>
 
-                <!-- Display Validation Errors -->
-                @if ($errors->any())
+                @if($errors->any())
                     <div class="alert-error">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
+                        {{ $errors->first() }}
                     </div>
                 @endif
-
-                <!-- Login Form -->
-                <form action="{{ route('core.login.submit') }}" method="POST">
+                
+                <form action="{{ route('core.login.post') }}" method="POST">
                     @csrf
                     <div class="form-group">
                         <label for="email">Email Address</label>
-                        <input 
-                            type="email" 
-                            id="email" 
-                            name="email" 
-                            placeholder="Enter email" 
-                            required 
-                            value="{{ old('email') }}"
-                            autofocus
-                        >
+                        <input type="email" id="email" name="email" placeholder="Enter email" required value="{{ old('email') }}">
                     </div>
                     
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input 
-                            type="password" 
-                            id="password" 
-                            name="password" 
-                            placeholder="Enter password" 
-                            required
-                        >
+                        <input type="password" id="password" name="password" placeholder="Enter password" required>
                     </div>
                     
                     <button type="submit" class="login-btn">Login</button>
                 </form>
 
-                <!-- Footer -->
                 <div class="login-footer">
-                    Don't have an account? 
-                    <a href="{{ route('core.register') }}" class="login-link">Register</a>
+                    Don't have an account? <a href="{{ route('core.register') }}" class="login-link">Register</a>
                 </div>
             </div>
         </div>
