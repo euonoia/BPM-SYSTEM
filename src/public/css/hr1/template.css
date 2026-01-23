@@ -145,15 +145,17 @@ body {
 
 .main-content {
     margin-left: 240px;
-    padding: 40px;
+    padding: 40px 0 40px 40px;
     flex: 1;
     transition: margin-left 0.3s ease;
-    width: calc(100% - 240px);
+    width: calc(100vw - 240px);
+    box-sizing: border-box;
 }
 
 .sidebar.collapsed ~ .main-content {
     margin-left: 80px;
-    width: calc(100% - 80px);
+    width: calc(100vw - 80px);
+    box-sizing: border-box;
 }
 
 .main-inner {

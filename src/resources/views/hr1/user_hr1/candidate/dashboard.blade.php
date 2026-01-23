@@ -58,7 +58,7 @@
     </div>
 
     <main class="main-content">
-        <div class="p-8 md:p-16 max-w-[1600px] mx-auto" style="width: 100%;">
+        <div class="p-8 md:p-12" style="width: 100%; max-width: 100%;">
             <div class="mb-16">
                 <h1 class="text-6xl font-black text-primary tracking-tighter capitalize mb-6">Dashboard</h1>
                 <div class="text-[15px] font-medium text-text-light/80 max-w-4xl leading-relaxed">

@@ -58,7 +58,7 @@
     </div>
 
     <main class="main-content">
-        <div class="p-8 md:p-16 max-w-[1600px] mx-auto" style="width: 100%;">
+        <div class="p-8 md:p-12" style="width: 100%; max-width: 100%;">
             <div class="mb-16">
                 <h1 class="text-6xl font-black text-primary tracking-tighter capitalize mb-6">Dashboard</h1>
                 <div class="text-[15px] font-medium text-text-light/80 max-w-4xl leading-relaxed">
@@ -76,7 +76,7 @@
                     <i data-lucide="bar-chart-2" class="w-16 h-16 text-highlight opacity-50"></i>
                 </div>
                 
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="card !w-full">
                         <h4 class="text-[10px] font-black text-accent uppercase tracking-widest mb-1">Total Applicants</h4>
                         <div class="text-3xl font-black text-primary" x-text="applicants.length"></div>
@@ -96,7 +96,7 @@
                 </div>
 
                 <!-- Additional Admin Metrics -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="card !w-full">
                         <h4 class="text-[10px] font-black text-accent uppercase tracking-widest mb-1">Active Job Postings</h4>
                         <div class="text-3xl font-black text-primary" x-text="jobs.length"></div>
