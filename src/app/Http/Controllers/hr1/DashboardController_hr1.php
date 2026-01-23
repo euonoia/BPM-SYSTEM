@@ -13,6 +13,7 @@ use App\Models\hr1\AwardCategory_hr1;
 use App\Models\hr1\LearningModule_hr1;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController_hr1 extends Controller
 {
@@ -61,28 +62,88 @@ class DashboardController_hr1 extends Controller
             ->get();
         
         // Get task sets and question sets from database
-        $taskSets = \DB::table('task_sets_hr1')
+        $taskSets = DB::table('task_sets_hr1')
             ->leftJoin('tasks_hr1', 'task_sets_hr1.id', '=', 'tasks_hr1.task_set_id')
-            ->select('task_sets_hr1.*', \DB::raw('GROUP_CONCAT(tasks_hr1.id) as task_ids'))
+            ->select('task_sets_hr1.*', DB::raw('GROUP_CONCAT(tasks_hr1.id) as task_ids'))
             ->groupBy('task_sets_hr1.id')
             ->get()
             ->map(function($ts) {
-                $ts->tasks = \DB::table('tasks_hr1')->where('task_set_id', $ts->id)->get();
+                $ts->tasks = DB::table('tasks_hr1')->where('task_set_id', $ts->id)->get();
                 return $ts;
             });
         
-        $questionSets = \DB::table('question_sets_hr1')
+        $questionSets = DB::table('question_sets_hr1')
             ->leftJoin('questions_hr1', 'question_sets_hr1.id', '=', 'questions_hr1.question_set_id')
-            ->select('question_sets_hr1.*', \DB::raw('GROUP_CONCAT(questions_hr1.id) as question_ids'))
+            ->select('question_sets_hr1.*', DB::raw('GROUP_CONCAT(questions_hr1.id) as question_ids'))
             ->groupBy('question_sets_hr1.id')
             ->get()
             ->map(function($qs) {
-                $qs->questions = \DB::table('questions_hr1')->where('question_set_id', $qs->id)->get();
+                $qs->questions = DB::table('questions_hr1')->where('question_set_id', $qs->id)->get();
                 return $qs;
             });
         
         // Get admin profile
         $adminProfile = User::where('role', 'admin')->first();
+        
+        // Get current candidate user (for candidate role)
+        $currentCandidate = null;
+        $myApplications = collect();
+        $myTasks = collect();
+        $myQuestionSets = collect();
+        $myLearningModules = collect();
+        $candidateProfile = null;
+        
+        if ($role === 'candidate') {
+            // Get the first candidate as example, or use authenticated user
+            $currentCandidate = $user && $user->role === 'candidate' ? $user : User::where('role', 'candidate')->first();
+            
+            if ($currentCandidate) {
+                $candidateProfile = $currentCandidate;
+                $myApplications = Application_hr1::where('user_id', $currentCandidate->id)
+                    ->with('jobPosting_hr1')
+                    ->get();
+                
+                // Get tasks for this candidate
+                $myTasks = OnboardingTask_hr1::where('user_id', $currentCandidate->id)->get();
+                
+                // Get applicant tasks (from applicant_tasks_hr1)
+                $applicantTasks = DB::table('applicant_tasks_hr1')
+                    ->where('applicant_tasks_hr1.user_id', $currentCandidate->id)
+                    ->leftJoin('tasks_hr1', 'applicant_tasks_hr1.task_id', '=', 'tasks_hr1.id')
+                    ->leftJoin('job_postings_hr1', 'applicant_tasks_hr1.job_posting_id', '=', 'job_postings_hr1.id')
+                    ->select('applicant_tasks_hr1.*', 'tasks_hr1.title as task_title', 'tasks_hr1.description as task_description', 
+                             'job_postings_hr1.title as job_title', 'job_postings_hr1.id as job_id')
+                    ->get();
+                
+                // Get question sets assigned to candidate
+                $myQuestionSets = DB::table('question_sets_hr1')
+                    ->where('is_active', true)
+                    ->leftJoin('questions_hr1', 'question_sets_hr1.id', '=', 'questions_hr1.question_set_id')
+                    ->select('question_sets_hr1.*')
+                    ->groupBy('question_sets_hr1.id')
+                    ->get()
+                    ->map(function($qs) use ($currentCandidate) {
+                        $qs->questions = DB::table('questions_hr1')->where('question_set_id', $qs->id)->get();
+                        // Check if candidate has responses
+                        $qs->responses = DB::table('applicant_responses_hr1')
+                            ->where('user_id', $currentCandidate->id)
+                            ->where('question_set_id', $qs->id)
+                            ->get();
+                        $qs->progress = $qs->questions->count() > 0 
+                            ? round(($qs->responses->count() / $qs->questions->count()) * 100) 
+                            : 0;
+                        $qs->completed = $qs->responses->count() === $qs->questions->count() && $qs->questions->count() > 0;
+                        return $qs;
+                    });
+                
+                // Get learning modules for candidate
+                $myLearningModules = DB::table('user_learning_modules_hr1')
+                    ->where('user_id', $currentCandidate->id)
+                    ->join('learning_modules_hr1', 'user_learning_modules_hr1.learning_module_id', '=', 'learning_modules_hr1.id')
+                    ->select('learning_modules_hr1.*', 'user_learning_modules_hr1.completed', 'user_learning_modules_hr1.id as assignment_id')
+                    ->get();
+            }
+        }
 
         $data = [
             'role' => $role,
@@ -98,6 +159,14 @@ class DashboardController_hr1 extends Controller
             'questionSets' => $questionSets,
             'onboardingCandidates' => $onboardingCandidates,
             'adminProfile' => $adminProfile,
+            // Candidate-specific data
+            'currentCandidate' => $currentCandidate,
+            'myApplications' => $myApplications,
+            'myTasks' => $myTasks,
+            'applicantTasks' => $applicantTasks ?? collect(),
+            'myQuestionSets' => $myQuestionSets,
+            'myLearningModules' => $myLearningModules,
+            'candidateProfile' => $candidateProfile,
             // Analytics
             'analytics' => [
                 'totalApplicants' => $totalApplicants,
@@ -126,6 +195,29 @@ class DashboardController_hr1 extends Controller
             'email' => 'sometimes|email|unique:users_hr1,email,' . $user->id,
             'contact_no' => 'sometimes|string|max:20',
             'date_of_employment' => 'sometimes|date',
+            'profile_picture' => 'sometimes|string', // For now, accept data URL
+        ]);
+
+        $user->update($validated);
+        return response()->json($user);
+    }
+
+    public function updateCandidateProfile(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user || $user->role !== 'candidate') {
+            // Fallback: get first candidate for testing
+            $user = User::where('role', 'candidate')->first();
+            if (!$user) {
+                return response()->json(['error' => 'Unauthorized'], 403);
+            }
+        }
+
+        $validated = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'email' => 'sometimes|email|unique:users_hr1,email,' . $user->id,
+            'contact_no' => 'sometimes|string|max:20',
+            'position' => 'sometimes|string|max:255',
             'profile_picture' => 'sometimes|string', // For now, accept data URL
         ]);
 

@@ -96,5 +96,74 @@ class EvaluationController_hr1 extends Controller
         DB::table('question_sets_hr1')->where('id', $id)->delete();
         return response()->json(['message' => 'Question set deleted successfully']);
     }
+
+    public function submitAssessment(Request $request, $id)
+    {
+        $questionSet = DB::table('question_sets_hr1')->where('id', $id)->first();
+        if (!$questionSet) {
+            return response()->json(['error' => 'Question set not found'], 404);
+        }
+
+        $userId = auth()->id() ?? 5; // Fallback for testing
+        $responses = [];
+        
+        // Get all questions for this set
+        $questions = DB::table('questions_hr1')->where('question_set_id', $id)->get();
+        
+        foreach ($questions as $question) {
+            $fieldName = 'question_' . $question->id;
+            $responseValue = $request->input($fieldName);
+            
+            if ($responseValue) {
+                // Check if response already exists
+                $existing = DB::table('applicant_responses_hr1')
+                    ->where('user_id', $userId)
+                    ->where('question_id', $question->id)
+                    ->first();
+                
+                if ($existing) {
+                    // Update existing response
+                    DB::table('applicant_responses_hr1')
+                        ->where('id', $existing->id)
+                        ->update([
+                            'response_text' => $question->question_type === 'text' ? $responseValue : null,
+                            'response_value' => $question->question_type !== 'text' ? $responseValue : null,
+                            'submitted_at' => now()
+                        ]);
+                } else {
+                    // Create new response
+                    DB::table('applicant_responses_hr1')->insert([
+                        'user_id' => $userId,
+                        'question_id' => $question->id,
+                        'question_set_id' => $id,
+                        'response_text' => $question->question_type === 'text' ? $responseValue : null,
+                        'response_value' => $question->question_type !== 'text' ? $responseValue : null,
+                        'submitted_at' => now()
+                    ]);
+                }
+                
+                $responses[] = [
+                    'question_id' => $question->id,
+                    'response' => $responseValue
+                ];
+            }
+        }
+        
+        // Calculate progress
+        $totalQuestions = $questions->count();
+        $answeredQuestions = DB::table('applicant_responses_hr1')
+            ->where('user_id', $userId)
+            ->where('question_set_id', $id)
+            ->count();
+        $progress = $totalQuestions > 0 ? round(($answeredQuestions / $totalQuestions) * 100) : 0;
+        $completed = $answeredQuestions === $totalQuestions && $totalQuestions > 0;
+        
+        return response()->json([
+            'message' => 'Assessment submitted successfully',
+            'responses' => $responses,
+            'progress' => $progress,
+            'completed' => $completed
+        ]);
+    }
 }
 

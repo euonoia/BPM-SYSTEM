@@ -35,7 +35,19 @@ Route::prefix('api/hr1')->group(function () {
 
     // Applications
     Route::post('/applications', [ApplicationController_hr1::class, 'store']);
+    Route::get('/applications/{id}', [ApplicationController_hr1::class, 'show']);
+    Route::patch('/applications/{id}', [ApplicationController_hr1::class, 'update']);
+    Route::delete('/applications/{id}', [ApplicationController_hr1::class, 'destroy']);
     Route::post('/applications/{id}/interview', [ApplicationController_hr1::class, 'scheduleInterview']);
+    
+    // Question Sets - Submit Assessment
+    Route::post('/question-sets/{id}/submit', [EvaluationController_hr1::class, 'submitAssessment']);
+    
+    // Learning Modules - Complete
+    Route::post('/modules/complete/{id}', [LearningModuleController_hr1::class, 'markComplete']);
+    
+    // Candidate Profile
+    Route::patch('/candidate/profile', [DashboardController_hr1::class, 'updateCandidateProfile']);
 
     // Recognitions
     Route::get('/recognitions', [RecognitionController_hr1::class, 'index']);

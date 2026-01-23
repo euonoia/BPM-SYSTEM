@@ -428,6 +428,7 @@ TRUNCATE TABLE `applicant_responses_hr1`;
 TRUNCATE TABLE `questions_hr1`;
 TRUNCATE TABLE `question_sets_hr1`;
 TRUNCATE TABLE `applicant_tasks_hr1`;
+TRUNCATE TABLE `applicant_tasks_hr1`;
 TRUNCATE TABLE `job_task_sets_hr1`;
 TRUNCATE TABLE `user_learning_modules_hr1`;
 TRUNCATE TABLE `learning_modules_hr1`;
@@ -589,6 +590,19 @@ INSERT INTO `questions_hr1` (`id`, `question_set_id`, `question_text`, `question
 (9, 4, 'How important is teamwork in healthcare?', 'rating', NULL, TRUE, 1, NOW(), NOW()),
 (10, 4, 'Are you comfortable working in a diverse environment?', 'yes-no', NULL, TRUE, 2, NOW(), NOW());
 
+-- Applicant Responses (Sample assessment answers)
+INSERT INTO `applicant_responses_hr1` (`id`, `user_id`, `question_id`, `question_set_id`, `response_text`, `response_value`, `submitted_at`) VALUES
+(1, 5, 1, 1, '5 years of experience in emergency nursing', NULL, DATE_SUB(NOW(), INTERVAL 8 DAY)),
+(2, 5, 2, 1, NULL, '4', DATE_SUB(NOW(), INTERVAL 8 DAY)),
+(3, 5, 3, 1, NULL, 'ACLS, BLS', DATE_SUB(NOW(), INTERVAL 8 DAY)),
+(4, 6, 1, 1, '3 years in laboratory technology', NULL, DATE_SUB(NOW(), INTERVAL 4 DAY)),
+(5, 6, 2, 1, NULL, '5', DATE_SUB(NOW(), INTERVAL 4 DAY)),
+(6, 7, 4, 2, 'I once handled a patient who was very anxious about their procedure. I took time to explain everything clearly and provided emotional support.', NULL, DATE_SUB(NOW(), INTERVAL 2 DAY)),
+(7, 7, 5, 2, 'I prioritize based on urgency and patient safety, always ensuring critical cases come first.', NULL, DATE_SUB(NOW(), INTERVAL 2 DAY)),
+(8, 8, 7, 3, 'Patient safety is my top priority. I always double-check medications and follow protocols strictly.', NULL, DATE_SUB(NOW(), INTERVAL 5 DAY)),
+(9, 9, 9, 4, NULL, '5', DATE_SUB(NOW(), INTERVAL 10 DAY)),
+(10, 9, 10, 4, NULL, 'Yes', DATE_SUB(NOW(), INTERVAL 10 DAY));
+
 -- =====================================================
 -- 7. RECOGNITIONS DATA
 -- =====================================================
@@ -685,6 +699,8 @@ ALTER TABLE `evaluation_criteria_hr1` AUTO_INCREMENT = 10;
 ALTER TABLE `applicant_evaluations_hr1` AUTO_INCREMENT = 10;
 ALTER TABLE `learning_modules_hr1` AUTO_INCREMENT = 10;
 ALTER TABLE `user_learning_modules_hr1` AUTO_INCREMENT = 10;
+ALTER TABLE `applicant_responses_hr1` AUTO_INCREMENT = 15;
+ALTER TABLE `applicant_tasks_hr1` AUTO_INCREMENT = 15;
 ALTER TABLE `settings_hr1` AUTO_INCREMENT = 10;
 ALTER TABLE `activity_logs_hr1` AUTO_INCREMENT = 10;
 
