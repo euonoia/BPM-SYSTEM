@@ -150,6 +150,7 @@ body {
     transition: margin-left 0.3s ease;
     width: calc(100vw - 240px);
     box-sizing: border-box;
+    background-color: #f0f2f5;
 }
 
 .sidebar.collapsed ~ .main-content {

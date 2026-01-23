@@ -76,22 +76,46 @@
                     <i data-lucide="bar-chart-2" class="w-16 h-16 text-highlight opacity-50"></i>
                 </div>
                 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="card !w-full">
-                        <h4 class="text-[10px] font-black text-accent uppercase tracking-widest mb-1">Total Applicants</h4>
-                        <div class="text-3xl font-black text-primary" x-text="applicants.length"></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="card !w-full group cursor-pointer">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                                <i class="bi bi-people text-primary text-xl"></i>
+                            </div>
+                        </div>
+                        <h4 class="text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Total Applicants</h4>
+                        <div class="text-4xl font-black text-primary mb-1" x-text="applicants.length"></div>
+                        <p class="text-xs text-text-light">Active candidates</p>
                     </div>
-                    <div class="card !w-full">
-                        <h4 class="text-[10px] font-black text-accent uppercase tracking-widest mb-1">Offer Acceptance</h4>
-                        <div class="text-3xl font-black text-primary">82%</div>
+                    <div class="card !w-full group cursor-pointer">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center group-hover:bg-green-200 transition-colors">
+                                <i class="bi bi-check-circle text-green-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <h4 class="text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Offer Acceptance</h4>
+                        <div class="text-4xl font-black text-primary mb-1">82%</div>
+                        <p class="text-xs text-text-light">Acceptance rate</p>
                     </div>
-                    <div class="card !w-full">
-                        <h4 class="text-[10px] font-black text-accent uppercase tracking-widest mb-1">Avg. Time to Hire</h4>
-                        <div class="text-3xl font-black text-primary">18 Days</div>
+                    <div class="card !w-full group cursor-pointer">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                                <i class="bi bi-clock text-blue-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <h4 class="text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Avg. Time to Hire</h4>
+                        <div class="text-4xl font-black text-primary mb-1">18 Days</div>
+                        <p class="text-xs text-text-light">Average duration</p>
                     </div>
-                    <div class="card !w-full">
-                        <h4 class="text-[10px] font-black text-accent uppercase tracking-widest mb-1">Training Compliance</h4>
-                        <div class="text-3xl font-black text-primary">94%</div>
+                    <div class="card !w-full group cursor-pointer">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center group-hover:bg-purple-200 transition-colors">
+                                <i class="bi bi-award text-purple-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <h4 class="text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Training Compliance</h4>
+                        <div class="text-4xl font-black text-primary mb-1">94%</div>
+                        <p class="text-xs text-text-light">Completion rate</p>
                     </div>
                 </div>
 
@@ -109,12 +133,17 @@
                 <h3 class="text-xl font-black text-primary mb-6">Applicants</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4" x-show="applicants.length">
                     <template x-for="applicant in applicants" :key="applicant.id">
-                        <div class="p-4 bg-bg rounded-2xl border border-gray-100 flex justify-between items-center">
-                            <div>
-                                <div class="text-sm font-black text-accent" x-text="applicant.name"></div>
-                                <div class="text-xs text-text-light" x-text="applicant.position"></div>
+                        <div class="p-5 bg-white rounded-xl border border-gray-200 hover:border-primary/30 hover:shadow-lg transition-all duration-200 flex justify-between items-center group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                                    <i class="bi bi-person text-primary"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-primary mb-1" x-text="applicant.name"></div>
+                                    <div class="text-xs text-text-light" x-text="applicant.position"></div>
+                                </div>
                             </div>
-                            <span class="text-[10px] font-bold uppercase px-3 py-1 rounded-full bg-primary/5 text-primary"
+                            <span class="text-xs font-semibold uppercase px-3 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/20"
                                   x-text="applicant.status"></span>
                         </div>
                     </template>
@@ -129,12 +158,22 @@
                 <h3 class="text-xl font-black text-primary mb-6">Recruitment</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4" x-show="jobs.length">
                     <template x-for="job in jobs" :key="job.id">
-                        <div class="p-4 bg-bg rounded-2xl border border-gray-100 flex flex-col gap-2">
-                            <div class="text-sm font-black text-accent" x-text="job.title"></div>
-                            <div class="text-xs text-text-light" x-text="job.department"></div>
-                            <div class="text-[11px] text-text-light/80">
-                                Applications:
-                                <span class="font-bold text-primary" x-text="job.applications_hr1 ? job.applications_hr1.length : 0"></span>
+                        <div class="p-5 bg-white rounded-xl border border-gray-200 hover:border-primary/30 hover:shadow-lg transition-all duration-200 flex flex-col gap-3 group">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1">
+                                    <div class="text-base font-semibold text-primary mb-1" x-text="job.title"></div>
+                                    <div class="text-xs text-text-light flex items-center gap-2">
+                                        <i class="bi bi-building text-accent"></i>
+                                        <span x-text="job.department"></span>
+                                    </div>
+                                </div>
+                                <div class="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+                                    <i class="bi bi-briefcase text-accent"></i>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between pt-2 border-t border-gray-100">
+                                <span class="text-xs text-text-light">Applications:</span>
+                                <span class="text-sm font-bold text-primary bg-primary/10 px-3 py-1 rounded-full" x-text="job.applications_hr1 ? job.applications_hr1.length : 0"></span>
                             </div>
                         </div>
                     </template>
@@ -149,13 +188,22 @@
                 <h3 class="text-xl font-black text-primary mb-6">Onboarding</h3>
                 <div class="flex flex-col gap-3" x-show="tasks.length">
                     <template x-for="task in tasks" :key="task.id">
-                        <div class="p-3 bg-bg rounded-xl border border-gray-100 flex justify-between items-center">
-                            <div>
-                                <div class="text-sm font-medium text-primary" x-text="task.title"></div>
-                                <div class="text-xs text-text-light" x-text="task.department"></div>
+                        <div class="p-4 bg-white rounded-xl border border-gray-200 hover:border-primary/30 hover:shadow-md transition-all duration-200 flex justify-between items-center group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-lg flex items-center justify-center transition-colors"
+                                     :class="task.completed ? 'bg-green-100 group-hover:bg-green-200' : 'bg-yellow-100 group-hover:bg-yellow-200'">
+                                    <i :class="task.completed ? 'bi bi-check-circle text-green-600' : 'bi bi-clock text-yellow-600'"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-primary mb-1" x-text="task.title"></div>
+                                    <div class="text-xs text-text-light flex items-center gap-2">
+                                        <i class="bi bi-building text-accent"></i>
+                                        <span x-text="task.department"></span>
+                                    </div>
+                                </div>
                             </div>
-                            <span class="text-[10px] font-bold uppercase px-3 py-1 rounded-full"
-                                  :class="task.completed ? 'bg-green-50 text-green-700' : 'bg-yellow-50 text-yellow-700'">
+                            <span class="text-xs font-semibold uppercase px-3 py-1.5 rounded-full border"
+                                  :class="task.completed ? 'bg-green-50 text-green-700 border-green-200' : 'bg-yellow-50 text-yellow-700 border-yellow-200'">
                                 <span x-text="task.completed ? 'Completed' : 'Pending'"></span>
                             </span>
                         </div>
