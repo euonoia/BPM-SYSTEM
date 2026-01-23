@@ -50,6 +50,22 @@ class RecognitionController_hr1 extends Controller
         return response()->json($recognition);
     }
 
+    public function update(Request $request, $id)
+    {
+        $recognition = Recognition_hr1::findOrFail($id);
+        
+        $validated = $request->validate([
+            'to' => 'sometimes|string|max:255',
+            'from' => 'sometimes|string|max:255',
+            'reason' => 'sometimes|string',
+            'award_type' => 'sometimes|string|max:255',
+            'date' => 'sometimes|date',
+        ]);
+
+        $recognition->update($validated);
+        return response()->json($recognition);
+    }
+
     public function destroy($id)
     {
         $recognition = Recognition_hr1::findOrFail($id);

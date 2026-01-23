@@ -53,5 +53,26 @@ class ApplicantController_hr1 extends Controller
         $applicant = User::with('applications_hr1.jobPosting_hr1')->findOrFail($id);
         return response()->json($applicant);
     }
+
+    public function update(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        
+        $validated = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'email' => 'sometimes|email|unique:users_hr1,email,' . $id,
+            'password' => 'sometimes|string|min:8',
+            'position' => 'sometimes|string|max:255',
+            'contact_no' => 'sometimes|string|max:20',
+            'status' => 'sometimes|in:Applied,Evaluation,Interviewing,Offer,Onboarding,Rejected',
+        ]);
+
+        if (isset($validated['password'])) {
+            $validated['password'] = bcrypt($validated['password']);
+        }
+
+        $user->update($validated);
+        return response()->json($user->load('applications_hr1'));
+    }
 }
 
