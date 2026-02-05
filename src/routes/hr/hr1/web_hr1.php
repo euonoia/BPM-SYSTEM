@@ -2,13 +2,13 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\hr1\DashboardController_hr1;
-use App\Http\Controllers\ApplicantController_hr1;
-use App\Http\Controllers\JobController_hr1;
-use App\Http\Controllers\ApplicationController_hr1;
-use App\Http\Controllers\RecognitionController_hr1;
-use App\Http\Controllers\OnboardingController_hr1;
-use App\Http\Controllers\LearningModuleController_hr1;
-use App\Http\Controllers\EvaluationController_hr1;
+use App\Http\Controllers\hr1\ApplicantController_hr1;
+use App\Http\Controllers\hr1\JobController_hr1;
+use App\Http\Controllers\hr1\ApplicationController_hr1;
+use App\Http\Controllers\hr1\RecognitionController_hr1;
+use App\Http\Controllers\hr1\OnboardingController_hr1;
+use App\Http\Controllers\hr1\LearningModuleController_hr1;
+use App\Http\Controllers\hr1\EvaluationController_hr1;
 
 // HR1 Index Route
 Route::prefix('hr/hr1')->name('hr.hr1.')->group(function () {
@@ -76,6 +76,12 @@ Route::prefix('api/hr1')->group(function () {
     Route::get('/tasks', [OnboardingController_hr1::class, 'index']);
     Route::post('/tasks', [OnboardingController_hr1::class, 'store']);
     Route::patch('/tasks/{id}/status', [OnboardingController_hr1::class, 'updateStatus']);
+    
+    // Applicant Tasks (from applicant_tasks_hr1 table)
+    Route::get('/applicant-tasks', [OnboardingController_hr1::class, 'applicantTasks']);
+    Route::patch('/applicant-tasks/{id}/status', [OnboardingController_hr1::class, 'updateApplicantTaskStatus']);
+    Route::patch('/applicant-tasks/{id}', [OnboardingController_hr1::class, 'updateApplicantTask']);
+    Route::delete('/applicant-tasks/{id}', [OnboardingController_hr1::class, 'deleteApplicantTask']);
 
     // Learning Modules
     Route::get('/modules', [LearningModuleController_hr1::class, 'index']);

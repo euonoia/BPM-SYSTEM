@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\hr1;
 
 use App\Http\Controllers\Controller;
 use App\Models\hr1\OnboardingTask_hr1;
@@ -96,6 +96,104 @@ class OnboardingController_hr1 extends Controller
     {
         DB::table('task_sets_hr1')->where('id', $id)->delete();
         return response()->json(['message' => 'Task set deleted successfully']);
+    }
+
+    public function applicantTasks()
+    {
+        $tasks = DB::table('applicant_tasks_hr1')
+            ->leftJoin('tasks_hr1', 'applicant_tasks_hr1.task_id', '=', 'tasks_hr1.id')
+            ->leftJoin('users_hr1', 'applicant_tasks_hr1.user_id', '=', 'users_hr1.id')
+            ->leftJoin('job_postings_hr1', 'applicant_tasks_hr1.job_posting_id', '=', 'job_postings_hr1.id')
+            ->select('applicant_tasks_hr1.*', 
+                     'tasks_hr1.title as task_title', 
+                     'tasks_hr1.description as task_description',
+                     'users_hr1.name as user_name',
+                     'job_postings_hr1.title as job_title')
+            ->get();
+        return response()->json($tasks);
+    }
+
+    public function updateApplicantTaskStatus(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'completed' => 'required|boolean',
+        ]);
+
+        $task = DB::table('applicant_tasks_hr1')->where('id', $id)->first();
+        if (!$task) {
+            return response()->json(['error' => 'Task not found'], 404);
+        }
+
+        DB::table('applicant_tasks_hr1')
+            ->where('id', $id)
+            ->update([
+                'completed' => $validated['completed'],
+                'completed_at' => $validated['completed'] ? now() : null,
+                'updated_at' => now()
+            ]);
+
+        $updatedTask = DB::table('applicant_tasks_hr1')
+            ->leftJoin('tasks_hr1', 'applicant_tasks_hr1.task_id', '=', 'tasks_hr1.id')
+            ->where('applicant_tasks_hr1.id', $id)
+            ->select('applicant_tasks_hr1.*', 'tasks_hr1.title as task_title')
+            ->first();
+
+        return response()->json($updatedTask);
+    }
+
+    public function updateApplicantTask(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'title' => 'sometimes|string|max:255',
+            'description' => 'nullable|string',
+            'completed' => 'sometimes|boolean',
+        ]);
+
+        $task = DB::table('applicant_tasks_hr1')->where('id', $id)->first();
+        if (!$task) {
+            return response()->json(['error' => 'Task not found'], 404);
+        }
+
+        // Update the task in tasks_hr1 table
+        if (isset($validated['title']) || isset($validated['description'])) {
+            DB::table('tasks_hr1')
+                ->where('id', $task->task_id)
+                ->update(array_filter([
+                    'title' => $validated['title'] ?? null,
+                    'description' => $validated['description'] ?? null,
+                    'updated_at' => now()
+                ]));
+        }
+
+        // Update applicant task status if provided
+        if (isset($validated['completed'])) {
+            DB::table('applicant_tasks_hr1')
+                ->where('id', $id)
+                ->update([
+                    'completed' => $validated['completed'],
+                    'completed_at' => $validated['completed'] ? now() : null,
+                    'updated_at' => now()
+                ]);
+        }
+
+        $updatedTask = DB::table('applicant_tasks_hr1')
+            ->leftJoin('tasks_hr1', 'applicant_tasks_hr1.task_id', '=', 'tasks_hr1.id')
+            ->where('applicant_tasks_hr1.id', $id)
+            ->select('applicant_tasks_hr1.*', 'tasks_hr1.title as task_title', 'tasks_hr1.description as task_description')
+            ->first();
+
+        return response()->json($updatedTask);
+    }
+
+    public function deleteApplicantTask($id)
+    {
+        $task = DB::table('applicant_tasks_hr1')->where('id', $id)->first();
+        if (!$task) {
+            return response()->json(['error' => 'Task not found'], 404);
+        }
+
+        DB::table('applicant_tasks_hr1')->where('id', $id)->delete();
+        return response()->json(['message' => 'Task deleted successfully']);
     }
 }
 

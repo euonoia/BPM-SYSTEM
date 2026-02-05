@@ -1,13 +1,18 @@
 @extends('hr1.layouts.app')
 
 @section('content')
-<div x-data="dashboard()" style="display: flex; min-height: 100vh;">
+<div x-data="dashboard()" x-init="init()" style="display: flex; min-height: 100vh;">
     <!-- Mobile Topbar -->
     <div class="topbar">
         <button class="menu-toggle" @click="document.querySelector('.sidebar').classList.toggle('show')">
             ☰
         </button>
         <div class="title">MedCore HR1</div>
+        <button type="button"
+                class="ml-auto text-xs px-3 py-1.5 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                @click="alert('Logout functionality will be implemented when authentication is added.')">
+            Sign out
+        </button>
     </div>
 
     <!-- Sidebar -->
@@ -172,8 +177,8 @@
                             </div>
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-2 mb-2">
-                                    <h4 class="text-[10px] font-semibold text-text-light uppercase tracking-wide">Recognitions</h4>
-                                    <span class="text-[10px] text-text-light">Total awards</span>
+                                    <h4 class="text-[10px] font-semibold text-text-light uppercase tracking-wide">Nominated Candidates</h4>
+                                    <span class="text-[10px] text-text-light">Most outstanding nominees</span>
                                 </div>
                                 <div class="text-3xl font-black text-primary" x-text="analytics.totalRecognitions || recognitions.length"></div>
                             </div>
@@ -276,17 +281,9 @@
                                         <div class="text-sm text-text-light" x-text="applicant.contact_no || 'N/A'"></div>
                                     </td>
                                     <td class="py-4 px-4">
-                                        <select @change="updateApplicantStatus(applicant.id, $event.target.value)" 
-                                                :value="applicant.status || 'applied'"
-                                                class="text-xs font-semibold px-3 py-1.5 rounded-full border outline-none"
-                                                :class="getStatusClass(applicant.status || 'applied')">
-                                            <option value="applied">Applied</option>
-                                            <option value="evaluating">Evaluating</option>
-                                            <option value="interviewing">Interviewing</option>
-                                            <option value="offered">Offered</option>
-                                            <option value="onboard">Onboard</option>
-                                            <option value="rejected">Rejected</option>
-                                        </select>
+                                        <span class="text-xs font-semibold px-3 py-1.5 rounded-full border"
+                                              :class="getStatusClass(applicant.status || 'Applied')"
+                                              x-text="applicant.status || 'Applied'"></span>
                                     </td>
                                     <td class="py-4 px-4">
                                         <div class="flex items-center justify-center gap-2">
@@ -360,7 +357,7 @@
                                     </button>
                                     <button @click="viewJobApplicants(job)" 
                                             class="px-3 py-1.5 text-xs font-semibold bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors">
-                                        View Applicants
+                                        <span x-text="selectedJobId === job.id ? 'Close' : 'View Applicants'"></span>
                                     </button>
                                     <button @click="deleteJob(job.id)" 
                                             class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
@@ -373,21 +370,56 @@
                             <!-- Applicants for this job -->
                             <div x-show="selectedJobId === job.id && job.applications_hr1 && job.applications_hr1.length" 
                                  class="mt-4 pt-4 border-t border-gray-200">
-                                <h4 class="text-sm font-semibold text-primary mb-3">Applicants for this position:</h4>
+                                <div class="flex items-center justify-between mb-3">
+                                    <h4 class="text-sm font-semibold text-primary">Applicants for this position:</h4>
+                                    <select @change="sortJobApplicants(job.id, $event.target.value)"
+                                            class="text-[11px] px-2 py-1 rounded border bg-bg">
+                                        <option value="applied_date_desc">Applied (Newest)</option>
+                                        <option value="applied_date_asc">Applied (Oldest)</option>
+                                        <option value="name_asc">Name A–Z</option>
+                                        <option value="name_desc">Name Z–A</option>
+                                    </select>
+                                </div>
                                 <div class="space-y-2">
                                     <template x-for="app in job.applications_hr1" :key="app.id">
-                                        <div class="p-3 bg-gray-50 rounded-lg flex items-center justify-between">
-                                            <div>
-                                                <div class="text-sm font-medium text-primary" x-text="app.user?.name || 'Unknown'"></div>
-                                                <div class="text-xs text-text-light" x-text="app.user?.email || 'N/A'"></div>
+                                        <div class="p-3 bg-gray-50 rounded-lg space-y-2">
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <div class="text-sm font-medium text-primary" x-text="app.user?.name || 'Unknown'"></div>
+                                                    <div class="text-xs text-text-light" x-text="app.user?.email || 'N/A'"></div>
+                                                </div>
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-xs font-semibold px-2 py-1 rounded-full bg-primary/10 text-primary" 
+                                                          x-text="app.status || 'Applied'"></span>
+                                                    <button @click="viewJobApplicantProfile(app.user)" 
+                                                            class="p-1.5 text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                                                            title="View Profile">
+                                                        <i class="bi bi-eye text-xs"></i>
+                                                    </button>
+                                                </div>
                                             </div>
-                                            <div class="flex items-center gap-2">
-                                                <span class="text-xs font-semibold px-2 py-1 rounded-full bg-primary/10 text-primary" 
-                                                      x-text="app.status || 'Applied'"></span>
-                                                <button @click="viewJobApplicantProfile(app.user)" 
-                                                        class="p-1.5 text-primary hover:bg-primary/10 rounded-lg transition-colors"
-                                                        title="View Profile">
-                                                    <i class="bi bi-eye text-xs"></i>
+                                            <!-- Documents / Requirements -->
+                                            <div class="text-[11px] mt-1" x-show="app.documents && app.documents.length">
+                                                <div class="font-semibold text-text-light mb-1">Requirements / Documents:</div>
+                                                <div class="space-y-1">
+                                                    <template x-for="(doc, index) in app.documents" :key="index">
+                                                        <a :href="doc" target="_blank"
+                                                           class="inline-flex items-center gap-1 text-primary hover:underline">
+                                                            <i class="bi bi-paperclip"></i>
+                                                            <span x-text="`Document ${index + 1}`"></span>
+                                                        </a>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                            <!-- Actions: Accept / Reject -->
+                                            <div class="flex items-center gap-2 mt-2">
+                                                <button @click="updateApplicationStatus(app.id, job.id, 'Interviewing')"
+                                                        class="px-2 py-1 text-[11px] bg-green-50 text-green-700 rounded hover:bg-green-100">
+                                                    Accept to Interview
+                                                </button>
+                                                <button @click="updateApplicationStatus(app.id, job.id, 'Rejected')"
+                                                        class="px-2 py-1 text-[11px] bg-red-50 text-red-700 rounded hover:bg-red-100">
+                                                    Reject
                                                 </button>
                                             </div>
                                         </div>
@@ -407,101 +439,109 @@
             <div x-show="activeTab === 'onboarding'" class="main-inner !w-full !max-w-none mt-8">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="text-xl font-black text-primary">Onboarding Management</h3>
-                    <button @click="modalType = 'add-task-set'" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-hover transition-colors flex items-center gap-2">
-                        <i class="bi bi-plus-circle"></i>
-                        <span class="text-sm font-semibold">Add Task Set</span>
-                    </button>
                 </div>
 
                 <!-- Search Bar -->
                 <div class="mb-6">
                     <div class="relative">
                         <input type="text" 
-                               x-model="taskSetSearchQuery" 
-                               @input="filterTaskSets()"
-                               placeholder="Search task sets..." 
+                               x-model="onboardingSearchQuery" 
+                               @input="filterOnboardingCandidates()"
+                               placeholder="Search candidates..." 
                                class="w-full p-4 bg-bg rounded-xl border border-gray-200 outline-none focus:border-primary pl-12">
                         <i class="bi bi-search absolute left-4 top-1/2 transform -translate-y-1/2 text-text-light"></i>
                     </div>
                 </div>
 
-                <!-- Job Selection -->
-                <div class="mb-6">
-                    <label class="block text-sm font-semibold text-primary mb-2">Select Job</label>
-                    <select @change="selectedOnboardingJob = $event.target.value" 
-                            class="w-full p-3 bg-bg rounded-xl border border-gray-200 outline-none focus:border-primary">
-                        <option value="">All Jobs</option>
-                        <template x-for="job in jobs" :key="job.id">
-                            <option :value="job.id" x-text="job.title"></option>
-                        </template>
-                    </select>
-                </div>
-
-                <!-- Task Sets -->
-                <div class="mb-6" x-show="filteredTaskSets.length">
-                    <h4 class="text-lg font-semibold text-primary mb-4">Task Sets</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <template x-for="taskSet in filteredTaskSets" :key="taskSet.id">
-                            <div class="p-4 bg-white rounded-xl border border-gray-200">
-                                <div class="flex items-center justify-between mb-3">
-                                    <div class="text-sm font-semibold text-primary" x-text="taskSet.name"></div>
-                                    <div class="flex gap-2">
-                                        <button @click="editTaskSet(taskSet)" class="p-1.5 text-accent hover:bg-accent/10 rounded">
-                                            <i class="bi bi-pencil text-xs"></i>
-                                        </button>
-                                        <button @click="deleteTaskSet(taskSet.id)" class="p-1.5 text-red-600 hover:bg-red-50 rounded">
-                                            <i class="bi bi-trash text-xs"></i>
-                                        </button>
+                <!-- Onboarding Candidates List -->
+                <div class="space-y-4" x-show="filteredOnboardingCandidates.length > 0">
+                    <template x-for="candidate in filteredOnboardingCandidates" :key="candidate.id">
+                        <div class="p-5 bg-white rounded-xl border border-gray-200 hover:border-primary/30 hover:shadow-lg transition-all">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <div class="text-lg font-semibold text-primary" x-text="candidate.name || 'Unknown'"></div>
+                                        <span class="text-xs font-semibold px-2 py-1 rounded-full"
+                                              :class="getStatusClass(candidate.status || 'Onboarding')"
+                                              x-text="candidate.status || 'Onboarding'"></span>
+                                    </div>
+                                    <div class="text-sm text-text-light flex items-center gap-2 mb-2">
+                                        <i class="bi bi-envelope text-accent"></i>
+                                        <span x-text="candidate.email || 'N/A'"></span>
+                                    </div>
+                                    <div class="text-xs text-text-light" x-show="candidate.job_title">
+                                        <i class="bi bi-briefcase text-accent"></i>
+                                        <span x-text="candidate.job_title"></span>
                                     </div>
                                 </div>
-                                <div class="text-xs text-text-light mb-2">Tasks:</div>
-                                <ul class="space-y-1">
-                                    <template x-for="task in taskSet.tasks" :key="task.id">
-                                        <li class="text-xs text-text-light flex items-center gap-2">
-                                            <i class="bi bi-check-circle text-green-600"></i>
-                                            <span x-text="task.title"></span>
-                                        </li>
-                                    </template>
-                                </ul>
-                                <button @click="assignTaskSetToJob(taskSet.id)" 
-                                        class="mt-3 text-xs font-semibold text-primary hover:underline">
-                                    Assign to Job
-                                </button>
+                                <div class="flex items-center gap-2">
+                                    <select @change="updateCandidateOnboardingStatus(candidate.application_id || candidate.id, candidate.id, candidate.job_id, $event.target.value)" 
+                                            :value="candidate.status || 'Onboarding'"
+                                            class="text-xs font-semibold px-3 py-1.5 rounded-full border outline-none"
+                                            :class="getStatusClass(candidate.status || 'Onboarding')">
+                                        <option value="Onboarding">Onboarding</option>
+                                        <option value="Offer">Offer</option>
+                                        <option value="Onboard">Onboard</option>
+                                        <option value="Rejected">Rejected</option>
+                                    </select>
+                                    <button @click="expandedCandidateId = expandedCandidateId === candidate.id ? null : candidate.id" 
+                                            class="text-xs px-3 py-1.5 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors">
+                                        <span x-text="expandedCandidateId === candidate.id ? 'Collapse' : 'Expand'"></span>
+                                    </button>
+                                </div>
                             </div>
-                        </template>
-                    </div>
-                </div>
-
-                <!-- Applicants and Their Tasks -->
-                <div x-show="selectedOnboardingJob">
-                    <h4 class="text-lg font-semibold text-primary mb-4">Applicants & Remaining Tasks</h4>
-                    <div class="space-y-4">
-                        <template x-for="applicant in getApplicantsForJob(selectedOnboardingJob)" :key="applicant.id">
-                            <div class="p-4 bg-white rounded-xl border border-gray-200">
+                            
+                            <!-- Tasks/Requirements Section -->
+                            <div x-show="expandedCandidateId === candidate.id" 
+                                 class="mt-4 pt-4 border-t border-gray-200">
                                 <div class="flex items-center justify-between mb-3">
-                                    <div>
-                                        <div class="text-sm font-semibold text-primary" x-text="applicant.name"></div>
-                                        <div class="text-xs text-text-light" x-text="applicant.email"></div>
-                                    </div>
-                                    <span class="text-xs font-semibold px-2 py-1 rounded-full bg-primary/10 text-primary" 
-                                          x-text="applicant.status"></span>
+                                    <h4 class="text-sm font-semibold text-primary">Tasks & Requirements</h4>
+                                    <button @click="editCandidateTasks(candidate, candidate.job_id)" 
+                                            class="text-xs px-2 py-1 bg-accent/10 text-accent rounded hover:bg-accent/20 transition-colors">
+                                        <i class="bi bi-pencil"></i> Edit Tasks
+                                    </button>
                                 </div>
-                                <div class="text-xs font-semibold text-text-light mb-2">Remaining Tasks:</div>
-                                <div class="space-y-2">
-                                    <template x-for="task in getRemainingTasks(applicant.id)" :key="task.id">
-                                        <div class="flex items-center gap-2 text-xs text-text-light">
-                                            <i class="bi bi-clock text-yellow-600"></i>
-                                            <span x-text="task.title"></span>
+                                
+                                <div class="space-y-2" x-show="getCandidateTasks(candidate.id, candidate.job_id).length > 0">
+                                    <template x-for="task in getCandidateTasks(candidate.id, candidate.job_id)" :key="task.id">
+                                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                            <div class="flex items-center gap-3 flex-1">
+                                                <input type="checkbox" 
+                                                       :checked="task.completed"
+                                                       @change="toggleTaskCompletion(task.id, candidate.id)"
+                                                       class="w-4 h-4 text-primary rounded cursor-pointer">
+                                                <div class="flex items-center gap-2 flex-1">
+                                                    <i :class="task.completed ? 'bi bi-check-circle text-green-600' : 'bi bi-circle text-gray-400'"></i>
+                                                    <span class="text-sm" 
+                                                          :class="task.completed ? 'text-text-light line-through' : 'text-primary font-medium'" 
+                                                          x-text="task.title || task.task_title || 'Untitled Task'"></span>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-1">
+                                                <button @click="editTask(task)" 
+                                                        class="p-1.5 text-accent hover:bg-accent/10 rounded-lg transition-colors"
+                                                        title="Edit Task">
+                                                    <i class="bi bi-pencil text-xs"></i>
+                                                </button>
+                                                <button @click="deleteTask(task.id)" 
+                                                        class="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                                        title="Delete Task">
+                                                    <i class="bi bi-trash text-xs"></i>
+                                                </button>
+                                            </div>
                                         </div>
                                     </template>
-                                    <div x-show="getRemainingTasks(applicant.id).length === 0" class="text-xs text-green-600 flex items-center gap-2">
-                                        <i class="bi bi-check-circle"></i>
-                                        <span>All tasks completed</span>
-                                    </div>
+                                </div>
+                                <div x-show="getCandidateTasks(candidate.id, candidate.job_id).length === 0" class="text-center py-4 text-sm text-text-light italic">
+                                    No tasks assigned yet. Click "Edit Tasks" to add requirements.
                                 </div>
                             </div>
-                        </template>
-                    </div>
+                        </div>
+                    </template>
+                </div>
+                <div x-show="filteredOnboardingCandidates.length === 0" class="text-center py-12 text-sm text-text-light">
+                    <span x-show="onboardingSearchQuery">No onboarding candidates found matching your search.</span>
+                    <span x-show="!onboardingSearchQuery">No candidates in onboarding status.</span>
                 </div>
             </div>
 
@@ -529,12 +569,15 @@
 
                 <!-- Question Sets List -->
                 <div class="mb-6">
-                    <h4 class="text-lg font-semibold text-primary mb-4">Question Sets</h4>
+                    <h4 class="text-lg font-semibold text-primary mb-4">Available Forms/Assessments</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4" x-show="filteredQuestionSets.length">
                         <template x-for="form in filteredQuestionSets" :key="form.id">
                             <div class="p-5 bg-white rounded-xl border border-gray-200 hover:border-primary/30 transition-all">
                                 <div class="flex items-center justify-between mb-3">
-                                    <div class="text-base font-semibold text-primary" x-text="form.title"></div>
+                                    <div class="flex-1">
+                                        <div class="text-base font-semibold text-primary" x-text="form.title"></div>
+                                        <div class="text-xs text-text-light mt-1" x-text="form.job_title ? 'For: ' + form.job_title : 'General Assessment'"></div>
+                                    </div>
                                     <div class="flex gap-2">
                                         <button @click="editForm(form)" class="p-2 text-accent hover:bg-accent/10 rounded-lg">
                                             <i class="bi bi-pencil"></i>
@@ -547,20 +590,63 @@
                                 <div class="text-xs text-text-light mb-3">
                                     <span x-text="form.questions ? form.questions.length : 0"></span> questions
                                 </div>
-                                <div class="space-y-2">
-                                    <template x-for="(question, index) in (form.questions || [])" :key="index">
+                                <div class="space-y-2 mb-3">
+                                    <template x-for="(question, index) in (form.questions || []).slice(0, 3)" :key="index">
                                         <div class="text-xs text-text-light p-2 bg-gray-50 rounded">
                                             <span class="font-semibold" x-text="(index + 1) + '.'"></span>
-                                            <span x-text="question.text || question"></span>
+                                            <span x-text="question.question_text || question.text || question"></span>
                                         </div>
                                     </template>
+                                    <div x-show="(form.questions || []).length > 3" class="text-xs text-primary font-semibold">
+                                        + <span x-text="(form.questions || []).length - 3"></span> more questions
+                                    </div>
                                 </div>
+                                <button @click="viewFormCandidates(form)" 
+                                        class="w-full mt-3 text-xs font-semibold text-primary hover:underline">
+                                    View Candidate Scores (<span x-text="getFormCandidatesCount(form.id)"></span>)
+                                </button>
                             </div>
                         </template>
                     </div>
                     <div x-show="!filteredQuestionSets.length" class="text-center py-8 text-sm text-text-light">
                         <span x-show="questionSetSearchQuery">No question sets found matching your search.</span>
                         <span x-show="!questionSetSearchQuery">No question sets created yet.</span>
+                    </div>
+                </div>
+
+                <!-- Candidate Scores Section -->
+                <div x-show="selectedFormForScores" class="mt-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-lg font-semibold text-primary">Candidate Scores - <span x-text="selectedFormForScores?.title"></span></h4>
+                        <button @click="selectedFormForScores = null" class="text-xs text-text-light hover:text-primary">Close</button>
+                    </div>
+                    
+                    <!-- Filter Options -->
+                    <div class="mb-4 flex items-center gap-4">
+                        <select @change="scoreFilterType = $event.target.value" 
+                                class="text-xs px-3 py-2 bg-bg rounded-lg border border-gray-200 outline-none focus:border-primary">
+                            <option value="name">Sort by Name</option>
+                            <option value="score">Sort by Score (Highest to Lowest)</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Candidates with Scores -->
+                    <div class="space-y-3" x-show="getFormCandidates(selectedFormForScores?.id).length > 0">
+                        <template x-for="candidate in getFormCandidates(selectedFormForScores?.id)" :key="candidate.id">
+                            <div class="p-4 bg-white rounded-xl border border-gray-200 flex items-center justify-between">
+                                <div class="flex-1">
+                                    <div class="text-sm font-semibold text-primary" x-text="candidate.name || candidate.user?.name || 'Unknown'"></div>
+                                    <div class="text-xs text-text-light" x-text="candidate.email || candidate.user?.email || 'N/A'"></div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-lg font-black text-primary" x-text="candidate.score || candidate.total_score || 'N/A'"></div>
+                                    <div class="text-xs text-text-light">Score</div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                    <div x-show="getFormCandidates(selectedFormForScores?.id).length === 0" class="text-center py-8 text-sm text-text-light">
+                        No candidates have completed this assessment yet.
                     </div>
                 </div>
             </div>
@@ -610,18 +696,33 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="text-sm text-text-light mb-2" x-text="recognition.description || 'Recognized for outstanding performance'"></div>
-                            <div class="flex items-center gap-2">
-                                <span class="text-xs font-semibold px-2 py-1 rounded-full"
-                                      :class="recognition.is_most_outstanding ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700'">
-                                    <span x-text="recognition.is_most_outstanding ? '⭐ Most Outstanding' : 'Outstanding'"></span>
-                                </span>
+                            <div class="text-sm text-text-light mb-3" x-text="recognition.reason || recognition.description || 'Recognized for outstanding performance'"></div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-semibold px-2 py-1 rounded-full"
+                                          :class="recognition.is_most_outstanding ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700'">
+                                        <span x-text="recognition.is_most_outstanding ? '⭐ Most Outstanding' : 'Outstanding'"></span>
+                                    </span>
+                                </div>
+                                <div class="flex items-center gap-4 text-xs text-text-light">
+                                    <div class="flex items-center gap-1">
+                                        <i class="bi bi-hand-thumbs-up"></i>
+                                        <span class="font-semibold" x-text="recognition.congratulations || 0"></span>
+                                        <span>Likes</span>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <i class="bi bi-lightning"></i>
+                                        <span class="font-semibold" x-text="recognition.boosts || 0"></span>
+                                        <span>Boosts</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </template>
                 </div>
-                <div x-show="!recognitions.length" class="text-center py-12 text-sm text-text-light">
-                    No recognitions posted yet.
+                <div x-show="!filteredRecognitions.length" class="text-center py-12 text-sm text-text-light">
+                    <span x-show="recognitionSearchQuery">No recognitions found matching your search.</span>
+                    <span x-show="!recognitionSearchQuery">No recognitions posted yet.</span>
                 </div>
             </div>
 
@@ -730,10 +831,12 @@
             </div>
         </div>
     </main>
+    
+    <!-- Modals must be inside x-data scope -->
+    @include('hr1.user_hr1.shared.modals')
+    @include('hr1.user_hr1.admin.partials.modals')
 </div>
 
-@include('hr1.user_hr1.shared.modals')
-@include('hr1.user_hr1.admin.partials.modals')
 @endsection
 
 @push('scripts')
@@ -766,12 +869,23 @@ function dashboard() {
         selectedJobId: null,
         selectedApplicant: null,
         selectedOnboardingJob: null,
+        expandedOnboardingJobId: null,
+        expandedCandidateId: null,
+        selectedFormForScores: null,
+        scoreFilterType: 'name',
+        onboardingSearchQuery: '',
+        filteredOnboardingJobs: [],
+        filteredOnboardingCandidates: [],
+        candidateTasks: @json($candidateTasks ?? []),
+        onboardingCandidates: @json($onboardingCandidates ?? []),
+        assessmentScores: @json($assessmentScores ?? []),
         editingProfile: false,
         editingForm: null,
         editingTaskSet: null,
         editingRecognition: null,
         editingApplicant: false,
-        selectedJob: null,
+        editingTask: null,
+        editingCandidateTasks: null,
         applicants: @json($applicants ?? []),
         filteredApplicants: @json($applicants ?? []),
         applicantSearchQuery: '',
@@ -962,9 +1076,12 @@ function dashboard() {
                     'Accept': 'application/json'
                 },
                 body: formData
-            }).then(res => {
-                if (!res.ok) throw new Error('Failed to add applicant');
-                return res.json();
+            }).then(async res => {
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.message || data.error || 'Failed to add applicant');
+                }
+                return data;
             }).then(data => {
                 this.applicants.push(data);
                 this.filterApplicants();
@@ -973,12 +1090,332 @@ function dashboard() {
                 alert('Candidate added successfully!');
             }).catch(err => {
                 console.error('Error adding applicant:', err);
-                alert('Failed to add candidate. Please try again.');
+                alert(err.message || 'Failed to add candidate. Please try again.');
             });
         },
         
         viewJobApplicants(job) {
             this.selectedJobId = this.selectedJobId === job.id ? null : job.id;
+        },
+        
+        filterOnboardingCandidates() {
+            const query = this.onboardingSearchQuery.toLowerCase();
+            let candidates = this.onboardingCandidates || [];
+            
+            // If no onboarding candidates from backend, get from jobs
+            if (candidates.length === 0) {
+                candidates = [];
+                this.jobs.forEach(job => {
+                    if (job.applications_hr1) {
+                        job.applications_hr1.forEach(app => {
+                            if (app.status === 'Onboarding' || app.status === 'onboard' || app.status === 'Offer') {
+                                candidates.push({
+                                    id: app.user?.id || app.user_id,
+                                    name: app.user?.name,
+                                    email: app.user?.email,
+                                    status: app.status,
+                                    application_id: app.id,
+                                    job_id: job.id,
+                                    job_title: job.title
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+            
+            if (!query) {
+                this.filteredOnboardingCandidates = candidates;
+                return;
+            }
+            
+            this.filteredOnboardingCandidates = candidates.filter(candidate => 
+                (candidate.name || '').toLowerCase().includes(query) ||
+                (candidate.email || '').toLowerCase().includes(query) ||
+                (candidate.job_title || '').toLowerCase().includes(query)
+            );
+        },
+        
+        getOnboardingCandidatesForJob(jobId) {
+            if (!jobId) return [];
+            const job = this.jobs.find(j => j.id == jobId);
+            if (!job || !job.applications_hr1) return [];
+            return job.applications_hr1.filter(app => 
+                app.status === 'Onboarding' || app.status === 'onboard' || app.status === 'Offer'
+            );
+        },
+
+        sortJobApplicants(jobId, mode) {
+            const job = this.jobs.find(j => j.id == jobId);
+            if (!job || !job.applications_hr1) return;
+
+            job.applications_hr1.sort((a, b) => {
+                if (mode === 'name_asc' || mode === 'name_desc') {
+                    const aName = (a.user?.name || '').toLowerCase();
+                    const bName = (b.user?.name || '').toLowerCase();
+                    return mode === 'name_asc' ? aName.localeCompare(bName) : bName.localeCompare(aName);
+                }
+                if (mode === 'applied_date_asc' || mode === 'applied_date_desc') {
+                    const aDate = new Date(a.applied_date || 0);
+                    const bDate = new Date(b.applied_date || 0);
+                    return mode === 'applied_date_asc' ? aDate - bDate : bDate - aDate;
+                }
+                return 0;
+            });
+        },
+
+        updateApplicationStatus(applicationId, jobId, status) {
+            fetch(`/api/hr1/applications/${applicationId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ status })
+            }).then(async res => {
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.message || data.error || 'Failed to update application');
+                }
+                return data;
+            }).then(data => {
+                const job = this.jobs.find(j => j.id == jobId);
+                if (job && job.applications_hr1) {
+                    const app = job.applications_hr1.find(a => a.id == applicationId);
+                    if (app) {
+                        app.status = data.status;
+                    }
+                }
+                this.filterJobs();
+                alert('Application status updated');
+            }).catch(err => {
+                console.error('Error updating application:', err);
+                alert(err.message || 'Failed to update application');
+            });
+        },
+        
+        getCandidateTasks(userId, jobId) {
+            if (!userId) return [];
+            let tasks = this.candidateTasks.filter(task => 
+                task.user_id == userId && (task.job_posting_id == jobId || !jobId)
+            );
+            // Ensure tasks have title field
+            return tasks.map(task => ({
+                ...task,
+                title: task.title || task.task_title || 'Untitled Task'
+            }));
+        },
+        
+        updateCandidateOnboardingStatus(applicationId, userId, jobId, status) {
+            const statusMap = {
+                'Onboarding': 'Onboarding',
+                'Offer': 'Offer',
+                'Onboard': 'Onboard',
+                'Rejected': 'Rejected'
+            };
+            const mappedStatus = statusMap[status] || status;
+            
+            fetch(`/api/hr1/applications/${applicationId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ status: mappedStatus })
+            }).then(async res => {
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.message || data.error || 'Failed to update status');
+                }
+                return data;
+            }).then(data => {
+                // Update in jobs
+                const job = this.jobs.find(j => j.id == jobId);
+                if (job && job.applications_hr1) {
+                    const app = job.applications_hr1.find(a => a.id == applicationId);
+                    if (app) {
+                        app.status = mappedStatus;
+                    }
+                }
+                // Update in onboarding candidates
+                const candidate = this.onboardingCandidates.find(c => c.id == userId);
+                if (candidate) {
+                    candidate.status = mappedStatus;
+                }
+                this.filterOnboardingCandidates();
+            }).catch(err => {
+                console.error('Error updating status:', err);
+                alert(err.message || 'Failed to update candidate status');
+            });
+        },
+        
+        editCandidateTasks(candidate, jobId) {
+            this.editingCandidateTasks = { ...candidate, jobId };
+            this.modalType = 'edit-candidate-tasks';
+        },
+        
+        deleteOnboardingCandidate(applicationId, userId) {
+            if (confirm('Remove this candidate from onboarding?')) {
+                fetch(`/api/hr1/applications/${applicationId}`, {
+                    method: 'DELETE',
+                    headers: { 
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    }
+                }).then(async res => {
+                    const data = await res.json();
+                    if (!res.ok) {
+                        throw new Error(data.message || data.error || 'Failed to remove candidate');
+                    }
+                    return data;
+                }).then(data => {
+                    // Remove from jobs
+                    this.jobs.forEach(job => {
+                        if (job.applications_hr1) {
+                            job.applications_hr1 = job.applications_hr1.filter(a => a.id != applicationId);
+                        }
+                    });
+                    // Remove from onboarding candidates
+                    this.onboardingCandidates = this.onboardingCandidates.filter(c => c.id != userId);
+                    this.filterOnboardingCandidates();
+                    alert('Candidate removed successfully!');
+                }).catch(err => {
+                    console.error('Error deleting candidate:', err);
+                    alert(err.message || 'Failed to remove candidate. Please try again.');
+                });
+            }
+        },
+        
+        toggleTaskCompletion(taskId, userId) {
+            const task = this.candidateTasks.find(t => t.id == taskId);
+            if (!task) {
+                console.error('Task not found:', taskId);
+                alert('Task not found');
+                return;
+            }
+            
+            const newCompleted = !task.completed;
+            
+            fetch(`/api/hr1/applicant-tasks/${taskId}/status`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ completed: newCompleted })
+            }).then(async res => {
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.message || data.error || 'Failed to update task status');
+                }
+                return data;
+            }).then(data => {
+                task.completed = newCompleted;
+                if (task.completed) {
+                    task.completed_at = new Date().toISOString();
+                } else {
+                    task.completed_at = null;
+                }
+            }).catch(err => {
+                console.error('Error updating task:', err);
+                alert(err.message || 'Failed to update task status');
+            });
+        },
+        
+        editTask(task) {
+            this.editingTask = { ...task };
+            this.modalType = 'edit-task';
+        },
+        
+        updateTask() {
+            const form = event.target;
+            const formData = new FormData(form);
+            
+            fetch(`/api/hr1/applicant-tasks/${this.editingTask.id}`, {
+                method: 'PATCH',
+                headers: { 
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            }).then(async res => {
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.message || data.error || 'Failed to update task');
+                }
+                return data;
+            }).then(data => {
+                const index = this.candidateTasks.findIndex(t => t.id == data.id);
+                if (index !== -1) {
+                    this.candidateTasks[index] = { ...this.candidateTasks[index], ...data };
+                }
+                this.modalType = null;
+                this.editingTask = null;
+                alert('Task updated successfully!');
+            }).catch(err => {
+                console.error('Error updating task:', err);
+                alert(err.message || 'Failed to update task. Please try again.');
+            });
+        },
+        
+        deleteTask(taskId) {
+            if (confirm('Delete this task?')) {
+                fetch(`/api/hr1/applicant-tasks/${taskId}`, {
+                    method: 'DELETE',
+                    headers: { 
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    }
+                }).then(async res => {
+                    const data = await res.json();
+                    if (!res.ok) {
+                        throw new Error(data.message || data.error || 'Failed to delete task');
+                    }
+                    return data;
+                }).then(data => {
+                    this.candidateTasks = this.candidateTasks.filter(t => t.id != taskId);
+                    alert('Task deleted successfully!');
+                }).catch(err => {
+                    console.error('Error deleting task:', err);
+                    alert(err.message || 'Failed to delete task. Please try again.');
+                });
+            }
+        },
+        
+        viewFormCandidates(form) {
+            this.selectedFormForScores = form;
+        },
+        
+        getFormCandidatesCount(formId) {
+            if (!formId) return 0;
+            return this.assessmentScores.filter(score => score.question_set_id == formId).length;
+        },
+        
+        getFormCandidates(formId) {
+            if (!formId) return [];
+            let candidates = this.assessmentScores.filter(score => score.question_set_id == formId);
+            
+            // Apply sorting
+            if (this.scoreFilterType === 'name') {
+                candidates.sort((a, b) => {
+                    const aName = (a.name || a.user?.name || '').toLowerCase();
+                    const bName = (b.name || b.user?.name || '').toLowerCase();
+                    return aName.localeCompare(bName);
+                });
+            } else if (this.scoreFilterType === 'score') {
+                candidates.sort((a, b) => {
+                    const aScore = parseFloat(a.score || a.total_score || 0);
+                    const bScore = parseFloat(b.score || b.total_score || 0);
+                    return bScore - aScore; // Highest to lowest
+                });
+            }
+            
+            return candidates;
         },
         
         deleteJob(id) {
@@ -989,14 +1426,19 @@ function dashboard() {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         'Accept': 'application/json'
                     }
-                }).then(res => {
-                    if (!res.ok) throw new Error('Failed to delete job');
+                }).then(async res => {
+                    const data = await res.json();
+                    if (!res.ok) {
+                        throw new Error(data.message || data.error || 'Failed to delete job');
+                    }
+                    return data;
+                }).then(data => {
                     this.jobs = this.jobs.filter(j => j.id != id);
                     this.filterJobs();
                     alert('Job deleted successfully!');
                 }).catch(err => {
                     console.error('Error deleting job:', err);
-                    alert('Failed to delete job. Please try again.');
+                    alert(err.message || 'Failed to delete job. Please try again.');
                 });
             }
         },
@@ -1012,9 +1454,12 @@ function dashboard() {
                     'Accept': 'application/json'
                 },
                 body: formData
-            }).then(res => {
-                if (!res.ok) throw new Error('Failed to create job');
-                return res.json();
+            }).then(async res => {
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.message || data.error || 'Failed to create job');
+                }
+                return data;
             }).then(data => {
                 this.jobs.push(data);
                 this.filterJobs();
@@ -1023,7 +1468,7 @@ function dashboard() {
                 alert('Job posted successfully!');
             }).catch(err => {
                 console.error('Error creating job:', err);
-                alert('Failed to create job. Please try again.');
+                alert(err.message || 'Failed to create job. Please try again.');
             });
         },
         
@@ -1043,9 +1488,12 @@ function dashboard() {
                     'Accept': 'application/json'
                 },
                 body: formData
-            }).then(res => {
-                if (!res.ok) throw new Error('Failed to update job');
-                return res.json();
+            }).then(async res => {
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.message || data.error || 'Failed to update job');
+                }
+                return data;
             }).then(data => {
                 const index = this.jobs.findIndex(j => j.id == data.id);
                 if (index !== -1) {
@@ -1056,7 +1504,7 @@ function dashboard() {
                 alert('Job updated successfully!');
             }).catch(err => {
                 console.error('Error updating job:', err);
-                alert('Failed to update job. Please try again.');
+                alert(err.message || 'Failed to update job. Please try again.');
             });
         },
         
@@ -1103,14 +1551,19 @@ function dashboard() {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         'Accept': 'application/json'
                     }
-                }).then(res => {
-                    if (!res.ok) throw new Error('Failed to delete task set');
+                }).then(async res => {
+                    const data = await res.json();
+                    if (!res.ok) {
+                        throw new Error(data.message || data.error || 'Failed to delete task set');
+                    }
+                    return data;
+                }).then(data => {
                     this.taskSets = this.taskSets.filter(ts => ts.id != id);
                     this.filterTaskSets();
                     alert('Task set deleted successfully!');
                 }).catch(err => {
                     console.error('Error deleting task set:', err);
-                    alert('Failed to delete task set. Please try again.');
+                    alert(err.message || 'Failed to delete task set. Please try again.');
                 });
             }
         },
@@ -1128,14 +1581,19 @@ function dashboard() {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         'Accept': 'application/json'
                     }
-                }).then(res => {
-                    if (!res.ok) throw new Error('Failed to delete form');
+                }).then(async res => {
+                    const data = await res.json();
+                    if (!res.ok) {
+                        throw new Error(data.message || data.error || 'Failed to delete form');
+                    }
+                    return data;
+                }).then(data => {
                     this.questionSets = this.questionSets.filter(qs => qs.id != id);
                     this.filterQuestionSets();
                     alert('Form deleted successfully!');
                 }).catch(err => {
                     console.error('Error deleting form:', err);
-                    alert('Failed to delete form. Please try again.');
+                    alert(err.message || 'Failed to delete form. Please try again.');
                 });
             }
         },
@@ -1153,14 +1611,19 @@ function dashboard() {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         'Accept': 'application/json'
                     }
-                }).then(res => {
-                    if (!res.ok) throw new Error('Failed to delete recognition');
+                }).then(async res => {
+                    const data = await res.json();
+                    if (!res.ok) {
+                        throw new Error(data.message || data.error || 'Failed to delete recognition');
+                    }
+                    return data;
+                }).then(data => {
                     this.recognitions = this.recognitions.filter(r => r.id != id);
                     this.filterRecognitions();
                     alert('Recognition deleted successfully!');
                 }).catch(err => {
                     console.error('Error deleting recognition:', err);
-                    alert('Failed to delete recognition. Please try again.');
+                    alert(err.message || 'Failed to delete recognition. Please try again.');
                 });
             }
         },
@@ -1196,16 +1659,19 @@ function dashboard() {
                     'Accept': 'application/json'
                 },
                 body: formData
-            }).then(res => {
-                if (!res.ok) throw new Error('Failed to update profile');
-                return res.json();
+            }).then(async res => {
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.message || data.error || 'Failed to update profile');
+                }
+                return data;
             }).then(data => {
                 this.adminProfile = { ...this.adminProfile, ...data };
                 this.editingProfile = false;
                 alert('Profile updated successfully');
             }).catch(err => {
                 console.error('Error updating profile:', err);
-                alert('Failed to update profile. Please try again.');
+                alert(err.message || 'Failed to update profile. Please try again.');
             });
         },
         
@@ -1239,9 +1705,12 @@ function dashboard() {
                     'Accept': 'application/json'
                 },
                 body: formData
-            }).then(res => {
-                if (!res.ok) throw new Error('Failed to update applicant');
-                return res.json();
+            }).then(async res => {
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.message || data.error || 'Failed to update applicant');
+                }
+                return data;
             }).then(data => {
                 const index = this.applicants.findIndex(a => a.id == data.id);
                 if (index !== -1) {
@@ -1253,7 +1722,7 @@ function dashboard() {
                 alert('Applicant updated successfully');
             }).catch(err => {
                 console.error('Error updating applicant:', err);
-                alert('Failed to update applicant. Please try again.');
+                alert(err.message || 'Failed to update applicant. Please try again.');
             });
         },
         
@@ -1274,9 +1743,12 @@ function dashboard() {
                     'Accept': 'application/json'
                 },
                 body: formData
-            }).then(res => {
-                if (!res.ok) throw new Error('Failed to create task set');
-                return res.json();
+            }).then(async res => {
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.message || data.error || 'Failed to create task set');
+                }
+                return data;
             }).then(data => {
                 this.taskSets.push(data);
                 this.filterTaskSets();
@@ -1285,7 +1757,7 @@ function dashboard() {
                 alert('Task set created successfully!');
             }).catch(err => {
                 console.error('Error creating task set:', err);
-                alert('Failed to create task set. Please try again.');
+                alert(err.message || 'Failed to create task set. Please try again.');
             });
         },
         
@@ -1300,9 +1772,12 @@ function dashboard() {
                     'Accept': 'application/json'
                 },
                 body: formData
-            }).then(res => {
-                if (!res.ok) throw new Error('Failed to update task set');
-                return res.json();
+            }).then(async res => {
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.message || data.error || 'Failed to update task set');
+                }
+                return data;
             }).then(data => {
                 const index = this.taskSets.findIndex(ts => ts.id == data.id);
                 if (index !== -1) {
@@ -1314,7 +1789,7 @@ function dashboard() {
                 alert('Task set updated successfully!');
             }).catch(err => {
                 console.error('Error updating task set:', err);
-                alert('Failed to update task set. Please try again.');
+                alert(err.message || 'Failed to update task set. Please try again.');
             });
         },
         
@@ -1322,16 +1797,66 @@ function dashboard() {
             const form = event.target;
             const formData = new FormData(form);
             
+            // Collect questions data from the form
+            const questions = [];
+            const questionInputs = form.querySelectorAll('[name^="questions["]');
+            
+            // Group by question index
+            const questionMap = {};
+            questionInputs.forEach(input => {
+                const match = input.name.match(/questions\[(\d+)\]\[(\w+)\](?:\[(\d+)\])?/);
+                if (match) {
+                    const index = parseInt(match[1]);
+                    const field = match[2];
+                    const optIndex = match[3] ? parseInt(match[3]) : null;
+                    
+                    if (!questionMap[index]) {
+                        questionMap[index] = { options: [] };
+                    }
+                    
+                    if (optIndex !== null) {
+                        // This is an option
+                        if (!questionMap[index].options[optIndex]) {
+                            questionMap[index].options[optIndex] = '';
+                        }
+                        questionMap[index].options[optIndex] = input.value;
+                    } else {
+                        // This is a question field
+                        questionMap[index][field] = input.value;
+                    }
+                }
+            });
+            
+            // Convert map to array
+            Object.keys(questionMap).forEach(index => {
+                const q = questionMap[index];
+                if (q.question_text) {
+                    questions.push({
+                        question_text: q.question_text,
+                        question_type: q.question_type || 'text',
+                        options: q.options && q.options.length > 0 ? JSON.stringify(q.options.filter(opt => opt)) : null,
+                        is_required: true
+                    });
+                }
+            });
+            
+            // Add questions as JSON
+            formData.append('questions', JSON.stringify(questions));
+            
             fetch('/api/hr1/question-sets', {
                 method: 'POST',
                 headers: { 
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'X-Requested-With': 'XMLHttpRequest',
                     'Accept': 'application/json'
                 },
                 body: formData
-            }).then(res => {
-                if (!res.ok) throw new Error('Failed to create form');
-                return res.json();
+            }).then(async res => {
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.message || data.error || 'Failed to create form');
+                }
+                return data;
             }).then(data => {
                 this.questionSets.push(data);
                 this.filterQuestionSets();
@@ -1340,13 +1865,18 @@ function dashboard() {
                 alert('Form created successfully!');
             }).catch(err => {
                 console.error('Error creating form:', err);
-                alert('Failed to create form. Please try again.');
+                alert(err.message || 'Failed to create form. Please try again.');
             });
         },
         
         updateForm() {
             const form = event.target;
             const formData = new FormData(form);
+            
+            // If job_id is provided, add it
+            if (formData.get('job_id')) {
+                formData.append('job_id', formData.get('job_id'));
+            }
             
             fetch(`/api/hr1/question-sets/${this.editingForm.id}`, {
                 method: 'PATCH',
@@ -1355,9 +1885,12 @@ function dashboard() {
                     'Accept': 'application/json'
                 },
                 body: formData
-            }).then(res => {
-                if (!res.ok) throw new Error('Failed to update form');
-                return res.json();
+            }).then(async res => {
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.message || data.error || 'Failed to update form');
+                }
+                return data;
             }).then(data => {
                 const index = this.questionSets.findIndex(qs => qs.id == data.id);
                 if (index !== -1) {
@@ -1369,13 +1902,18 @@ function dashboard() {
                 alert('Form updated successfully!');
             }).catch(err => {
                 console.error('Error updating form:', err);
-                alert('Failed to update form. Please try again.');
+                alert(err.message || 'Failed to update form. Please try again.');
             });
         },
         
         createRecognition() {
             const form = event.target;
             const formData = new FormData(form);
+            
+            // Ensure is_most_outstanding is set correctly
+            if (!formData.has('is_most_outstanding')) {
+                formData.append('is_most_outstanding', '0');
+            }
             
             fetch('/api/hr1/recognitions', {
                 method: 'POST',
@@ -1384,9 +1922,12 @@ function dashboard() {
                     'Accept': 'application/json'
                 },
                 body: formData
-            }).then(res => {
-                if (!res.ok) throw new Error('Failed to create recognition');
-                return res.json();
+            }).then(async res => {
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.message || data.error || 'Failed to create recognition');
+                }
+                return data;
             }).then(data => {
                 this.recognitions.push(data);
                 this.filterRecognitions();
@@ -1395,7 +1936,7 @@ function dashboard() {
                 alert('Recognition posted successfully!');
             }).catch(err => {
                 console.error('Error creating recognition:', err);
-                alert('Failed to post recognition. Please try again.');
+                alert(err.message || 'Failed to post recognition. Please try again.');
             });
         },
         
@@ -1410,9 +1951,12 @@ function dashboard() {
                     'Accept': 'application/json'
                 },
                 body: formData
-            }).then(res => {
-                if (!res.ok) throw new Error('Failed to update recognition');
-                return res.json();
+            }).then(async res => {
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.message || data.error || 'Failed to update recognition');
+                }
+                return data;
             }).then(data => {
                 const index = this.recognitions.findIndex(r => r.id == data.id);
                 if (index !== -1) {
@@ -1424,7 +1968,7 @@ function dashboard() {
                 alert('Recognition updated successfully!');
             }).catch(err => {
                 console.error('Error updating recognition:', err);
-                alert('Failed to update recognition. Please try again.');
+                alert(err.message || 'Failed to update recognition. Please try again.');
             });
         },
         
@@ -1438,6 +1982,12 @@ function dashboard() {
                 { id: 'recognition', label: 'Recognition', icon: 'award' },
                 { id: 'profile', label: 'Profile', icon: 'user-circle' }
             ];
+        },
+        
+        init() {
+            // Initialize filtered lists
+            this.filteredOnboardingJobs = [...this.jobs];
+            this.filterOnboardingCandidates();
         }
     }
 }

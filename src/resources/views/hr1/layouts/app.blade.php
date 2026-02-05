@@ -75,6 +75,10 @@
           background: #1B3C53;
           border-radius: 10px;
       }
+      
+      [x-cloak] {
+          display: none !important;
+      }
     </style>
     @stack('styles')
 </head>

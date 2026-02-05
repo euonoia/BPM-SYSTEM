@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\hr1;
 
 use App\Http\Controllers\Controller;
 use App\Models\hr1\Application_hr1;
@@ -55,42 +55,56 @@ class ApplicationController_hr1 extends Controller
     public function update(Request $request, $id)
     {
         $application = Application_hr1::findOrFail($id);
+        $user = Auth::user();
         
-        // Check ownership
-        if ($application->user_id != Auth::id()) {
+        // Check ownership or admin role
+        if ($application->user_id != Auth::id() && (!$user || $user->role !== 'admin')) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
         $validated = $request->validate([
+            'status' => 'sometimes|in:Applied,Evaluation,Interviewing,Offer,Onboarding,Rejected',
             'documents' => 'nullable|array',
             'documents.*' => 'file|max:5120',
         ]);
 
-        $documents = $application->documents ?? [];
-        if ($request->hasFile('documents')) {
-            foreach ($request->file('documents') as $file) {
-                $documents[] = $file->store('applications_hr1', 'public');
+        $updateData = [];
+        
+        // Allow status update for admins
+        if (isset($validated['status'])) {
+            $updateData['status'] = $validated['status'];
+            // Also update user status if application status changes
+            if ($application->user) {
+                $application->user->update(['status' => $validated['status']]);
             }
         }
 
-        $application->update([
-            'documents' => $documents,
-        ]);
+        // Handle documents update (only for applicants)
+        if ($application->user_id == Auth::id() && $request->hasFile('documents')) {
+            $documents = $application->documents ?? [];
+            foreach ($request->file('documents') as $file) {
+                $documents[] = $file->store('applications_hr1', 'public');
+            }
+            $updateData['documents'] = $documents;
+        }
 
-        return response()->json($application->load('jobPosting_hr1'));
+        $application->update($updateData);
+
+        return response()->json($application->load('jobPosting_hr1', 'user'));
     }
 
     public function destroy($id)
     {
         $application = Application_hr1::findOrFail($id);
+        $user = Auth::user();
         
-        // Check ownership
-        if ($application->user_id != Auth::id()) {
+        // Check ownership or admin role
+        if ($application->user_id != Auth::id() && (!$user || $user->role !== 'admin')) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
         $application->delete();
-        return response()->json(['message' => 'Application cancelled successfully']);
+        return response()->json(['message' => 'Application deleted successfully']);
     }
 
     public function scheduleInterview(Request $request, $id)

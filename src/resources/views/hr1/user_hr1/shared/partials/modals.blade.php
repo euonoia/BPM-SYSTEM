@@ -1,5 +1,8 @@
 <!-- Apply Modal -->
-<div x-show="modalType === 'apply'" class="fixed inset-0 z-[100] flex items-center justify-center p-4" style="display: none;">
+<div x-show="modalType === 'apply'" 
+     x-cloak
+     x-transition
+     class="fixed inset-0 z-[100] flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-primary/40 backdrop-blur-md" @click="modalType = null"></div>
     <div class="relative bg-white w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-hidden">
         <div class="p-8 border-b border-gray-100 flex justify-between items-center">
@@ -32,7 +35,10 @@
 </div>
 
 <!-- View Application Details Modal -->
-<div x-show="modalType === 'view-application'" class="fixed inset-0 z-[100] flex items-center justify-center p-4" style="display: none;">
+<div x-show="modalType === 'view-application'" 
+     x-cloak
+     x-transition
+     class="fixed inset-0 z-[100] flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-primary/40 backdrop-blur-md" @click="modalType = null"></div>
     <div class="relative bg-white w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-hidden">
         <div class="p-8 border-b border-gray-100 flex justify-between items-center">
@@ -82,7 +88,10 @@
 </div>
 
 <!-- Edit Application Modal -->
-<div x-show="modalType === 'edit-application'" class="fixed inset-0 z-[100] flex items-center justify-center p-4" style="display: none;">
+<div x-show="modalType === 'edit-application'" 
+     x-cloak
+     x-transition
+     class="fixed inset-0 z-[100] flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-primary/40 backdrop-blur-md" @click="modalType = null"></div>
     <div class="relative bg-white w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-hidden">
         <div class="p-8 border-b border-gray-100 flex justify-between items-center">
@@ -121,7 +130,10 @@
 </div>
 
 <!-- Take Assessment Modal -->
-<div x-show="modalType === 'take-assessment'" class="fixed inset-0 z-[100] flex items-center justify-center p-4" style="display: none;">
+<div x-show="modalType === 'take-assessment'" 
+     x-cloak
+     x-transition
+     class="fixed inset-0 z-[100] flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-primary/40 backdrop-blur-md" @click="modalType = null"></div>
     <div class="relative bg-white w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-hidden">
         <div class="p-8 border-b border-gray-100 flex justify-between items-center">
@@ -182,7 +194,10 @@
 </div>
 
 <!-- View Module Modal -->
-<div x-show="modalType === 'view-module'" class="fixed inset-0 z-[100] flex items-center justify-center p-4" style="display: none;">
+<div x-show="modalType === 'view-module'" 
+     x-cloak
+     x-transition
+     class="fixed inset-0 z-[100] flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-primary/40 backdrop-blur-md" @click="modalType = null"></div>
     <div class="relative bg-white w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-hidden">
         <div class="p-8 border-b border-gray-100 flex justify-between items-center">
@@ -210,7 +225,10 @@
 </div>
 
 <!-- Add Applicant Modal -->
-<div x-show="modalType === 'add-applicant'" class="fixed inset-0 z-[100] flex items-center justify-center p-4" style="display: none;">
+<div x-show="modalType === 'add-applicant'" 
+     x-cloak
+     x-transition
+     class="fixed inset-0 z-[100] flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-primary/40 backdrop-blur-md" @click="modalType = null"></div>
     <div class="relative bg-white w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-hidden">
         <div class="p-8 border-b border-gray-100 flex justify-between items-center">
@@ -222,7 +240,18 @@
                 <input name="name" required placeholder="Full Name" class="w-full p-4 bg-bg rounded-2xl font-bold text-sm outline-none" />
                 <input name="email" required type="email" placeholder="Email Address" class="w-full p-4 bg-bg rounded-2xl font-bold text-sm outline-none" />
                 <input name="password" required type="password" placeholder="System Password" class="w-full p-4 bg-bg rounded-2xl font-bold text-sm outline-none" />
-                <input name="position" required placeholder="Initial Position" class="w-full p-4 bg-bg rounded-2xl font-bold text-sm outline-none" />
+                <div>
+                    <label class="block text-xs font-semibold text-text-light uppercase tracking-wide mb-2">
+                        Initial Position (Job)
+                    </label>
+                    <select name="position" required
+                            class="w-full p-4 bg-bg rounded-2xl font-bold text-sm outline-none">
+                        <option value="">Select Job</option>
+                        <template x-for="job in jobs" :key="job.id">
+                            <option :value="job.title" x-text="job.title"></option>
+                        </template>
+                    </select>
+                </div>
                 <button type="submit" class="w-full bg-primary text-white py-5 rounded-2xl font-black text-xs uppercase shadow-xl">Add Candidate</button>
             </form>
         </div>
@@ -230,7 +259,10 @@
 </div>
 
 <!-- Create Job Modal -->
-<div x-show="modalType === 'create-job'" class="fixed inset-0 z-[100] flex items-center justify-center p-4" style="display: none;">
+<div x-show="modalType === 'create-job'" 
+     x-cloak
+     x-transition
+     class="fixed inset-0 z-[100] flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-primary/40 backdrop-blur-md" @click="modalType = null"></div>
     <div class="relative bg-white w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-hidden">
         <div class="p-8 border-b border-gray-100 flex justify-between items-center">

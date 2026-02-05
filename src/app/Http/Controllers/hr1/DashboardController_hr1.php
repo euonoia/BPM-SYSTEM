@@ -55,10 +55,51 @@ class DashboardController_hr1 extends Controller
         $completedModules = \DB::table('user_learning_modules_hr1')->where('completed', 1)->count();
         $trainingCompliance = $totalAssignedModules > 0 ? round(($completedModules / $totalAssignedModules) * 100) : 0;
         
-        // Get onboarding candidates (status = Onboarding)
+        // Get onboarding candidates (status = Onboarding or Offer)
         $onboardingCandidates = User::where('role', 'candidate')
-            ->where('status', 'Onboarding')
-            ->with('applications_hr1')
+            ->whereIn('status', ['Onboarding', 'Offer'])
+            ->with(['applications_hr1' => function($query) {
+                $query->whereIn('status', ['Onboarding', 'Offer']);
+            }])
+            ->get()
+            ->map(function($candidate) {
+                // Get applications with onboarding status
+                $applications = $candidate->applications_hr1->filter(function($app) {
+                    return in_array($app->status, ['Onboarding', 'Offer']);
+                });
+                
+                // Get tasks for each application
+                foreach ($applications as $app) {
+                    $app->tasks = DB::table('applicant_tasks_hr1')
+                        ->where('user_id', $candidate->id)
+                        ->where('job_posting_id', $app->job_posting_id)
+                        ->leftJoin('tasks_hr1', 'applicant_tasks_hr1.task_id', '=', 'tasks_hr1.id')
+                        ->select('applicant_tasks_hr1.*', 'tasks_hr1.title as task_title', 'tasks_hr1.description as task_description')
+                        ->get();
+                }
+                
+                // If candidate has applications, add job info
+                if ($applications->count() > 0) {
+                    $firstApp = $applications->first();
+                    $candidate->job_title = $firstApp->jobPosting_hr1->title ?? null;
+                    $candidate->job_id = $firstApp->job_posting_id ?? null;
+                    $candidate->application_id = $firstApp->id ?? null;
+                }
+                
+                return $candidate;
+            });
+        
+        // Get candidate tasks for admin view
+        $candidateTasks = DB::table('applicant_tasks_hr1')
+            ->leftJoin('tasks_hr1', 'applicant_tasks_hr1.task_id', '=', 'tasks_hr1.id')
+            ->leftJoin('users_hr1', 'applicant_tasks_hr1.user_id', '=', 'users_hr1.id')
+            ->leftJoin('job_postings_hr1', 'applicant_tasks_hr1.job_posting_id', '=', 'job_postings_hr1.id')
+            ->select('applicant_tasks_hr1.*', 
+                     'tasks_hr1.title as task_title', 
+                     'tasks_hr1.description as task_description',
+                     'users_hr1.name as user_name',
+                     'job_postings_hr1.title as job_title')
+            ->whereIn('users_hr1.status', ['Onboarding', 'Offer'])
             ->get();
         
         // Get task sets and question sets from database
@@ -158,6 +199,8 @@ class DashboardController_hr1 extends Controller
             'taskSets' => $taskSets,
             'questionSets' => $questionSets,
             'onboardingCandidates' => $onboardingCandidates,
+            'candidateTasks' => $candidateTasks ?? collect(),
+            'assessmentScores' => collect(), // Will be populated when assessment scores are available
             'adminProfile' => $adminProfile,
             // Candidate-specific data
             'currentCandidate' => $currentCandidate,
