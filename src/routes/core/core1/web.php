@@ -71,6 +71,7 @@ Route::middleware(['multiAuth'])->group(function () {
         Route::get('/patients/{patient}/edit', [PatientManagementController::class, 'edit'])->name('patients.edit');
         Route::put('/patients/{patient}', [PatientManagementController::class, 'update'])->name('patients.update');
         Route::delete('/patients/{patient}', [PatientManagementController::class, 'destroy'])->name('patients.destroy');
+        Route::post('/patients/{patient}/assign-nurse', [PatientManagementController::class, 'assignNurse'])->name('patients.assign-nurse');
     });
     
     Route::middleware('role:admin,doctor,patient,receptionist')->group(function () {

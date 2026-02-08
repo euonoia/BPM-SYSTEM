@@ -60,6 +60,10 @@
                 <p>{{ $patient->email }}</p>
             </div>
             <div class="core1-info-item">
+                <h3>Assigned Nurse</h3>
+                <p>{{ $patient->assignedNurse->name ?? 'None' }}</p>
+            </div>
+            <div class="core1-info-item">
                 <h3>Status</h3>
                 <div>
                     <span class="core1-badge {{ $patient->status === 'active' ? 'core1-badge-active' : 'core1-badge-inactive' }}">

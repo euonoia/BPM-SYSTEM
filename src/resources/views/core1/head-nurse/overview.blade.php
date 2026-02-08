@@ -59,7 +59,7 @@
                                 {{ ucfirst($appointment->status) }}
                             </span>
                         </td>
-                        <td>{{ $appointment->nurse_assigned ?? 'Pending' }}</td>
+                        <td>{{ $appointment->patient->assignedNurse->name ?? 'Pending' }}</td>
                     </tr>
                     @empty
                     <tr>

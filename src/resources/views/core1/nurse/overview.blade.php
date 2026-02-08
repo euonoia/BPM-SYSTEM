@@ -13,8 +13,8 @@
 
     <div class="core1-stat-card">
         <div class="d-flex flex-col items-center w-full">
-            <h3 class="core1-info-item h3 text-center mb-10">Active Patients</h3>
-            <p class="core1-title text-green">{{ $stats['active_patients'] ?? 0 }}</p>
+            <h3 class="core1-info-item h3 text-center mb-10">My Assigned Patients</h3>
+            <p class="core1-title text-green">{{ $stats['assigned_patients'] ?? 0 }}</p>
         </div>
     </div>
 
@@ -76,10 +76,10 @@
         </div>
     </div>
 
-    <!-- Recent Patients -->
+    <!-- My Assigned Patients -->
     <div class="core1-card no-hover has-header overflow-hidden core1-scroll-card">
         <div class="core1-card-header">
-            <h2 class="core1-title core1-section-title mb-0">Recently Registered Patients</h2>
+            <h2 class="core1-title core1-section-title mb-0">My Assigned Patients</h2>
         </div>
         <div class="core1-table-container shadow-none core1-scroll-area">
             <table class="core1-table">
@@ -87,19 +87,21 @@
                     <tr>
                         <th>Name</th>
                         <th>Gender</th>
-                        <th>Registered At</th>
+                        <th>Last Visit</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($recentPatients as $patient)
+                    @forelse($assignedPatients as $patient)
                     <tr>
-                        <td class="font-bold text-blue">{{ $patient->name }}</td>
+                        <td class="font-bold text-blue">
+                            <a href="{{ route('patients.show', $patient) }}" class="text-blue">{{ $patient->name }}</a>
+                        </td>
                         <td>{{ ucfirst($patient->gender) }}</td>
-                        <td>{{ $patient->created_at->format('M d, Y') }}</td>
+                        <td>{{ $patient->last_visit ? $patient->last_visit->format('M d, Y') : 'N/A' }}</td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="3" class="empty-state-cell text-center p-40">No recent patients found.</td>
+                        <td colspan="3" class="empty-state-cell text-center p-40">You have no patients assigned to you yet.</td>
                     </tr>
                     @endforelse
                 </tbody>

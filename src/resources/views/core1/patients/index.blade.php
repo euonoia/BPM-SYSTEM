@@ -106,6 +106,7 @@
                     <th>Patient</th>
                     <th>Contact Info</th>
                     <th>Age/Gender</th>
+                    <th>Assigned Nurse</th>
                     <th>Last Visit</th>
                     <th>Status</th>
                     <th class="text-center">Actions</th>
@@ -141,6 +142,25 @@
                                 <span class="text-gray">|</span>
                                 <span class="text-sm text-gray text-capitalize">{{ $patient->gender }}</span>
                             </div>
+                        </td>
+                        <td>
+                            @if(auth()->user()->isAdmin() || auth()->user()->isHeadNurse())
+                                <form action="{{ route('patients.assign-nurse', $patient) }}" method="POST" class="m-0 d-flex gap-2">
+                                    @csrf
+                                    <select name="nurse_id" onchange="this.form.submit()" class="core1-input text-xs w-auto py-5 px-10 m-0">
+                                        <option value="">-- Assign Nurse --</option>
+                                        @foreach($nurses as $nurse)
+                                            <option value="{{ $nurse->id }}" {{ $patient->assigned_nurse_id == $nurse->id ? 'selected' : '' }}>
+                                                {{ $nurse->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </form>
+                            @else
+                                <div class="text-sm text-dark">
+                                    {{ $patient->assignedNurse->name ?? 'Unassigned' }}
+                                </div>
+                            @endif
                         </td>
                         <td>
                             <div class="text-sm text-dark">
@@ -192,7 +212,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="text-center p-40">
+                        <td colspan="7" class="text-center p-40">
                             <div class="d-flex flex-col items-center justify-center">
                                 <div class="icon-box-large">
                                     <i class="fas fa-user-slash"></i>
