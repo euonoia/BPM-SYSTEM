@@ -36,7 +36,7 @@ class CoreAuthController extends Controller
             return match ($user->role) {
                 'admin'        => redirect()->route('admin.dashboard'),
                 'doctor'       => redirect()->route('doctor.dashboard'),
-                'nurse'        => redirect()->route('nurse.dashboard'),
+                'nurse', 'head_nurse' => redirect()->route('nurse.dashboard'),
                 'patient'      => redirect()->route('patient.dashboard'),
                 'receptionist' => redirect()->route('receptionist.dashboard'),
                 'billing'      => redirect()->route('billing.dashboard'),
@@ -66,7 +66,7 @@ class CoreAuthController extends Controller
             'name'           => 'required|string|max:255',
             'email'          => 'required|email|unique:users_core1,email',
             'password'       => 'required|min:8|confirmed',
-            'role'           => 'required|string|in:admin,doctor,nurse,receptionist,patient,billing',
+            'role'           => 'required|string|in:admin,doctor,head_nurse,nurse,receptionist,patient,billing',
             'phone'          => 'nullable|string|max:20',
             'department'     => 'nullable|string|max:255',
             'specialization' => 'nullable|string|max:255',

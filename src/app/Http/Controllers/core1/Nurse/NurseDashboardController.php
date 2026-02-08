@@ -14,6 +14,27 @@ class NurseDashboardController extends Controller
     {
         $user = auth()->user();
         
+        if ($user->role === 'head_nurse') {
+             $stats = [
+                'today_appointments' => Appointment::whereDate('appointment_date', today())->count(),
+                'active_patients' => Patient::where('status', 'active')->count(),
+                'total_nurses' => \App\Models\core1\User::where('role', 'nurse')->count(),
+                'pending_tasks' => Appointment::where('status', 'scheduled')->count(),
+            ];
+            
+            $todayAppointments = Appointment::with(['patient', 'doctor'])
+                ->whereDate('appointment_date', today())
+                ->orderBy('appointment_time')
+                ->take(10)
+                ->get();
+            
+            $recentPatients = Patient::latest()
+                ->take(10)
+                ->get();
+
+            return view('core1.head-nurse.dashboard', compact('stats', 'todayAppointments', 'recentPatients'));
+        }
+
         // Statistics for nurse dashboard
         $stats = [
             'today_appointments' => Appointment::whereDate('appointment_date', today())->count(),
@@ -41,6 +62,27 @@ class NurseDashboardController extends Controller
     {
         $user = auth()->user();
         
+        if ($user->role === 'head_nurse') {
+            $stats = [
+                'today_appointments' => Appointment::whereDate('appointment_date', today())->count(),
+                'active_patients' => Patient::where('status', 'active')->count(),
+                'total_nurses' => \App\Models\core1\User::where('role', 'nurse')->count(),
+                'pending_tasks' => Appointment::where('status', 'scheduled')->count(),
+            ];
+            
+            $todayAppointments = Appointment::with(['patient', 'doctor'])
+                ->whereDate('appointment_date', today())
+                ->orderBy('appointment_time')
+                ->take(10)
+                ->get();
+            
+            $recentPatients = Patient::latest()
+                ->take(10)
+                ->get();
+
+            return view('core1.head-nurse.overview', compact('stats', 'todayAppointments', 'recentPatients'));
+        }
+
         // Statistics for nurse dashboard
         $stats = [
             'today_appointments' => Appointment::whereDate('appointment_date', today())->count(),

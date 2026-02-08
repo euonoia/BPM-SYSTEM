@@ -14,7 +14,7 @@ class CoreAuthController extends BaseAuthController
         return match ($user->role) {
             'admin' => redirect()->route('admin.dashboard'),
             'doctor' => redirect()->route('doctor.dashboard'),
-            'nurse' => redirect()->route('nurse.dashboard'),
+            'nurse', 'head_nurse' => redirect()->route('nurse.dashboard'),
             'patient' => redirect()->route('patient.dashboard'),
             'billing' => redirect()->route('billing.dashboard'),
             default => redirect('/'),

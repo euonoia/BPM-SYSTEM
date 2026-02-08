@@ -3,17 +3,17 @@
     $currentRoute = request()->route()->getName();
     
     $navItems = [
-        ['id' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'bi-house-door', 'roles' => ['admin', 'doctor', 'nurse', 'patient', 'receptionist', 'billing'], 'route' => $user->role . '.dashboard'],
-        ['id' => 'patients', 'label' => 'Patient Management', 'icon' => 'bi-people', 'roles' => ['admin', 'doctor', 'nurse', 'receptionist'], 'route' => 'patients.index'],
+        ['id' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'bi-house-door', 'roles' => ['admin', 'doctor', 'nurse', 'head_nurse', 'patient', 'receptionist', 'billing'], 'route' => ($user->role === 'head_nurse' ? 'nurse' : $user->role) . '.dashboard'],
+        ['id' => 'patients', 'label' => 'Patient Management', 'icon' => 'bi-people', 'roles' => ['admin', 'doctor', 'nurse', 'head_nurse', 'receptionist'], 'route' => 'patients.index'],
         ['id' => 'appointments', 'label' => 'Appointments', 'icon' => 'bi-calendar', 'roles' => ['admin', 'doctor', 'patient', 'receptionist'], 'route' => 'appointments.index'],
-        ['id' => 'inpatient', 'label' => 'Inpatient Care', 'icon' => 'bi-hospital', 'roles' => ['admin', 'doctor', 'nurse'], 'route' => 'inpatient.index'],
-        ['id' => 'outpatient', 'label' => 'Outpatient Care', 'icon' => 'bi-heart-pulse', 'roles' => ['admin', 'doctor', 'nurse'], 'route' => 'outpatient.index'],
-        ['id' => 'medical-records', 'label' => 'Medical Records', 'icon' => 'bi-file-text', 'roles' => ['admin', 'doctor', 'nurse', 'patient'], 'route' => 'medical-records.index'],
+        ['id' => 'inpatient', 'label' => 'Inpatient Care', 'icon' => 'bi-hospital', 'roles' => ['admin', 'doctor', 'nurse', 'head_nurse'], 'route' => 'inpatient.index'],
+        ['id' => 'outpatient', 'label' => 'Outpatient Care', 'icon' => 'bi-heart-pulse', 'roles' => ['admin', 'doctor', 'nurse', 'head_nurse'], 'route' => 'outpatient.index'],
+        ['id' => 'medical-records', 'label' => 'Medical Records', 'icon' => 'bi-file-text', 'roles' => ['admin', 'doctor', 'nurse', 'head_nurse', 'patient'], 'route' => 'medical-records.index'],
         ['id' => 'billing', 'label' => 'Billing & Payments', 'icon' => 'bi-credit-card', 'roles' => ['admin', 'billing', 'patient'], 'route' => 'billing.index'],
-        ['id' => 'discharge', 'label' => 'Discharge Management', 'icon' => 'bi-clipboard-check', 'roles' => ['admin', 'doctor', 'nurse', 'billing'], 'route' => 'discharge.index'],
+        ['id' => 'discharge', 'label' => 'Discharge Management', 'icon' => 'bi-clipboard-check', 'roles' => ['admin', 'doctor', 'nurse', 'head_nurse', 'billing'], 'route' => 'discharge.index'],
         ['id' => 'reports', 'label' => 'Reports & Analytics', 'icon' => 'bi-graph-up', 'roles' => ['admin'], 'route' => 'reports.index'],
         ['id' => 'staff', 'label' => 'Staff Management', 'icon' => 'bi-person-gear', 'roles' => ['admin'], 'route' => 'staff.index'],
-        ['id' => 'settings', 'label' => 'Settings', 'icon' => 'bi-gear', 'roles' => ['admin', 'doctor', 'nurse', 'patient', 'receptionist', 'billing'], 'route' => 'settings.index'],
+        ['id' => 'settings', 'label' => 'Settings', 'icon' => 'bi-gear', 'roles' => ['admin', 'doctor', 'nurse', 'head_nurse', 'patient', 'receptionist', 'billing'], 'route' => 'settings.index'],
     ];
     
     $filteredNavItems = array_filter($navItems, function($item) use ($user) {

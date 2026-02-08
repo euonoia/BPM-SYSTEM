@@ -157,6 +157,7 @@
                     <option value="">--Select Role--</option>
                     <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Administrator</option>
                     <option value="doctor" {{ old('role') == 'doctor' ? 'selected' : '' }}>Doctor</option>
+                    <option value="head_nurse" {{ old('role') == 'head_nurse' ? 'selected' : '' }}>Head Nurse</option>
                     <option value="nurse" {{ old('role') == 'nurse' ? 'selected' : '' }}>Nurse</option>
                     <option value="receptionist" {{ old('role') == 'receptionist' ? 'selected' : '' }}>Receptionist</option>
                     <option value="patient" {{ old('role') == 'patient' ? 'selected' : '' }}>Patient</option>

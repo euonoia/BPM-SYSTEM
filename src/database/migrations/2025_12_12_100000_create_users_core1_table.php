@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('role', ['admin', 'doctor', 'nurse', 'patient', 'receptionist', 'billing'])->default('patient');
+            $table->enum('role', ['admin', 'doctor', 'head_nurse', 'nurse', 'patient', 'receptionist', 'billing'])->default('patient');
             $table->string('employee_id')->unique()->nullable();
             $table->string('department')->nullable();
             $table->string('specialization')->nullable();

@@ -45,7 +45,7 @@ Route::middleware('auth:core')->get('/core', function () {
     return match ($user->role) {
         'admin'         => redirect()->route('admin.dashboard'),
         'doctor'        => redirect()->route('doctor.dashboard'),
-        'nurse'         => redirect()->route('nurse.dashboard'),
+        'nurse', 'head_nurse' => redirect()->route('nurse.dashboard'),
         'patient'       => redirect()->route('patient.dashboard'),
         'receptionist'  => redirect()->route('receptionist.dashboard'),
         'billing'       => redirect()->route('billing.dashboard'),

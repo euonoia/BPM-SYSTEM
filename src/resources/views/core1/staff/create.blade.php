@@ -25,6 +25,7 @@
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                         <option value="">Select Role</option>
                         <option value="doctor">Doctor</option>
+                        <option value="head_nurse">Head Nurse</option>
                         <option value="nurse">Nurse</option>
                         <option value="receptionist">Receptionist</option>
                         <option value="billing">Billing Officer</option>

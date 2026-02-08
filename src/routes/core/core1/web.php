@@ -42,7 +42,7 @@ Route::middleware(['multiAuth'])->group(function () {
         Route::get('/overview', [DoctorDashboardController::class, 'overview'])->name('doctor.overview');
     });
     
-    Route::prefix('nurse')->middleware('role:nurse')->group(function () {
+    Route::prefix('nurse')->middleware('role:nurse,head_nurse')->group(function () {
         Route::get('/dashboard', [NurseDashboardController::class, 'index'])->name('nurse.dashboard');
         Route::get('/overview', [NurseDashboardController::class, 'overview'])->name('nurse.overview');
     });
@@ -63,7 +63,7 @@ Route::middleware(['multiAuth'])->group(function () {
     });
     
     // Shared Feature Routes
-    Route::middleware('role:admin,doctor,nurse,receptionist')->group(function () {
+    Route::middleware('role:admin,doctor,nurse,head_nurse,receptionist')->group(function () {
         Route::get('/patients', [PatientManagementController::class, 'index'])->name('patients.index');
         Route::get('/patients/create', [PatientManagementController::class, 'create'])->name('patients.create');
         Route::post('/patients', [PatientManagementController::class, 'store'])->name('patients.store');
@@ -83,13 +83,13 @@ Route::middleware(['multiAuth'])->group(function () {
         Route::delete('/appointments/{appointment}', [AppointmentController::class, 'destroy'])->name('appointments.destroy');
     });
     
-    Route::middleware('role:admin,doctor,nurse')->group(function () {
+    Route::middleware('role:admin,doctor,nurse,head_nurse')->group(function () {
         Route::get('/inpatient', [InpatientController::class, 'index'])->name('inpatient.index');
         Route::get('/outpatient', [OutpatientController::class, 'index'])->name('outpatient.index');
         Route::get('/discharge', [DischargeController::class, 'index'])->name('discharge.index');
     });
     
-    Route::middleware('role:admin,doctor,nurse,patient')->group(function () {
+    Route::middleware('role:admin,doctor,nurse,head_nurse,patient')->group(function () {
         Route::get('/medical-records', [MedicalRecordController::class, 'index'])->name('medical-records.index');
         Route::get('/medical-records/{record}', [MedicalRecordController::class, 'show'])->name('medical-records.show');
     });
