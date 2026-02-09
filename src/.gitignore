@@ -25,5 +25,3 @@ Thumbs.db
 .cursorignore
 resources/views/core1/plan.md
 **/agent/
-src/resources/views/core1/Head.nurse.md
-.agent/rules/strict-rule.md
