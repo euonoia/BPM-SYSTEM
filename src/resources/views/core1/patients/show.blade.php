@@ -10,11 +10,11 @@
             <p class="core1-subtitle">View patient information</p>
         </div>
         <div class="core1-flex-gap-2">
-            <a href="{{ route('patients.edit', $patient) }}" class="core1-btn core1-btn-primary">
+            <a href="{{ route('core1.patients.edit', $patient) }}" class="core1-btn core1-btn-primary">
                 <i class="fas fa-edit"></i>
                 <span class="pl-20">Edit Patient</span>
             </a>
-            <form action="{{ route('patients.destroy', $patient) }}" method="POST" class="core1-flex m-0" onsubmit="return confirm('Are you sure you want to delete this patient? This action cannot be undone.');">
+            <form action="{{ route('core1.patients.destroy', $patient) }}" method="POST" class="core1-flex m-0" onsubmit="return confirm('Are you sure you want to delete this patient? This action cannot be undone.');">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="core1-btn core1-btn-danger">
@@ -22,7 +22,7 @@
                     <span class="pl-20">Delete Patient</span>
                 </button>
             </form>
-            <a href="{{ route('patients.index') }}" class="core1-btn core1-btn-outline">
+            <a href="{{ route('core1.patients.index') }}" class="core1-btn core1-btn-outline">
                 <i class="fas fa-arrow-left"></i>
                 <span class="pl-20">Back to List</span>
             </a>
@@ -99,11 +99,11 @@
     </div>
 
     <div class="core1-form-actions">
-        <a href="{{ route('appointments.create', ['patient_id' => $patient->id]) }}" class="core1-btn core1-btn-success">
+        <a href="{{ route('core1.appointments.create', ['patient_id' => $patient->id]) }}" class="core1-btn core1-btn-success">
             <i class="fas fa-calendar-plus"></i>
             <span class="pl-20">Book Appointment</span>
         </a>
-        <a href="{{ route('medical-records.index', ['patient' => $patient->id]) }}" class="core1-btn core1-btn-outline">
+        <a href="{{ route('core1.medical-records.index', ['patient' => $patient->id]) }}" class="core1-btn core1-btn-outline">
             <i class="fas fa-file-medical"></i>
             <span class="pl-20">View Medical Records</span>
         </a>

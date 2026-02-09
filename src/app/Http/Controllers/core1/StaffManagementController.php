@@ -40,7 +40,7 @@ class StaffManagementController extends Controller
 
         User::create($validated);
 
-        return redirect()->route('staff.index')->with('success', 'Staff member added successfully.');
+        return redirect()->route('core1.staff.index')->with('success', 'Staff member added successfully.');
     }
 }
 

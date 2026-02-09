@@ -74,7 +74,7 @@ class PatientManagementController extends Controller
 
         Patient::create($validated);
 
-        return redirect()->route('patients.index')->with('success', 'Patient registered successfully.');
+        return redirect()->route('core1.patients.index')->with('success', 'Patient registered successfully.');
     }
 
     public function show(Patient $patient)
@@ -103,13 +103,13 @@ class PatientManagementController extends Controller
 
         $patient->update($validated);
 
-        return redirect()->route('patients.index')->with('success', 'Patient updated successfully.');
+        return redirect()->route('core1.patients.index')->with('success', 'Patient updated successfully.');
     }
 
     public function destroy(Patient $patient)
     {
         $patient->delete();
-        return redirect()->route('patients.index')->with('success', 'Patient deleted successfully.');
+        return redirect()->route('core1.patients.index')->with('success', 'Patient deleted successfully.');
     }
 
     public function assignNurse(Request $request, Patient $patient)

@@ -66,7 +66,7 @@ class AppointmentController extends Controller
 
         Appointment::create($validated);
 
-        return redirect()->route('appointments.index')->with('success', 'Appointment booked successfully.');
+        return redirect()->route('core1.appointments.index')->with('success', 'Appointment booked successfully.');
     }
 
     public function show(Appointment $appointment)
@@ -117,7 +117,7 @@ class AppointmentController extends Controller
             $msg .= " Slot opened! Notified waiting patient: {$waiting->patient->name}.";
         }
 
-        return redirect()->route('appointments.index')->with('success', $msg);
+        return redirect()->route('core1.appointments.index')->with('success', $msg);
     }
 
     /**

@@ -94,7 +94,7 @@
                     @forelse($assignedPatients as $patient)
                     <tr>
                         <td class="font-bold text-blue">
-                            <a href="{{ route('patients.show', $patient) }}" class="text-blue">{{ $patient->name }}</a>
+                            <a href="{{ route('core1.patients.show', $patient) }}" class="text-blue">{{ $patient->name }}</a>
                         </td>
                         <td>{{ ucfirst($patient->gender) }}</td>
                         <td>{{ $patient->last_visit ? $patient->last_visit->format('M d, Y') : 'N/A' }}</td>

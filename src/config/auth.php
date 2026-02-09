@@ -31,7 +31,7 @@ return [
         'provider' => 'users',
     ],
 
-    'core' => [
+    'core1' => [
         'driver' => 'session',
         'provider' => 'core_users',
     ],

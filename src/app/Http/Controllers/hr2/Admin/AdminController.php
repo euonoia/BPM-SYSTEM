@@ -34,6 +34,6 @@ class AdminController extends Controller
             'role' => 'admin', 
         ]);
 
-        return redirect()->route('admin.dashboard')->with('success', 'Admin added successfully!');
+        return redirect()->route('hr2.admin.dashboard')->with('success', 'Admin added successfully!');
     }
 }

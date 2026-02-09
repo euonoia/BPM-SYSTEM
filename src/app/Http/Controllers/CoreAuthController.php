@@ -28,18 +28,18 @@ class CoreAuthController extends Controller
             'password' => 'required',
         ]);
 
-        if (Auth::guard('core')->attempt($credentials, $request->boolean('remember'))) {
+        if (Auth::guard('core1')->attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
-            $user = Auth::guard('core')->user();
+            $user = Auth::guard('core1')->user();
 
             // Redirect based on role
             return match ($user->role) {
-                'admin'        => redirect()->route('admin.dashboard'),
-                'doctor'       => redirect()->route('doctor.dashboard'),
-                'nurse', 'head_nurse' => redirect()->route('nurse.dashboard'),
-                'patient'      => redirect()->route('patient.dashboard'),
-                'receptionist' => redirect()->route('receptionist.dashboard'),
-                'billing'      => redirect()->route('billing.dashboard'),
+                'admin'        => redirect()->route('core1.admin.dashboard'),
+                'doctor'       => redirect()->route('core1.doctor.dashboard'),
+                'nurse', 'head_nurse' => redirect()->route('core1.nurse.dashboard'),
+                'patient'      => redirect()->route('core1.patient.dashboard'),
+                'receptionist' => redirect()->route('core1.receptionist.dashboard'),
+                'billing'      => redirect()->route('core1.billing.dashboard'),
                 default        => abort(403),
             };
         }
@@ -83,10 +83,10 @@ class CoreAuthController extends Controller
             'status'         => 'active',
         ]);
 
-        Auth::guard('core')->login($user);
+        Auth::guard('core1')->login($user);
         $request->session()->regenerate();
 
-        return redirect()->route('core.home');
+        return redirect()->route('core1.home');
     }
 
     /**
@@ -94,11 +94,11 @@ class CoreAuthController extends Controller
      */
     public function logout(Request $request)
     {
-        Auth::guard('core')->logout();
+        Auth::guard('core1')->logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('core.login'); // matches web.php
+        return redirect()->route('core1.login'); // matches web.php
     }
 }
