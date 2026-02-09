@@ -23,7 +23,7 @@
             <h2 class="core1-title">Patient Management</h2>
             <p class="core1-subtitle">Manage patient records and registrations</p>
         </div>
-        <a href="{{ route('patients.create') }}" class="core1-btn core1-btn-primary">
+        <a href="{{ route('core1.patients.create') }}" class="core1-btn core1-btn-primary">
             <i class="fas fa-plus"></i>
             <span class="pl-20">New Patient</span>
         </a>
@@ -71,7 +71,7 @@
         </div>
     </div>
 
-    <form method="GET" action="{{ route('patients.index') }}" class="core1-search-form">
+    <form method="GET" action="{{ route('core1.patients.index') }}" class="core1-search-form">
         <div class="core1-search-input-wrapper">
             <i class="fas fa-search core1-search-icon"></i>
             <input
@@ -92,7 +92,7 @@
             <span class="pl-20">Search</span>
         </button>
         @if($searchTerm || $statusFilter)
-            <a href="{{ route('patients.index') }}" class="core1-btn core1-btn-outline">
+            <a href="{{ route('core1.patients.index') }}" class="core1-btn core1-btn-outline">
                 <i class="fas fa-times"></i>
                 <span class="pl-20">Clear</span>
             </a>
@@ -106,6 +106,7 @@
                     <th>Patient</th>
                     <th>Contact Info</th>
                     <th>Age/Gender</th>
+                    <th>Assigned Nurse</th>
                     <th>Last Visit</th>
                     <th>Status</th>
                     <th class="text-center">Actions</th>
@@ -143,6 +144,25 @@
                             </div>
                         </td>
                         <td>
+                            @if(auth()->user()->isAdmin() || auth()->user()->isHeadNurse())
+                                <form action="{{ route('core1.patients.assign-nurse', $patient) }}" method="POST" class="m-0 d-flex gap-2">
+                                    @csrf
+                                    <select name="nurse_id" onchange="this.form.submit()" class="core1-input text-xs w-auto py-5 px-10 m-0">
+                                        <option value="">-- Assign Nurse --</option>
+                                        @foreach($nurses as $nurse)
+                                            <option value="{{ $nurse->id }}" {{ $patient->assigned_nurse_id == $nurse->id ? 'selected' : '' }}>
+                                                {{ $nurse->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </form>
+                            @else
+                                <div class="text-sm text-dark">
+                                    {{ $patient->assignedNurse->name ?? 'Unassigned' }}
+                                </div>
+                            @endif
+                        </td>
+                        <td>
                             <div class="text-sm text-dark">
                                 {{ $patient->last_visit ? $patient->last_visit->format('M d, Y') : 'Never' }}
                             </div>
@@ -160,22 +180,22 @@
                         </td>
                         <td>
                             <div class="d-flex items-center justify-center gap-2">
-                                <a href="{{ route('patients.show', $patient) }}" 
+                                <a href="{{ route('core1.patients.show', $patient) }}" 
                                    class="core1-icon-action text-blue"
                                    title="View Details">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="{{ route('patients.edit', $patient) }}" 
+                                <a href="{{ route('core1.patients.edit', $patient) }}" 
                                    class="core1-icon-action text-orange"
                                    title="Edit Patient">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <a href="{{ route('appointments.create', ['patient_id' => $patient->id]) }}" 
+                                <a href="{{ route('core1.appointments.create', ['patient_id' => $patient->id]) }}" 
                                    class="core1-icon-action text-purple"
                                    title="Book Appointment">
                                     <i class="fas fa-calendar-plus"></i>
                                 </a>
-                                <form action="{{ route('patients.destroy', $patient) }}" 
+                                <form action="{{ route('core1.patients.destroy', $patient) }}" 
                                       method="POST" 
                                       class="d-flex m-0 p-0 bg-transparent"
                                       onsubmit="return confirm('Are you sure you want to delete this patient? This action cannot be undone.');">
@@ -192,7 +212,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="text-center p-40">
+                        <td colspan="7" class="text-center p-40">
                             <div class="d-flex flex-col items-center justify-center">
                                 <div class="icon-box-large">
                                     <i class="fas fa-user-slash"></i>
@@ -206,7 +226,7 @@
                                     @endif
                                 </p>
                                 @if(!$searchTerm && !$statusFilter)
-                                    <a href="{{ route('patients.create') }}" class="core1-btn core1-btn-primary">
+                                    <a href="{{ route('core1.patients.create') }}" class="core1-btn core1-btn-primary">
                                         <i class="fas fa-plus"></i>
                                         <span class="pl-20">Add First Patient</span>
                                     </a>

@@ -10,9 +10,13 @@ use App\Http\Controllers\OnboardingController_hr1;
 use App\Http\Controllers\LearningModuleController_hr1;
 use App\Http\Controllers\EvaluationController_hr1;
 
+use App\Http\Controllers\hr1\HR1Controller;
+
 // HR1 Index Route
 Route::prefix('hr/hr1')->name('hr.hr1.')->group(function () {
-    Route::get('/', fn () => view('hr1.index'))->name('index');
+    Route::get('/', [HR1Controller::class, 'index'])->name('index');
+    Route::get('/policies', [HR1Controller::class, 'policies'])->name('policies');
+    Route::get('/reports', [HR1Controller::class, 'reports'])->name('reports');
 });
 
 // Change FROM:
@@ -24,11 +28,13 @@ Route::prefix('api/hr1')->group(function () {
     Route::get('/applicants', [ApplicantController_hr1::class, 'index']);
     Route::post('/applicants', [ApplicantController_hr1::class, 'store']);
     Route::get('/applicants/{id}', [ApplicantController_hr1::class, 'show']);
+    Route::patch('/applicants/{id}', [ApplicantController_hr1::class, 'update']);
     Route::patch('/applicants/{id}/status', [ApplicantController_hr1::class, 'updateStatus']);
 
     // Jobs
     Route::get('/jobs', [JobController_hr1::class, 'index']);
     Route::post('/jobs', [JobController_hr1::class, 'store']);
+    Route::patch('/jobs/{id}', [JobController_hr1::class, 'update']);
     Route::delete('/jobs/{id}', [JobController_hr1::class, 'destroy']);
 
     // Applications
@@ -38,9 +44,25 @@ Route::prefix('api/hr1')->group(function () {
     // Recognitions
     Route::get('/recognitions', [RecognitionController_hr1::class, 'index']);
     Route::post('/recognitions', [RecognitionController_hr1::class, 'store']);
+    Route::patch('/recognitions/{id}', [RecognitionController_hr1::class, 'update']);
     Route::post('/recognitions/{id}/congratulate', [RecognitionController_hr1::class, 'congratulate']);
     Route::post('/recognitions/{id}/boost', [RecognitionController_hr1::class, 'boost']);
     Route::delete('/recognitions/{id}', [RecognitionController_hr1::class, 'destroy']);
+    
+    // Task Sets
+    Route::get('/task-sets', [OnboardingController_hr1::class, 'taskSets']);
+    Route::post('/task-sets', [OnboardingController_hr1::class, 'storeTaskSet']);
+    Route::patch('/task-sets/{id}', [OnboardingController_hr1::class, 'updateTaskSet']);
+    Route::delete('/task-sets/{id}', [OnboardingController_hr1::class, 'destroyTaskSet']);
+    
+    // Question Sets
+    Route::get('/question-sets', [EvaluationController_hr1::class, 'questionSets']);
+    Route::post('/question-sets', [EvaluationController_hr1::class, 'storeQuestionSet']);
+    Route::patch('/question-sets/{id}', [EvaluationController_hr1::class, 'updateQuestionSet']);
+    Route::delete('/question-sets/{id}', [EvaluationController_hr1::class, 'destroyQuestionSet']);
+    
+    // Admin Profile
+    Route::patch('/admin/profile', [DashboardController_hr1::class, 'updateProfile']);
 
     // Onboarding
     Route::get('/tasks', [OnboardingController_hr1::class, 'index']);

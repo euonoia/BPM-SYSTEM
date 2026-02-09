@@ -42,6 +42,22 @@ class JobController_hr1 extends Controller
         return response()->json($job, 201);
     }
 
+    public function update(Request $request, $id)
+    {
+        $job = JobPosting_hr1::findOrFail($id);
+        
+        $validated = $request->validate([
+            'title' => 'sometimes|string|max:255',
+            'department' => 'sometimes|string|max:255',
+            'location' => 'sometimes|string|max:255',
+            'type' => 'sometimes|in:Full-time,Part-time,Contract',
+            'description' => 'sometimes|string',
+        ]);
+
+        $job->update($validated);
+        return response()->json($job);
+    }
+
     public function destroy($id)
     {
         $job = JobPosting_hr1::findOrFail($id);

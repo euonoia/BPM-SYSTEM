@@ -47,9 +47,14 @@ class User extends Authenticatable
         return $this->role === 'doctor';
     }
 
+    public function isHeadNurse(): bool
+    {
+        return $this->role === 'head_nurse';
+    }
+
     public function isNurse(): bool
     {
-        return $this->role === 'nurse';
+        return in_array($this->role, ['nurse', 'head_nurse']);
     }
 
     public function isPatient(): bool

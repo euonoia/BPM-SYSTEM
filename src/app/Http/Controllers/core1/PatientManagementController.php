@@ -4,6 +4,7 @@ namespace App\Http\Controllers\core1;
 
 use App\Http\Controllers\Controller;
 use App\Models\core1\Patient;
+use App\Models\core1\User;
 use Illuminate\Http\Request;
 
 class PatientManagementController extends Controller
@@ -39,7 +40,13 @@ class PatientManagementController extends Controller
                 ->count(),
         ];
         
-        return view('core1.patients.index', compact('patients', 'searchTerm', 'statusFilter', 'stats'));
+        // Nurses for assignment (Head Nurse/Admin only)
+        $nurses = [];
+        if (auth()->user()->isAdmin() || auth()->user()->isHeadNurse()) {
+            $nurses = User::where('role', 'nurse')->get();
+        }
+        
+        return view('core1.patients.index', compact('patients', 'searchTerm', 'statusFilter', 'stats', 'nurses'));
     }
 
     public function create()
@@ -67,7 +74,7 @@ class PatientManagementController extends Controller
 
         Patient::create($validated);
 
-        return redirect()->route('patients.index')->with('success', 'Patient registered successfully.');
+        return redirect()->route('core1.patients.index')->with('success', 'Patient registered successfully.');
     }
 
     public function show(Patient $patient)
@@ -96,13 +103,26 @@ class PatientManagementController extends Controller
 
         $patient->update($validated);
 
-        return redirect()->route('patients.index')->with('success', 'Patient updated successfully.');
+        return redirect()->route('core1.patients.index')->with('success', 'Patient updated successfully.');
     }
 
     public function destroy(Patient $patient)
     {
         $patient->delete();
-        return redirect()->route('patients.index')->with('success', 'Patient deleted successfully.');
+        return redirect()->route('core1.patients.index')->with('success', 'Patient deleted successfully.');
+    }
+
+    public function assignNurse(Request $request, Patient $patient)
+    {
+        $validated = $request->validate([
+            'nurse_id' => 'required|exists:users_core1,id',
+        ]);
+
+        $patient->update([
+            'assigned_nurse_id' => $validated['nurse_id']
+        ]);
+
+        return back()->with('success', 'Nurse assigned to patient successfully.');
     }
 }
 

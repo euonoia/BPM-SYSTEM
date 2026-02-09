@@ -27,36 +27,31 @@ Route::prefix('portal')->group(function () {
 | Core Authentication
 |--------------------------------------------------------------------------
 */
-Route::get('/login', [CoreAuthController::class, 'showLogin'])->name('core.login');
-Route::post('/login', [CoreAuthController::class, 'login'])->name('core.login.post');
-Route::get('/register', [CoreAuthController::class, 'showRegistrationForm'])->name('core.register');
-Route::post('/register', [CoreAuthController::class, 'register'])->name('core.register.post');
-Route::match(['get', 'post'], '/logout', [CoreAuthController::class, 'logout'])->name('core.logout');
+Route::get('/login', [CoreAuthController::class, 'showLogin'])->name('core1.login');
+Route::post('/login', [CoreAuthController::class, 'login'])->name('core1.login.post');
+Route::get('/register', [CoreAuthController::class, 'showRegistrationForm'])->name('core1.register');
+Route::post('/register', [CoreAuthController::class, 'register'])->name('core1.register.post');
+Route::match(['get', 'post'], '/logout', [CoreAuthController::class, 'logout'])->name('core1.logout');
 /*
 
-    // Register
-    Route::get('/register', [CoreAuthController::class, 'showRegistrationForm'])->name('core.register');
-    Route::post('/register', [CoreAuthController::class, 'register'])->name('core.register.submit');
+/*
+|--------------------------------------------------------------------------
+| Core Post-Login Router
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth:core1')->get('/core1', function () {
+    $user = auth('core1')->user();
 
-    // Logout
-    Route::post('/logout', [CoreAuthController::class, 'logout'])->name('core.logout');
-
-    // Post-login redirect
-    Route::middleware('auth:core')->get('/', function () {
-        $user = auth('core')->user();
-
-        return match ($user->role) {
-            'admin'         => redirect()->route('admin.dashboard'),
-            'doctor'        => redirect()->route('doctor.dashboard'),
-            'nurse'         => redirect()->route('nurse.dashboard'),
-            'patient'       => redirect()->route('patient.dashboard'),
-            'receptionist'  => redirect()->route('receptionist.dashboard'),
-            'billing'       => redirect()->route('billing.dashboard'),
-            default         => abort(403),
-        };
-    })->name('core.home');
-});
-
+    return match ($user->role) {
+        'admin'         => redirect()->route('core1.admin.dashboard'),
+        'doctor'        => redirect()->route('core1.doctor.dashboard'),
+        'nurse', 'head_nurse' => redirect()->route('core1.nurse.dashboard'),
+        'patient'       => redirect()->route('core1.patient.dashboard'),
+        'receptionist'  => redirect()->route('core1.receptionist.dashboard'),
+        'billing'       => redirect()->route('core1.billing.dashboard'),
+        default         => abort(403),
+    };
+})->name('core1.home');
 
 /*
 |--------------------------------------------------------------------------

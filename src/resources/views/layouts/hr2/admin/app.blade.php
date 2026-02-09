@@ -24,7 +24,7 @@
         <div><strong>HR2 Admin</strong></div>
         <div>
             <a href="{{ route('hr2.admin.dashboard') }}">Dashboard</a>
-            <a href="{{ route('admin.add') }}">Add Admin</a>
+            <a href="{{ route('hr2.admin.add') }}">Add Admin</a>
             <a href="{{ route('hr2.admin.competency') }}">Competency</a>
             <a href="{{ route('hr2.admin.learning') }}">Learning</a>
             <a href="{{ route('hr2.admin.training') }}">Training</a>

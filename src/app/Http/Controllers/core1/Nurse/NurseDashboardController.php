@@ -14,10 +14,31 @@ class NurseDashboardController extends Controller
     {
         $user = auth()->user();
         
+        if ($user->role === 'head_nurse') {
+             $stats = [
+                'today_appointments' => Appointment::whereDate('appointment_date', today())->count(),
+                'active_patients' => Patient::where('status', 'active')->count(),
+                'total_nurses' => \App\Models\core1\User::where('role', 'nurse')->count(),
+                'pending_tasks' => Appointment::where('status', 'scheduled')->count(),
+            ];
+            
+            $todayAppointments = Appointment::with(['patient.assignedNurse', 'doctor'])
+                ->whereDate('appointment_date', today())
+                ->orderBy('appointment_time')
+                ->take(10)
+                ->get();
+            
+            $recentPatients = Patient::latest()
+                ->take(10)
+                ->get();
+
+            return view('core1.head-nurse.dashboard', compact('stats', 'todayAppointments', 'recentPatients'));
+        }
+
         // Statistics for nurse dashboard
         $stats = [
             'today_appointments' => Appointment::whereDate('appointment_date', today())->count(),
-            'active_patients' => Patient::where('status', 'active')->count(),
+            'assigned_patients' => Patient::where('assigned_nurse_id', $user->id)->count(),
             'today_registrations' => Patient::whereDate('created_at', today())->count(),
             'recent_records' => MedicalRecord::whereDate('created_at', '>=', now()->subDays(7))->count(),
         ];
@@ -29,22 +50,49 @@ class NurseDashboardController extends Controller
             ->take(5)
             ->get();
         
-        // Recent patients
+        // Assigned patients
+        $assignedPatients = Patient::where('assigned_nurse_id', $user->id)
+            ->latest()
+            ->take(5)
+            ->get();
+        
+        // Recent patients (fallback/global)
         $recentPatients = Patient::latest()
             ->take(5)
             ->get();
         
-        return view('core1.nurse.dashboard', compact('stats', 'todayAppointments', 'recentPatients'));
+        return view('core1.nurse.dashboard', compact('stats', 'todayAppointments', 'assignedPatients', 'recentPatients'));
     }
 
     public function overview()
     {
         $user = auth()->user();
         
+        if ($user->role === 'head_nurse') {
+            $stats = [
+                'today_appointments' => Appointment::whereDate('appointment_date', today())->count(),
+                'active_patients' => Patient::where('status', 'active')->count(),
+                'total_nurses' => \App\Models\core1\User::where('role', 'nurse')->count(),
+                'pending_tasks' => Appointment::where('status', 'scheduled')->count(),
+            ];
+            
+            $todayAppointments = Appointment::with(['patient.assignedNurse', 'doctor'])
+                ->whereDate('appointment_date', today())
+                ->orderBy('appointment_time')
+                ->take(10)
+                ->get();
+            
+            $recentPatients = Patient::latest()
+                ->take(10)
+                ->get();
+
+            return view('core1.head-nurse.overview', compact('stats', 'todayAppointments', 'recentPatients'));
+        }
+
         // Statistics for nurse dashboard
         $stats = [
             'today_appointments' => Appointment::whereDate('appointment_date', today())->count(),
-            'active_patients' => Patient::where('status', 'active')->count(),
+            'assigned_patients' => Patient::where('assigned_nurse_id', $user->id)->count(),
             'today_registrations' => Patient::whereDate('created_at', today())->count(),
             'recent_records' => MedicalRecord::whereDate('created_at', '>=', now()->subDays(7))->count(),
         ];
@@ -56,12 +104,18 @@ class NurseDashboardController extends Controller
             ->take(5)
             ->get();
         
-        // Recent patients
+        // Assigned patients
+        $assignedPatients = Patient::where('assigned_nurse_id', $user->id)
+            ->latest()
+            ->take(5)
+            ->get();
+        
+        // Recent patients (fallback/global)
         $recentPatients = Patient::latest()
             ->take(5)
             ->get();
         
-        return view('core1.nurse.overview', compact('stats', 'todayAppointments', 'recentPatients'));
+        return view('core1.nurse.overview', compact('stats', 'todayAppointments', 'assignedPatients', 'recentPatients'));
     }
 }
 

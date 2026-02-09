@@ -30,7 +30,7 @@
                     </div>
                 @endif
                 
-                <form action="{{ route('core.login.post') }}" method="POST">
+                <form action="{{ route('core1.login.post') }}" method="POST">
                     @csrf
                     <div class="form-group">
                         <label for="email">Email Address</label>
@@ -46,7 +46,7 @@
                 </form>
 
                 <div class="login-footer">
-                    Don't have an account? <a href="{{ route('core.register') }}" class="login-link">Register</a>
+                    Don't have an account? <a href="{{ route('core1.register') }}" class="login-link">Register</a>
                 </div>
             </div>
         </div>

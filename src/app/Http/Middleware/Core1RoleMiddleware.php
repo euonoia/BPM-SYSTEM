@@ -16,19 +16,11 @@ class Core1RoleMiddleware
      */
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        // Try to get user from auth first
-        $user = auth('core')->user();
-        
-        // If auth()->user() returns null, try to get from session (for Core1User)
-        if (!$user) {
-            $core1UserId = $request->session()->get('core1_user_id');
-            if ($core1UserId) {
-                $user = Core1User::find($core1UserId);
-            }
-        }
+        // Explicitly check the 'core1' guard
+        $user = auth('core1')->user();
         
         if (!$user) {
-            return redirect()->route('login');
+            return redirect()->route('core1.login');
         }
 
         // Check if user has one of the required roles
@@ -39,3 +31,4 @@ class Core1RoleMiddleware
         return $next($request);
     }
 }
+

@@ -52,7 +52,7 @@ CREATE TABLE `users_core1` (
   `email` varchar(255) NOT NULL,
   `email_verified_at` timestamp NULL DEFAULT NULL,
   `password` varchar(255) NOT NULL,
-  `role` enum('admin','doctor','nurse','patient','receptionist','billing') NOT NULL DEFAULT 'patient',
+  `role` enum('admin','doctor','head_nurse','nurse','patient','receptionist','billing') NOT NULL DEFAULT 'patient',
   `employee_id` varchar(255) DEFAULT NULL,
   `department` varchar(255) DEFAULT NULL,
   `specialization` varchar(255) DEFAULT NULL,

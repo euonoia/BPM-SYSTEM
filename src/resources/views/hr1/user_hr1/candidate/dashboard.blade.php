@@ -58,7 +58,7 @@
     </div>
 
     <main class="main-content">
-        <div class="p-8 md:p-16 max-w-[1600px] mx-auto" style="width: 100%;">
+        <div class="p-8 md:p-12" style="width: 100%; max-width: 100%;">
             <div class="mb-16">
                 <h1 class="text-6xl font-black text-primary tracking-tighter capitalize mb-6">Dashboard</h1>
                 <div class="text-[15px] font-medium text-text-light/80 max-w-4xl leading-relaxed">
@@ -68,37 +68,70 @@
             
             <!-- Candidate Dashboard Content -->
             <div x-show="activeTab === 'dashboard'" class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div class="card !w-full">
-                        <h4 class="text-[10px] font-black text-accent uppercase tracking-widest mb-1">Open Positions</h4>
-                        <div class="text-3xl font-black text-primary" x-text="jobs.length"></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="card !w-full group cursor-pointer">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                                <i class="bi bi-briefcase text-primary text-xl"></i>
+                            </div>
+                        </div>
+                        <h4 class="text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Open Positions</h4>
+                        <div class="text-4xl font-black text-primary mb-1" x-text="jobs.length"></div>
+                        <p class="text-xs text-text-light">Available jobs</p>
                     </div>
-                    <div class="card !w-full">
-                        <h4 class="text-[10px] font-black text-accent uppercase tracking-widest mb-1">Pending Tasks</h4>
-                        <div class="text-3xl font-black text-primary" x-text="tasks.filter(t => !t.completed).length"></div>
+                    <div class="card !w-full group cursor-pointer">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center group-hover:bg-yellow-200 transition-colors">
+                                <i class="bi bi-clock text-yellow-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <h4 class="text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Pending Tasks</h4>
+                        <div class="text-4xl font-black text-primary mb-1" x-text="tasks.filter(t => !t.completed).length"></div>
+                        <p class="text-xs text-text-light">Awaiting action</p>
                     </div>
-                    <div class="card !w-full">
-                        <h4 class="text-[10px] font-black text-accent uppercase tracking-widest mb-1">Completed Tasks</h4>
-                        <div class="text-3xl font-black text-primary" x-text="tasks.filter(t => t.completed).length"></div>
+                    <div class="card !w-full group cursor-pointer">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center group-hover:bg-green-200 transition-colors">
+                                <i class="bi bi-check-circle text-green-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <h4 class="text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Completed Tasks</h4>
+                        <div class="text-4xl font-black text-primary mb-1" x-text="tasks.filter(t => t.completed).length"></div>
+                        <p class="text-xs text-text-light">Finished</p>
                     </div>
-                    <div class="card !w-full">
-                        <h4 class="text-[10px] font-black text-accent uppercase tracking-widest mb-1">Assessment %</h4>
-                        <div class="text-3xl font-black text-primary">65%</div>
+                    <div class="card !w-full group cursor-pointer">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                                <i class="bi bi-graph-up text-blue-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <h4 class="text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Assessment %</h4>
+                        <div class="text-4xl font-black text-primary mb-1">65%</div>
+                        <p class="text-xs text-text-light">Progress score</p>
                     </div>
                 </div>
 
                 <!-- Live Application Journey -->
                 <div class="main-inner !w-full !max-w-none">
                     <h3 class="text-xl font-black text-primary mb-6">Live Application Journey</h3>
-                    <div class="flex gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         <template x-for="app in myApplications" :key="app.id">
-                            <div class="p-4 bg-bg rounded-2xl flex-1 border border-gray-100">
-                                <div class="text-xs font-black uppercase text-accent mb-2" x-text="app.jobTitle"></div>
-                                <div class="flex items-center gap-2">
-                                    <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                                        <div class="h-full bg-primary" style="width: 60%"></div>
+                            <div class="p-5 bg-white rounded-xl border border-gray-200 hover:border-primary/30 hover:shadow-lg transition-all duration-200 group">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                                        <i class="bi bi-file-earmark-text text-primary"></i>
                                     </div>
-                                    <span class="text-[10px] font-bold text-primary" x-text="app.status"></span>
+                                    <span class="text-xs font-semibold uppercase px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20" x-text="app.status"></span>
+                                </div>
+                                <div class="text-sm font-semibold text-primary mb-3" x-text="app.jobTitle"></div>
+                                <div class="space-y-2">
+                                    <div class="flex items-center justify-between text-xs text-text-light mb-1">
+                                        <span>Progress</span>
+                                        <span class="font-semibold text-primary">60%</span>
+                                    </div>
+                                    <div class="w-full h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-primary to-accent rounded-full transition-all duration-500" style="width: 60%"></div>
+                                    </div>
                                 </div>
                             </div>
                         </template>
@@ -111,12 +144,20 @@
                 <h3 class="text-xl font-black text-primary mb-6">My Applications</h3>
                 <div class="flex flex-col gap-4" x-show="myApplications.length">
                     <template x-for="app in myApplications" :key="app.id">
-                        <div class="p-4 bg-bg rounded-2xl border border-gray-100 flex justify-between items-center">
-                            <div>
-                                <div class="text-sm font-black text-accent" x-text="app.jobTitle"></div>
-                                <div class="text-xs text-text-light" x-text="app.status"></div>
+                        <div class="p-5 bg-white rounded-xl border border-gray-200 hover:border-primary/30 hover:shadow-lg transition-all duration-200 flex justify-between items-center group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                                    <i class="bi bi-file-earmark-text text-primary"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-primary mb-1" x-text="app.jobTitle"></div>
+                                    <div class="text-xs text-text-light flex items-center gap-2">
+                                        <i class="bi bi-clock text-accent"></i>
+                                        <span x-text="app.status"></span>
+                                    </div>
+                                </div>
                             </div>
-                            <span class="text-[10px] font-bold text-primary uppercase bg-primary/5 px-3 py-1 rounded-full">
+                            <span class="text-xs font-semibold uppercase px-3 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/20">
                                 In Progress
                             </span>
                         </div>
@@ -132,12 +173,23 @@
                 <h3 class="text-xl font-black text-primary mb-6">Available Jobs</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4" x-show="jobs.length">
                     <template x-for="job in jobs" :key="job.id">
-                        <div class="p-4 bg-bg rounded-2xl border border-gray-100 flex flex-col gap-2">
-                            <div class="text-sm font-black text-accent" x-text="job.title"></div>
-                            <div class="text-xs text-text-light" x-text="job.department"></div>
-                            <button class="mt-2 text-xs font-bold text-primary uppercase bg-primary/5 px-3 py-1 rounded-full"
+                        <div class="p-5 bg-white rounded-xl border border-gray-200 hover:border-primary/30 hover:shadow-lg transition-all duration-200 flex flex-col gap-3 group">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1">
+                                    <div class="text-base font-semibold text-primary mb-1" x-text="job.title"></div>
+                                    <div class="text-xs text-text-light flex items-center gap-2">
+                                        <i class="bi bi-building text-accent"></i>
+                                        <span x-text="job.department"></span>
+                                    </div>
+                                </div>
+                                <div class="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+                                    <i class="bi bi-briefcase text-accent"></i>
+                                </div>
+                            </div>
+                            <button class="mt-2 text-xs font-semibold text-white uppercase bg-primary hover:bg-primary-hover px-4 py-2 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
                                     @click="openApplyModal(job)">
-                                Apply
+                                <i class="bi bi-send"></i>
+                                Apply Now
                             </button>
                         </div>
                     </template>
@@ -152,13 +204,22 @@
                 <h3 class="text-xl font-black text-primary mb-6">Onboarding Tasks</h3>
                 <div class="flex flex-col gap-3" x-show="tasks.length">
                     <template x-for="task in tasks" :key="task.id">
-                        <div class="p-3 bg-bg rounded-xl border border-gray-100 flex justify-between items-center">
-                            <div>
-                                <div class="text-sm font-medium text-primary" x-text="task.title"></div>
-                                <div class="text-xs text-text-light" x-text="task.category"></div>
+                        <div class="p-4 bg-white rounded-xl border border-gray-200 hover:border-primary/30 hover:shadow-md transition-all duration-200 flex justify-between items-center group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-lg flex items-center justify-center transition-colors"
+                                     :class="task.completed ? 'bg-green-100 group-hover:bg-green-200' : 'bg-yellow-100 group-hover:bg-yellow-200'">
+                                    <i :class="task.completed ? 'bi bi-check-circle text-green-600' : 'bi bi-clock text-yellow-600'"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-primary mb-1" x-text="task.title"></div>
+                                    <div class="text-xs text-text-light flex items-center gap-2">
+                                        <i class="bi bi-tag text-accent"></i>
+                                        <span x-text="task.category"></span>
+                                    </div>
+                                </div>
                             </div>
-                            <span class="text-[10px] font-bold uppercase px-3 py-1 rounded-full"
-                                  :class="task.completed ? 'bg-green-50 text-green-700' : 'bg-yellow-50 text-yellow-700'">
+                            <span class="text-xs font-semibold uppercase px-3 py-1.5 rounded-full border"
+                                  :class="task.completed ? 'bg-green-50 text-green-700 border-green-200' : 'bg-yellow-50 text-yellow-700 border-yellow-200'">
                                 <span x-text="task.completed ? 'Completed' : 'Pending'"></span>
                             </span>
                         </div>
