@@ -18,107 +18,44 @@ $counts = [
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="{{ asset('css/hr1/example.css') }}">
     <title>Employee Dashboard - HR1</title>
-
-   
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+        <link rel="stylesheet" href="{{ asset('css/hr1/example.css') }}">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 <body>
+ <div style="margin-top: 2rem; padding: 2rem; background: #f8f9fa; border-radius: 12px;">
+            <h3 style="margin-bottom: 1.5rem; color: #333;">HR1 Management System - View Dashboards</h3>
+            <p style="margin-bottom: 1.5rem; color: #666;">Click below to view the role-based dashboards:</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                <a href="{{ url('/dashboard_hr1?role=admin') }}" 
+                   style="display: block; padding: 1.5rem; background: #1B3C53; color: white; text-decoration: none; border-radius: 8px; text-align: center; transition: transform 0.2s;"
+                   onmouseover="this.style.transform='scale(1.05)'" 
+                   onmouseout="this.style.transform='scale(1)'">
+                    <i class="bi bi-shield-check" style="font-size: 2rem; display: block; margin-bottom: 0.5rem;"></i>
+                    <strong>Admin Dashboard</strong>
+                    <p style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.9;">Complete HR management overview</p>
+                </a>
 
-<!-- Mobile Topbar -->
-<div class="topbar">
-    <button class="menu-toggle"
-        onclick="document.querySelector('.sidebar').classList.toggle('show')">
-        ☰
-    </button>
-</div>
+                <a href="{{ url('/dashboard_hr1?role=staff') }}" 
+                   style="display: block; padding: 1.5rem; background: #2C5F7C; color: white; text-decoration: none; border-radius: 8px; text-align: center; transition: transform 0.2s;"
+                   onmouseover="this.style.transform='scale(1.05)'" 
+                   onmouseout="this.style.transform='scale(1)'">
+                    <i class="bi bi-people" style="font-size: 2rem; display: block; margin-bottom: 0.5rem;"></i>
+                    <strong>Staff Dashboard</strong>
+                    <p style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.9;">HR staff management view</p>
+                </a>
 
-<!-- Sidebar -->
-<div class="sidebar" id="sidebar">
-    <div class="logo">
-        <img src="logo/deamns.png" alt="HR1 Logo">
-    </div>
-
-    <nav>
-        <a href="index.php" class="active">
-            <i class="bi bi-house-door"></i> <span>Dashboard</span>
-        </a>
-
-        <a href="modules/hr2/user/competency.php">
-            <i class="bi bi-lightbulb"></i> <span>Competencies</span>
-        </a>
-
-        <a href="modules/hr2/user/learning.php">
-            <i class="bi bi-book"></i> <span>Learning</span>
-        </a>
-
-        <a href="modules/hr2/user/training.php">
-            <i class="bi bi-mortarboard"></i> <span>Training</span>
-        </a>
-
-        <a href="modules/hr2/user/succession.php">
-            <i class="bi bi-tree"></i> <span>Succession</span>
-        </a>
-
-        <a href="modules/hr2/user/ess.php">
-            <i class="bi bi-pencil-square"></i> <span>ESS</span>
-        </a>
-
-        <a href="logout.php">
-            <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
-        </a>
-    </nav>
-</div>
-
-<!-- Main Content -->
-<div class="main">
-    <div class="main-inner">
-        <div class="header">
-            <h2>Welcome, <?= htmlspecialchars($employee['first_name']) ?></h2>
-            <p>Here’s your HR1 summary overview:</p>
+                <a href="{{ url('/dashboard_hr1?role=candidate') }}" 
+                   style="display: block; padding: 1.5rem; background: #3D7BA5; color: white; text-decoration: none; border-radius: 8px; text-align: center; transition: transform 0.2s;"
+                   onmouseover="this.style.transform='scale(1.05)'" 
+                   onmouseout="this.style.transform='scale(1)'">
+                    <i class="bi bi-person-badge" style="font-size: 2rem; display: block; margin-bottom: 0.5rem;"></i>
+                    <strong>Candidate Dashboard</strong>
+                    <p style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.9;">Job applicant view</p>
+                </a>
+            </div>
         </div>
-
-        <div class="grid">
-            <?php foreach ($counts as $label => $count): ?>
-                <div class="card">
-                    <h3><?= htmlspecialchars($label) ?></h3>
-                    <p><?= htmlspecialchars($count) ?></p>
-                </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-</div>
-
-<script>
-const sidebar = document.getElementById('sidebar');
-
-// Desktop hover collapse
-sidebar.addEventListener('mouseenter', () => {
-    if (window.innerWidth > 768 && sidebar.classList.contains('collapsed')) {
-        sidebar.classList.remove('collapsed');
-    }
-});
-
-sidebar.addEventListener('mouseleave', () => {
-    if (window.innerWidth > 768) {
-        sidebar.classList.add('collapsed');
-    }
-});
-
-// Default collapsed on desktop
-if (window.innerWidth > 768) {
-    sidebar.classList.add('collapsed');
-}
-
-// Auto-close on mobile
-document.addEventListener('click', (e) => {
-    const toggle = document.querySelector('.menu-toggle');
-    if (!sidebar.contains(e.target) && !toggle.contains(e.target)) {
-        sidebar.classList.remove('show');
-    }
-});
-</script>
 
 </body>
 </html>
