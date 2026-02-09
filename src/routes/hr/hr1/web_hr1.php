@@ -10,9 +10,13 @@ use App\Http\Controllers\OnboardingController_hr1;
 use App\Http\Controllers\LearningModuleController_hr1;
 use App\Http\Controllers\EvaluationController_hr1;
 
+use App\Http\Controllers\hr1\HR1Controller;
+
 // HR1 Index Route
 Route::prefix('hr/hr1')->name('hr.hr1.')->group(function () {
-    Route::get('/', fn () => view('hr1.index'))->name('index');
+    Route::get('/', [HR1Controller::class, 'index'])->name('index');
+    Route::get('/policies', [HR1Controller::class, 'policies'])->name('policies');
+    Route::get('/reports', [HR1Controller::class, 'reports'])->name('reports');
 });
 
 // Change FROM:
