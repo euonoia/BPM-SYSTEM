@@ -4,6 +4,9 @@ namespace App\Models\core1;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\core1\Appointment;
+use App\Models\core1\MedicalRecord;
+use App\Models\core1\Bill;
 
 class Patient extends Model
 {
@@ -11,7 +14,9 @@ class Patient extends Model
 
     protected $table = 'patients_core1';
 
+    // <--- Replace this $fillable with the updated version
     protected $fillable = [
+<<<<<<< Updated upstream
         'patient_id',
         'name',
         'date_of_birth',
@@ -27,6 +32,12 @@ class Patient extends Model
         'medical_history',
         'status',
         'last_visit',
+=======
+        'patient_id', 'name', 'date_of_birth', 'gender', 'phone', 'email', 
+        'address', 'emergency_contact_name', 'emergency_contact_phone',
+        'blood_type', 'allergies', 'medical_history', 'status', 'last_visit',
+        'care_type', 'admission_date', 'doctor_id', 'reason'
+>>>>>>> Stashed changes
     ];
 
     protected $casts = [
@@ -58,5 +69,9 @@ class Patient extends Model
     {
         return $this->date_of_birth ? $this->date_of_birth->age : null;
     }
-}
 
+    public function doctor()
+    {
+        return $this->belongsTo(User::class, 'doctor_id'); // doctor relation
+    }
+}

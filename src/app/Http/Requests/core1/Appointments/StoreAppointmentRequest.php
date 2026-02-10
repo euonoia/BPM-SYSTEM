@@ -20,7 +20,7 @@ class StoreAppointmentRequest extends FormRequest
             'doctor_id' => ['required', 'exists:users_core1,id'],
             'appointment_date' => ['required', 'date', 'after_or_equal:today'],
             'appointment_time' => ['required', 'date_format:H:i'],
-            'type' => ['required', 'string', Rule::in(['consultation', 'follow-up', 'emergency', 'surgery', 'checkup'])],
+            'type' => ['required', 'string', Rule::in(['consultation', 'follow-up', 'emergency', 'surgery', 'check-up'])],
             'reason' => ['nullable', 'string', 'max:500'],
             'notes' => ['nullable', 'string', 'max:500'],
         ];

@@ -277,4 +277,28 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 
+ALTER TABLE appointments_core1
+MODIFY status ENUM('pending','scheduled','confirmed','completed','cancelled','declined','no-show') 
+NOT NULL DEFAULT 'pending';
 
+ALTER TABLE `patients_core1`
+ADD COLUMN `care_type` enum('inpatient','outpatient') DEFAULT NULL AFTER `status`;
+
+ALTER TABLE `patients_core1`
+ADD COLUMN `admission_date` date NULL,
+ADD COLUMN `doctor_id` bigint(20) UNSIGNED NULL,
+ADD COLUMN `reason` text NULL;
+
+ALTER TABLE `appointments_core1`
+MODIFY `type` ENUM('consultation','follow-up','check-up','emergency') NOT NULL;
+
+ALTER TABLE patients_core1 
+MODIFY status ENUM(
+    'active',
+    'inactive',
+    'deceased',
+    'scheduled',
+    'waiting',
+    'in consultation',
+    'consulted'
+);

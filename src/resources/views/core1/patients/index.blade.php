@@ -23,10 +23,21 @@
             <h2 class="core1-title">Patient Management</h2>
             <p class="core1-subtitle">Manage patient records and registrations</p>
         </div>
+<<<<<<< Updated upstream
         <a href="{{ route('core1.patients.create') }}" class="core1-btn core1-btn-primary">
             <i class="fas fa-plus"></i>
             <span class="pl-20">New Patient</span>
         </a>
+=======
+
+        {{-- New Patient button only for non-doctors --}}
+        @if(auth()->user()->role !== 'doctor')
+            <a href="{{ route('patients.create') }}" class="core1-btn core1-btn-primary">
+                <i class="fas fa-plus"></i>
+                <span class="pl-20">New Patient</span>
+            </a>
+        @endif
+>>>>>>> Stashed changes
     </div>
 
     <div class="core1-stats-grid">
@@ -178,13 +189,22 @@
                                 <span class="pl-20">{{ ucfirst($patient->status) }}</span>
                             </span>
                         </td>
+
+                        {{-- ACTIONS --}}
                         <td>
                             <div class="d-flex items-center justify-center gap-2">
+<<<<<<< Updated upstream
                                 <a href="{{ route('core1.patients.show', $patient) }}" 
+=======
+
+                                {{-- View --}}
+                                <a href="{{ route('patients.show', $patient) }}" 
+>>>>>>> Stashed changes
                                    class="core1-icon-action text-blue"
                                    title="View Details">
                                     <i class="fas fa-eye"></i>
                                 </a>
+<<<<<<< Updated upstream
                                 <a href="{{ route('core1.patients.edit', $patient) }}" 
                                    class="core1-icon-action text-orange"
                                    title="Edit Patient">
@@ -207,6 +227,56 @@
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
+=======
+
+                                {{-- Edit (non-doctor only) --}}
+                                @if(auth()->user()->role !== 'doctor')
+                                    <a href="{{ route('patients.edit', $patient) }}" 
+                                       class="core1-icon-action text-orange"
+                                       title="Edit Patient">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                @endif
+
+                                {{-- Move to Inpatient / Outpatient --}}
+                                @if(!$patient->care_type)
+                                    <form method="POST" action="{{ route('patients.move', $patient) }}" class="d-flex gap-1">
+                                        @csrf
+                                        <input type="hidden" name="care_type" value="inpatient">
+                                        <input type="hidden" name="admission_date" value="{{ now()->toDateString() }}">
+                                        <input type="hidden" name="doctor_id" value="{{ auth()->user()->id }}">
+                                        <input type="hidden" name="reason" value="Routine Checkup">
+                                        <button class="core1-btn-sm core1-btn-outline">Move to Inpatient</button>
+                                    </form>
+
+                                    <form method="POST" action="{{ route('patients.move', $patient) }}" class="d-flex gap-1">
+                                        @csrf
+                                        <input type="hidden" name="care_type" value="outpatient">
+                                        <input type="hidden" name="admission_date" value="{{ now()->toDateString() }}">
+                                        <input type="hidden" name="doctor_id" value="{{ auth()->user()->id }}">
+                                        <input type="hidden" name="reason" value="Routine Checkup">
+                                        <button class="core1-btn-sm core1-btn-outline">Move to Outpatient</button>
+                                    </form>
+                                @else
+                                    <span class="core1-badge {{ $patient->care_type === 'inpatient' ? 'core1-badge-active' : 'core1-badge-inactive' }}">
+                                        {{ strtoupper($patient->care_type) }}
+                                    </span>
+                                @endif
+
+                                {{-- Delete (non-doctor only) --}}
+                                @if(auth()->user()->role !== 'doctor')
+                                    <form action="{{ route('patients.destroy', $patient) }}" 
+                                          method="POST"
+                                          onsubmit="return confirm('Are you sure?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="core1-icon-action text-red">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                @endif
+
+>>>>>>> Stashed changes
                             </div>
                         </td>
                     </tr>
@@ -222,11 +292,22 @@
                                     @if($searchTerm || $statusFilter)
                                         Try adjusting your search or filters
                                     @else
-                                        Get started by adding a new patient
+                                        @if(auth()->user()->role !== 'doctor')
+                                            Get started by adding a new patient
+                                        @else
+                                            {{-- Doctors see no extra message --}}
+                                        @endif
                                     @endif
                                 </p>
+<<<<<<< Updated upstream
                                 @if(!$searchTerm && !$statusFilter)
                                     <a href="{{ route('core1.patients.create') }}" class="core1-btn core1-btn-primary">
+=======
+
+                                {{-- Add First Patient button only for non-doctors --}}
+                                @if(!$searchTerm && !$statusFilter && auth()->user()->role !== 'doctor')
+                                    <a href="{{ route('patients.create') }}" class="core1-btn core1-btn-primary">
+>>>>>>> Stashed changes
                                         <i class="fas fa-plus"></i>
                                         <span class="pl-20">Add First Patient</span>
                                     </a>
@@ -251,4 +332,3 @@
     @endif
 </div>
 @endsection
-

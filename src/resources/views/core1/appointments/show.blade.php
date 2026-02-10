@@ -4,93 +4,81 @@
 
 @section('content')
 <div class="p-8">
-    <div class="mb-8">
-        <div class="flex items-center justify-between">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-900">Appointment Details</h1>
-                <p class="text-gray-600 mt-1">View appointment information</p>
-            </div>
-            <a href="{{ route('appointments.index') }}" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-                Back to List
-            </a>
+    <div class="mb-8 flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Appointment Details</h1>
+            <p class="text-gray-600 mt-1">View or edit appointment information</p>
         </div>
+        <a href="{{ route('appointments.index') }}" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+            Back to List
+        </a>
     </div>
 
     <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 max-w-2xl">
-        <div class="space-y-6">
-            <div class="grid grid-cols-2 gap-6">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Appointment ID</label>
-                    <p class="text-gray-900 font-semibold">{{ $appointment->appointment_id }}</p>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ 
-                        $appointment->status === 'completed' ? 'bg-green-100 text-green-800' :
-                        $appointment->status === 'scheduled' ? 'bg-blue-100 text-blue-800' :
-                        $appointment->status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                        'bg-gray-100 text-gray-800'
-                    }}">
-                        {{ $appointment->status }}
-                    </span>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Patient</label>
-                    <p class="text-gray-900">{{ $appointment->patient->name }}</p>
-                    <p class="text-sm text-gray-500">{{ $appointment->patient->patient_id }}</p>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Doctor</label>
-                    <p class="text-gray-900">{{ $appointment->doctor->name }}</p>
-                    @if($appointment->doctor->specialization)
-                        <p class="text-sm text-gray-500">{{ $appointment->doctor->specialization }}</p>
-                    @endif
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
-                    <p class="text-gray-900">{{ $appointment->appointment_date->format('M d, Y') }}</p>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Time</label>
-                    <p class="text-gray-900">{{ $appointment->appointment_time }}</p>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
-                    <p class="text-gray-900">{{ $appointment->type }}</p>
-                </div>
-            </div>
+        <form action="{{ route('appointments.update', $appointment) }}" method="POST" class="space-y-6">
+    @csrf
+    @method('PUT')
 
-            @if($appointment->reason)
+    @if(auth()->user()->role !== 'doctor')
+        <div>
+            <label>Patient</label>
+            <select name="patient_id" class="core1-input">
+                @foreach($patients as $p)
+                    <option value="{{ $p->id }}" {{ $appointment->patient_id == $p->id ? 'selected' : '' }}>{{ $p->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div>
+            <label>Doctor</label>
+            <select name="doctor_id" class="core1-input">
+                @foreach($doctors as $d)
+                    <option value="{{ $d->id }}" {{ $appointment->doctor_id == $d->id ? 'selected' : '' }}>{{ $d->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Reason</label>
-                <p class="text-gray-900">{{ $appointment->reason }}</p>
+                <label>Date</label>
+                <input type="date" name="appointment_date" value="{{ $appointment->appointment_date->format('Y-m-d') }}" class="core1-input">
             </div>
-            @endif
-
-            @if($appointment->notes)
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
-                <p class="text-gray-900">{{ $appointment->notes }}</p>
-            </div>
-            @endif
-
-            <div class="pt-6 border-t border-gray-200">
-                <form action="{{ route('appointments.update', $appointment) }}" method="POST" class="flex gap-4">
-                    @csrf
-                    @method('PUT')
-                    <select name="status" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                        <option value="scheduled" {{ $appointment->status === 'scheduled' ? 'selected' : '' }}>Scheduled</option>
-                        <option value="completed" {{ $appointment->status === 'completed' ? 'selected' : '' }}>Completed</option>
-                        <option value="cancelled" {{ $appointment->status === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                        <option value="no-show" {{ $appointment->status === 'no-show' ? 'selected' : '' }}>No Show</option>
-                    </select>
-                    <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                        Update Status
-                    </button>
-                </form>
+                <label>Time</label>
+                <input type="time" name="appointment_time" value="{{ \Carbon\Carbon::parse($appointment->appointment_time)->format('H:i') }}" class="core1-input">
             </div>
         </div>
+
+        <div>
+            <label>Type</label>
+            <input type="text" name="type" value="{{ $appointment->type }}" class="core1-input">
+        </div>
+
+        <div>
+            <label>Reason</label>
+            <textarea name="reason" class="core1-input">{{ $appointment->reason }}</textarea>
+        </div>
+
+        <div>
+            <label>Notes</label>
+            <textarea name="notes" class="core1-input">{{ $appointment->notes }}</textarea>
+        </div>
+    @endif
+
+    @if(auth()->user()->role === 'doctor')
+        <div>
+            <label>Status</label>
+            <select name="status" class="core1-input">
+                @foreach(['pending','scheduled','declined','completed','cancelled'] as $status)
+                    <option value="{{ $status }}" {{ $appointment->status === $status ? 'selected' : '' }}>{{ ucfirst($status) }}</option>
+                @endforeach
+            </select>
+        </div>
+    @endif
+
+    <button type="submit" class="core1-btn core1-btn-primary">Update</button>
+</form>
+
     </div>
 </div>
 @endsection
-

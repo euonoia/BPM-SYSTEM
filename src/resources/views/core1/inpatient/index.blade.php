@@ -38,11 +38,14 @@
         </div>
     </div>
     <div class="d-flex justify-end mt-15">
-        <button class="core1-btn core1-btn-primary">
+    @if(auth()->user()->role !== 'doctor')
+        <a href="{{ route('patients.create') }}" class="core1-btn core1-btn-primary">
             <i class="bi bi-plus"></i>
             <span class="ml-10">Admit Patient</span>
-        </button>
-    </div>
+        </a>
+    @endif
+</div>
+
 
     <!-- Tabs Section -->
     <div class="core1-card no-hover p-0 overflow-hidden mt-30">
@@ -74,28 +77,58 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($inpatients as $inp)
-                                <tr>
-                                    <td>{{ $inp['inpatient_id'] }}</td>
-                                    <td><a href="#" class="text-blue">{{ $inp['patient'] }}</a></td>
-                                    <td>
-                                        <span class="core1-badge-teal">
-                                            {{ $inp['bed'] }}
-                                        </span>
-                                    </td>
-                                    <td>{{ $inp['admission_date'] }}</td>
-                                    <td>{{ $inp['doctor'] }}</td>
-                                    <td>{{ $inp['reason'] }}</td>
-                                    <td>
-                                        <span class="text-success font-bold">{{ $inp['status'] }}</span>
-                                    </td>
-                                    <td class="text-right">
-                                        <i class="bi bi-eye text-blue mr-10 cursor-pointer"></i>
-                                        <i class="bi bi-file-earmark-text text-gray cursor-pointer"></i>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
+    @foreach($inpatients as $inp)
+        <tr>
+            {{-- Inpatient ID --}}
+            <td>{{ $inp->id }}</td>
+
+            {{-- Patient Name --}}
+            <td><a href="#" class="text-blue">{{ $inp->name }}</a></td>
+
+            {{-- Bed --}}
+            <td>
+                <span class="core1-badge-teal">
+                    {{ $inp->bed ?? 'N/A' }}
+                </span>
+            </td>
+
+            {{-- Admission Date --}}
+<td>
+    {{ $inp->admission_date ? \Carbon\Carbon::parse($inp->admission_date)->format('M d, Y') : 'N/A' }}
+</td>
+
+{{-- Doctor --}}
+<td>
+    {{ $inp->doctor?->name ?? 'N/A' }}
+</td>
+
+{{-- Reason --}}
+<td>
+    {{ $inp->reason ?? 'N/A' }}
+</td>
+
+
+            {{-- Status --}}
+            <td>
+                <span class="text-{{ $inp->status === 'inactive' ? 'red' : 'green' }} font-bold">
+                    {{ ucfirst($inp->status ?? 'active') }}
+                </span>
+            </td>
+
+            {{-- Actions: Edit button to change status --}}
+            <td class="text-right">
+                <form action="{{ route('inpatients.deactivate', $inp) }}" method="POST" style="display:inline-block;">
+                    @csrf
+                    @method('PATCH')
+                    <button type="submit" class="core1-btn-sm core1-btn-outline text-orange">
+                        <i class="bi bi-pencil"></i> Edit
+                    </button>
+                </form>
+            </td>
+        </tr>
+    @endforeach
+</tbody>
+
                     </table>
                 </div>
             </div>

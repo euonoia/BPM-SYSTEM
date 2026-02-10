@@ -13,90 +13,150 @@ use Carbon\Carbon;
 
 class AppointmentController extends Controller
 {
-    public function index(Request $request)
-    {
-        $view = $request->get('view', 'month');
-        $dateParam = $request->get('date', now()->format('Y-m-d'));
-        
-        // Ensure $currentDate is a valid date string for calculations
-        try {
-            $date = Carbon::parse($dateParam);
-        } catch (\Exception $e) {
-            $date = now();
-        }
-        $currentDate = $date->format('Y-m-d');
-        
-        $query = Appointment::with(['patient', 'doctor']);
-        
-        if ($view === 'month') {
-            $query->whereYear('appointment_date', $date->year)
-                  ->whereMonth('appointment_date', $date->month);
-        } elseif ($view === 'week') {
-            $query->whereBetween('appointment_date', [
-                $date->copy()->startOfWeek(),
-                $date->copy()->endOfWeek()
-            ]);
-        } elseif ($view === 'day') {
-            $query->whereDate('appointment_date', $date->toDateString());
-        }
-        
-        $appointments = $query->orderBy('appointment_time')->get();
-        
-        return view('core1.appointments.index', compact('appointments', 'view', 'currentDate'));
+ public function index(Request $request)
+{
+    $view = $request->get('view', 'month');
+    $dateParam = $request->get('date', now()->format('Y-m-d'));
+    $date = Carbon::parse($dateParam);
+    $currentDate = $date->format('Y-m-d');
+
+    $query = Appointment::with(['patient', 'doctor']);
+
+    // Doctor sees ONLY own appointments
+    if (auth()->user()->role === 'doctor') {
+        $query->where('doctor_id', auth()->id());
     }
+
+    if ($view === 'month') {
+        $query->whereBetween('appointment_time', [
+            $date->copy()->startOfMonth(),
+            $date->copy()->endOfMonth()
+        ]);
+    }
+
+    elseif ($view === 'week') {
+        $query->whereBetween('appointment_time', [
+            $date->copy()->startOfWeek(),
+            $date->copy()->endOfWeek()
+        ]);
+    }
+
+    elseif ($view === 'day') {
+        $query->whereBetween('appointment_time', [
+            $date->copy()->startOfDay(),
+            $date->copy()->endOfDay()
+        ]);
+    }
+
+    $appointments = $query
+        ->orderBy('appointment_time')
+        ->get();
+
+    return view(
+        'core1.appointments.index',
+        compact('appointments', 'view', 'currentDate')
+    );
+}
+
 
     public function create()
-    {
-        $patients = Patient::all();
-        $doctors = User::where('role', 'doctor')->get();
-        return view('core1.appointments.create', compact('patients', 'doctors'));
-    }
+{
+    $patients = Patient::all();
+
+    $patients->each(function($patient) {
+        // Check if the patient has any upcoming appointment that is NOT cancelled
+        $patient->hasUpcomingAppointment = $patient->appointments()
+            ->where('appointment_date', '>=', now())
+            ->where('status', '!=', 'cancelled')  // any status except cancelled
+            ->exists();
+    });
+
+    $doctors = User::where('role', 'doctor')->get();
+
+    return view('core1.appointments.create', compact('patients', 'doctors'));
+}
+
 
     public function store(StoreAppointmentRequest $request)
-    {
-        $validated = $request->validated();
-        
-        // Transform H:i to Y-m-d H:i:s
-        $fullTime = $validated['appointment_date'] . ' ' . $validated['appointment_time'];
-        $validated['appointment_time'] = Carbon::parse($fullTime)->format('Y-m-d H:i:s');
-        
-        // Generate collision-safe ID
-        $validated['appointment_id'] = 'APT-' . uniqid();
-        $validated['status'] = 'scheduled';
+{
+    $validated = $request->validated();
 
-        Appointment::create($validated);
+    $fullTime = $validated['appointment_date'] . ' ' . $validated['appointment_time'];
+    $validated['appointment_time'] = Carbon::parse($fullTime)->format('Y-m-d H:i:s');
+    
+    $validated['appointment_id'] = 'APT-' . uniqid();
+    $validated['status'] = 'pending'; // <-- pending instead of scheduled
 
+    Appointment::create($validated);
+
+    return redirect()->route('appointments.index')->with('success', 'Appointment booked successfully.');
+}
+
+<<<<<<< Updated upstream
         return redirect()->route('core1.appointments.index')->with('success', 'Appointment booked successfully.');
     }
+=======
+>>>>>>> Stashed changes
 
     public function show(Appointment $appointment)
-    {
-        $appointment->load(['patient', 'doctor']);
-        return view('core1.appointments.show', compact('appointment'));
-    }
+{
+    $appointment->load(['patient', 'doctor']);
+    $patients = Patient::all();
+    $doctors = User::where('role', 'doctor')->get();
+    return view('core1.appointments.show', compact('appointment','patients','doctors'));
+}
+
 
     public function update(Request $request, Appointment $appointment)
-    {
-        // For rescheduling or status updates
+{
+    // Only doctor can update status
+    if (auth()->user()->role === 'doctor') {
         $validated = $request->validate([
-            'status' => 'sometimes|in:scheduled,completed,cancelled,no-show',
-            'appointment_date' => 'sometimes|date',
-            'appointment_time' => 'sometimes', // check format if needed
-            'notes' => 'nullable|string'
+            'status' => 'required|in:pending,scheduled,declined,completed,cancelled,no-show'
         ]);
-        
-        if (isset($validated['appointment_date']) && isset($validated['appointment_time'])) {
-            // Check conflicts again if rescheduling
-            // This is a simplified check; idealy logic should be shared
-            $fullTime = $validated['appointment_date'] . ' ' . $validated['appointment_time'];
-             // ... conflict logic here ...
-             $validated['appointment_time'] = Carbon::parse($fullTime)->format('Y-m-d H:i:s');
-        }
+        $appointment->update($validated);
+        return redirect()->back()->with('success', 'Status updated successfully.');
+    } else {
+        // Admin/Receptionist can edit info except status
+        $validated = $request->validate([
+            'patient_id' => 'required|exists:patients_core1,id',
+            'doctor_id' => 'required|exists:users_core1,id',
+            'appointment_date' => 'required|date',
+            'appointment_time' => 'required',
+            'type' => 'required|string',
+            'reason' => 'nullable|string|max:500',
+            'notes' => 'nullable|string|max:500'
+        ]);
 
         $appointment->update($validated);
+        return redirect()->route('appointments.show', $appointment)
+         ->with('success', 'Appointment updated successfully.');
 
-        return redirect()->back()->with('success', 'Appointment updated successfully.');
+
     }
+}
+
+public function accept(Appointment $appointment)
+{
+    $appointment->update(['status' => 'scheduled']);
+    return redirect()->back()->with('success', 'Appointment accepted.');
+}
+
+public function decline(Appointment $appointment)
+{
+    $appointment->update(['status' => 'declined']);
+
+    // 🔄 Clear inpatient/outpatient info if patient was admitted
+    $appointment->patient->update([
+        'care_type' => null,
+        'doctor_id' => null,      // optional: unassign doctor
+        'admission_date' => null,
+        'reason' => null,
+    ]);
+
+    return redirect()->back()->with('success', 'Appointment declined and patient moved back to general list.');
+}
+
 
     public function destroy(Appointment $appointment)
     {

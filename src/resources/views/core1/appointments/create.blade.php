@@ -14,18 +14,22 @@
             @csrf
             
             <div class="core1-form-grid">
-                <div class="core1-form-group core1-col-span-2">
-                    <label for="patient_id" class="core1-label">Patient *</label>
-                    <select id="patient_id" name="patient_id" required
-                            class="core1-input">
-                        <option value="">Select Patient</option>
-                        @foreach($patients as $patient)
-                            <option value="{{ $patient->id }}" {{ old('patient_id') == $patient->id || request('patient_id') == $patient->id ? 'selected' : '' }}>
-                                {{ $patient->name }} ({{ $patient->patient_id }})
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+               <div class="core1-form-group core1-col-span-2">
+    <label for="patient_id" class="core1-label">Patient *</label>
+    <select id="patient_id" name="patient_id" required class="core1-input">
+        <option value="">Select Patient</option>
+        @foreach($patients as $patient)
+            <option value="{{ $patient->id }}"
+                {{ old('patient_id') == $patient->id ? 'selected' : '' }}
+                @if($patient->hasUpcomingAppointment) disabled @endif
+            >
+                {{ $patient->name }} ({{ $patient->patient_id }})
+                @if($patient->hasUpcomingAppointment) - Already Booked @endif
+            </option>
+        @endforeach
+    </select>
+</div>
+
 
                 <div class="core1-form-group core1-col-span-2">
                     <label for="doctor_id" class="core1-label">Doctor *</label>
@@ -60,10 +64,11 @@
                     <select id="type" name="type" required
                             class="core1-input">
                         <option value="">Select Type</option>
-                        <option value="Consultation" {{ old('type') === 'Consultation' ? 'selected' : '' }}>Consultation</option>
-                        <option value="Follow-up" {{ old('type') === 'Follow-up' ? 'selected' : '' }}>Follow-up</option>
-                        <option value="Check-up" {{ old('type') === 'Check-up' ? 'selected' : '' }}>Check-up</option>
-                        <option value="Emergency" {{ old('type') === 'Emergency' ? 'selected' : '' }}>Emergency</option>
+                        <option value="consultation" {{ old('type') === 'consultation' ? 'selected' : '' }}>Consultation</option>
+<option value="follow-up" {{ old('type') === 'follow-up' ? 'selected' : '' }}>Follow-up</option>
+<option value="check-up" {{ old('type') === 'check-up' ? 'selected' : '' }}>Check-up</option>
+<option value="emergency" {{ old('type') === 'emergency' ? 'selected' : '' }}>Emergency</option>
+
                     </select>
                 </div>
 

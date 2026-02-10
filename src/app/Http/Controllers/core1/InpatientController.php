@@ -3,41 +3,64 @@
 namespace App\Http\Controllers\core1;
 
 use App\Http\Controllers\Controller;
+use App\Models\core1\Patient;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Carbon;
 
 class InpatientController extends Controller
 {
     public function index()
     {
+         $user = Auth::user();
+        $isDoctor = $user->role === 'doctor';
+
+        // Query inpatients
+        $inpatients = Patient::query()
+        ->where('care_type', 'inpatient')
+        ->when($isDoctor, fn($q) => $q->where('doctor_id', $user->id))
+        ->whereHas('appointments', function ($q) use ($user, $isDoctor) {
+            $q->where('status', 'scheduled'); // Only show scheduled patients
+            if ($isDoctor) {
+                $q->where('doctor_id', $user->id);
+            }
+        })
+        ->latest()
+        ->get();
+
+        // Stats
         $stats = [
-            'current_inpatients' => 4,
-            'occupied' => 4,
-            'discharges_today' => 2,
+            'current_inpatients' => $inpatients->count(),
+            'occupied' => $inpatients->count(), // assuming each inpatient occupies a bed
+            'discharges_today' => Patient::where('care_type', 'inpatient')
+                                        ->whereDate('last_visit', today())
+                                        ->count(),
         ];
 
-        $beds = [
-            ['id' => 'ICU-01', 'type' => 'ICU', 'patient' => 'Alice Wilson', 'patient_id' => 'HMS-2025-00123', 'status' => 'critical', 'bg' => 'critical'],
-            ['id' => 'ICU-02', 'type' => 'ICU', 'patient' => 'Available', 'status' => 'available', 'bg' => 'available'],
-            ['id' => 'ICU-03', 'type' => 'ICU', 'patient' => 'David Martinez', 'patient_id' => 'HMS-2025-00124', 'status' => 'stable', 'bg' => 'stable'],
-            ['id' => 'ICU-04', 'type' => 'ICU', 'patient' => 'Cleaning', 'status' => 'cleaning', 'bg' => 'cleaning'],
-            ['id' => 'WARD-01', 'type' => 'General Ward', 'patient' => 'Sarah Thompson', 'patient_id' => 'HMS-2025-00125', 'status' => 'recovering', 'bg' => 'critical'],
-            ['id' => 'WARD-02', 'type' => 'General Ward', 'patient' => 'Available', 'status' => 'available', 'bg' => 'available'],
-            ['id' => 'WARD-03', 'type' => 'General Ward', 'patient' => 'Available', 'status' => 'available', 'bg' => 'available'],
-            ['id' => 'WARD-04', 'type' => 'General Ward', 'patient' => 'James Wilson', 'patient_id' => 'HMS-2025-00126', 'status' => 'stable', 'bg' => 'critical'],
-        ];
+        // Beds (temporary placeholders for UI)
+        $beds = [];
+        for ($i = 1; $i <= 10; $i++) {
+            $beds[] = [
+                'id' => 'Bed ' . $i,
+                'type' => 'General',
+                'status' => 'available',
+                'bg' => 'core1-bed-available',
+                'patient' => '',
+                'patient_id' => '',
+            ];
+        }
 
-        $inpatients = [
-            ['inpatient_id' => 'IP-0001', 'patient' => 'John Doe', 'bed' => 'BED-201', 'admission_date' => '12/10/2024', 'doctor' => 'Dr. Emily Chen', 'reason' => 'Fever', 'status' => 'Admitted'],
-            ['inpatient_id' => 'IP-0002', 'patient' => 'Jane Smith', 'bed' => 'BED-202', 'admission_date' => '12/11/2024', 'doctor' => 'Dr. Wilson', 'reason' => 'Observation', 'status' => 'Admitted'],
-            ['inpatient_id' => 'IP-0003', 'patient' => 'Robert Brown', 'bed' => 'BED-203', 'admission_date' => '12/12/2024', 'doctor' => 'Dr. Adams', 'reason' => 'Surgery', 'status' => 'Admitted'],
-        ];
-
-        $medications = [
-            ['patient' => 'Alice Wilson', 'medication' => 'Aspirin', 'dosage' => '100mg', 'time' => '09:00 AM', 'status' => 'Administered', 'action' => 'View'],
-            ['patient' => 'David Martinez', 'medication' => 'Metformin', 'dosage' => '500mg', 'time' => '10:00 AM', 'status' => 'Pending', 'action' => 'Administer'],
-        ];
-
-        return view('core1.inpatient.index', compact('stats', 'beds', 'inpatients', 'medications'));
+        return view('core1.inpatient.index', compact('inpatients', 'stats', 'beds'));
     }
+
+    public function deactivate(Patient $patient)
+{
+    // Toggle status
+    $patient->update([
+        'status' => 'inactive',
+    ]);
+
+    return back()->with('success', 'Patient status updated to inactive.');
 }
 
+}

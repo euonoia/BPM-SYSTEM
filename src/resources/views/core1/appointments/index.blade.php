@@ -33,7 +33,6 @@
 </style>
 @endpush
 
-
 @section('title', 'Appointments')
 
 @section('content')
@@ -43,10 +42,20 @@
             <h1 class="core1-title">Appointments</h1>
             <p class="core1-subtitle">Manage and schedule appointments</p>
         </div>
+<<<<<<< Updated upstream
         <a href="{{ route('core1.appointments.create') }}" class="core1-btn core1-btn-primary">
             <i class="fas fa-plus"></i>
             <span class="pl-20">Book Appointment</span>
         </a>
+=======
+        @if(auth()->user()->role !== 'doctor')
+    <a href="{{ route('appointments.create') }}" class="core1-btn core1-btn-primary">
+        <i class="fas fa-plus"></i>
+        <span class="pl-20">Book Appointment</span>
+    </a>
+@endif
+
+>>>>>>> Stashed changes
     </div>
 
     <!-- View Controls -->
@@ -100,19 +109,70 @@
         </div>
     </div>
 
-    <!-- List View -->
-    @if($view === 'list')
-        <div class="core1-table-container">
-            <table class="core1-table">
-                <thead>
-                    <tr>
-                        <th>Date & Time</th>
+    <!-- Calendar View -->
+    <div class="core1-card" style="padding: 0; overflow: hidden;">
+        <div id="calendar"></div>
+    </div>
+
+    <!-- Bottom Appointment Table -->
+    <div class="core1-card mt-20">
+        <h3 class="core1-title">{{ auth()->user()->role === 'doctor' ? 'My Appointments' : 'Appointments' }}</h3>
+        <table class="core1-table">
+            <thead>
+                <tr>
+                    @if(auth()->user()->role !== 'doctor')
                         <th>Patient</th>
                         <th>Doctor</th>
                         <th>Type</th>
-                        <th>Status</th>
-                        <th class="text-center">Actions</th>
+                    @else
+                        <th>Patient</th>
+                        <th>Type</th>
+                    @endif
+                    <th>Date & Time</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($appointments as $appointment)
+                    @if(auth()->user()->role !== 'doctor' || auth()->user()->id === $appointment->doctor_id)
+                    <tr>
+                        @if(auth()->user()->role !== 'doctor')
+                            <td>{{ $appointment->patient->name }}</td>
+                            <td>{{ $appointment->doctor->name }}</td>
+                            <td>{{ ucfirst($appointment->type) }}</td>
+                        @else
+                            <td>{{ $appointment->patient->name }}</td>
+                            <td>{{ ucfirst($appointment->type) }}</td>
+                        @endif
+                        <td>{{ $appointment->appointment_date->format('M d, Y') }} - {{ \Carbon\Carbon::parse($appointment->appointment_time)->format('H:i') }}</td>
+                        <td>
+                            <span class="core1-badge {{
+                                $appointment->status === 'scheduled' ? 'core1-badge-active' :
+                                ($appointment->status === 'declined' ? 'core1-badge-inactive' : 'core1-badge-warning')
+                            }}">
+                                {{ ucfirst($appointment->status) }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="d-flex items-center justify-center gap-2">
+                                @if(auth()->user()->role === 'doctor' && $appointment->status === 'pending')
+    <form action="{{ route('appointments.accept', $appointment) }}" method="POST">
+        @csrf
+        <button type="submit" class="core1-btn core1-btn-primary">Accept</button>
+    </form>
+    <form action="{{ route('appointments.decline', $appointment) }}" method="POST">
+        @csrf
+        <button type="submit" class="core1-btn core1-btn-outline">Decline</button>
+    </form>
+@else
+    <a href="{{ route('appointments.show', $appointment) }}" class="core1-btn core1-btn-outline">Edit</a>
+@endif
+
+                            </div>
+                        </td>
                     </tr>
+<<<<<<< Updated upstream
                 </thead>
                 <tbody>
                     @forelse($appointments as $appointment)
@@ -180,26 +240,36 @@
             <div id="calendar"></div>
         </div>
     @endif
+=======
+                    @endif
+                @empty
+                    <tr>
+                        <td colspan="6" class="text-center p-20 text-gray">No appointments found</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+>>>>>>> Stashed changes
 </div>
 @endsection
 
 @push('scripts')
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const calendarEl = document.getElementById('calendar');
-        if (!calendarEl) return;
+document.addEventListener('DOMContentLoaded', function() {
+    const calendarEl = document.getElementById('calendar');
+    if (!calendarEl) return;
 
-        const viewMap = {
-            'month': 'dayGridMonth',
-            'week': 'timeGridWeek',
-            'day': 'timeGridDay'
-        };
+    const viewMap = { month: 'dayGridMonth', week: 'timeGridWeek', day: 'timeGridDay' };
+    const currentView = '{{ $view }}';
+    const initialView = viewMap[currentView] || 'dayGridMonth';
+    const initialDate = '{{ $currentDate }}';
 
-        const currentView = '{{ $view }}';
-        const initialView = viewMap[currentView] || 'dayGridMonth';
-        const initialDate = '{{ $currentDate }}';
+    const isDoctor = '{{ auth()->user()->role }}' === 'doctor';
+    const userId = '{{ auth()->user()->id }}';
 
+<<<<<<< Updated upstream
         const calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: initialView,
             initialDate: initialDate.includes('-') && initialDate.split('-').length === 2 ? initialDate + '-01' : initialDate,
@@ -234,10 +304,42 @@
             slotMinTime: '08:00:00',
             slotMaxTime: '19:00:00',
         });
+=======
+    const events = [
+    @foreach($appointments as $appointment)
+        @if(auth()->user()->role !== 'doctor' || $appointment->doctor_id == auth()->user()->id)
+    {
+        id: '{{ $appointment->id }}',
+        title: '{{ auth()->user()->role === "doctor" ? $appointment->patient->name . " - " . $appointment->type . " (" . $appointment->status . ")" : $appointment->patient->name . " - " . $appointment->doctor->name . " (" . $appointment->status . ")" }}',
+        start: '{{ $appointment->appointment_date->format('Y-m-d') }}T{{ \Carbon\Carbon::parse($appointment->appointment_time)->format('H:i:s') }}',
+end: '{{ $appointment->appointment_date->format('Y-m-d') }}T{{ \Carbon\Carbon::parse($appointment->appointment_time)->addMinutes(30)->format('H:i:s') }}',
+        backgroundColor: '{{ 
+            $appointment->status === "scheduled" ? "#10b981" : 
+            ($appointment->status === "declined" ? "#ef4444" : "#facc15")
+        }}',
+        borderColor: 'transparent'
+    },
+        @endif
+    @endforeach
+];
+>>>>>>> Stashed changes
 
-        calendar.render();
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: initialView,
+        initialDate: initialDate.includes('-') && initialDate.split('-').length === 2 ? initialDate + '-01' : initialDate,
+        headerToolbar: false,
+        themeSystem: 'standard',
+        events: events,
+        eventClick: function(info) {
+            window.location.href = `/appointments/${info.event.id}`;
+        },
+        height: 'auto',
+        allDaySlot: false,
+        slotMinTime: '08:00:00',
+        slotMaxTime: '19:00:00',
     });
+
+    calendar.render();
+});
 </script>
 @endpush
-
-
