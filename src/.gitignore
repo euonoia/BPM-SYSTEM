@@ -24,3 +24,5 @@ Homestead.yaml
 Thumbs.db
 .cursorignore
 resources/views/core1/plan.md
+**/agent/
+*.md

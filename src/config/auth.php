@@ -31,7 +31,7 @@ return [
         'provider' => 'users',
     ],
 
-    'core' => [
+    'core1' => [
         'driver' => 'session',
         'provider' => 'core_users',
     ],
@@ -39,6 +39,11 @@ return [
     'employee' => [
         'driver' => 'session',
         'provider' => 'employees',
+    ],
+
+    'hr1' => [
+        'driver' => 'session',
+        'provider' => 'hr1_users',
     ],
 ],
 
@@ -64,6 +69,11 @@ return [
     'employees' => [
         'driver' => 'eloquent',
         'model' => App\Models\Employee::class,
+    ],
+
+    'hr1_users' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\hr1\User::class,
     ],
 ],
     /*

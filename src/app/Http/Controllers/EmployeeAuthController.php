@@ -33,7 +33,7 @@ public function login(Request $request)
 
         // Redirect based on role only
         if ($employee->isAdmin()) {
-            return redirect()->route('admin.dashboard'); // HR2 admin
+            return redirect()->route('hr2.admin.dashboard'); // HR2 admin
         }
 
         if ($employee->isHr()) {

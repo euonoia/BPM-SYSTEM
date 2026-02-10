@@ -12,7 +12,7 @@
 </head>
 <body>
 
-@auth
+@auth('core1')
 <!-- Mobile Topbar -->
 <div class="topbar">
     <button class="menu-toggle"

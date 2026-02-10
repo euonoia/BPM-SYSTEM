@@ -37,10 +37,10 @@ Route::middleware('auth:employee')->prefix('hr2')->group(function () {
 
 // ---------------- Admin Routes ----------------
 Route::prefix('hr2/admin')->middleware('auth:employee')->group(function () {
-    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('hr2.admin.dashboard');
 
     // Dashboard
-    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('hr2.admin.dashboard_alt');
 
     // Competency
     Route::get('/competency', [AdminCompetencyController::class, 'index'])->name('admin.competency');
@@ -69,6 +69,6 @@ Route::prefix('hr2/admin')->middleware('auth:employee')->group(function () {
     Route::post('/ess/{id}/update', [AdminEssController::class, 'updateStatus'])->name('admin.ess.updateStatus');
 
      // ---------------- Add Admin ----------------
-    Route::get('/add-admin', [\App\Http\Controllers\hr2\Admin\AdminController::class, 'create'])->name('admin.add'); // show form
-    Route::post('/add-admin', [\App\Http\Controllers\hr2\Admin\AdminController::class, 'store'])->name('admin.add.store'); // save admin
+    Route::get('/add-admin', [\App\Http\Controllers\hr2\Admin\AdminController::class, 'create'])->name('hr2.admin.add'); // show form
+    Route::post('/add-admin', [\App\Http\Controllers\hr2\Admin\AdminController::class, 'store'])->name('hr2.admin.add.store'); // save admin
 });

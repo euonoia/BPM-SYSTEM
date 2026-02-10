@@ -22,6 +22,7 @@ class Patient extends Model
         'emergency_contact_name',
         'emergency_contact_phone',
         'blood_type',
+        'assigned_nurse_id',
         'allergies',
         'medical_history',
         'status',
@@ -46,6 +47,11 @@ class Patient extends Model
     public function bills()
     {
         return $this->hasMany(Bill::class);
+    }
+
+    public function assignedNurse()
+    {
+        return $this->belongsTo(User::class, 'assigned_nurse_id');
     }
 
     public function getAgeAttribute()

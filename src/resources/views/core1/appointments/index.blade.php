@@ -43,7 +43,7 @@
             <h1 class="core1-title">Appointments</h1>
             <p class="core1-subtitle">Manage and schedule appointments</p>
         </div>
-        <a href="{{ route('appointments.create') }}" class="core1-btn core1-btn-primary">
+        <a href="{{ route('core1.appointments.create') }}" class="core1-btn core1-btn-primary">
             <i class="fas fa-plus"></i>
             <span class="pl-20">Book Appointment</span>
         </a>
@@ -154,10 +154,10 @@
                             </td>
                             <td>
                                 <div class="d-flex items-center justify-center gap-2">
-                                    <a href="{{ route('appointments.show', $appointment) }}" class="btn-icon-action text-blue-500">
+                                    <a href="{{ route('core1.appointments.show', $appointment) }}" class="btn-icon-action text-blue-500">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <form action="{{ route('appointments.destroy', $appointment) }}" method="POST" class="d-flex m-0 bg-transparent">
+                                    <form action="{{ route('core1.appointments.destroy', $appointment) }}" method="POST" class="d-flex m-0 bg-transparent">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn-icon-action text-red-600">
@@ -227,7 +227,7 @@
                 @endforeach
             ],
             eventClick: function(info) {
-                window.location.href = `/appointments/${info.event.id}`;
+                window.location.href = `{{ route('core1.appointments.index') }}/${info.event.id}`;
             },
             height: 'auto',
             allDaySlot: false,

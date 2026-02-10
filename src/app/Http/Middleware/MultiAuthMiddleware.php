@@ -12,8 +12,8 @@ class MultiAuthMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         // Core authentication (PRIMARY)
-        if (Auth::guard('core')->check()) {
-            Auth::shouldUse('core');
+        if (Auth::guard('core1')->check()) {
+            Auth::shouldUse('core1');
             return $next($request);
         }
 
@@ -23,6 +23,6 @@ class MultiAuthMiddleware
         //     return $next($request);
         // }
 
-        return redirect()->route('login');
+        return redirect()->route('core1.login');
     }
 }

@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('emergency_contact_name')->nullable();
             $table->string('emergency_contact_phone')->nullable();
             $table->string('blood_type')->nullable();
+            $table->foreignId('assigned_nurse_id')->nullable()->constrained('users_core1')->onDelete('set null');
             $table->text('allergies')->nullable();
             $table->text('medical_history')->nullable();
             $table->enum('status', ['active', 'inactive', 'deceased'])->default('active');
