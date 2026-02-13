@@ -1,0 +1,22 @@
+resources/views/hr4/
+├── index.blade.php (okay na to)
+├── payroll/
+│   ├── index.blade.php
+│   ├── time-keeping.blade.php
+│   ├── computation.blade.php
+│   └── payslip.blade.php
+├── compensation/
+│   ├── index.blade.php
+│   ├── job-grading.blade.php
+│   ├── performance.blade.php
+│   └── review.blade.php
+├── human-capital/
+│   ├── index.blade.php
+│   ├── records.blade.php
+│   ├── recruitment.blade.php
+│   └── leave-scheduling.blade.php
+└── analytics/
+    ├── index.blade.php
+    ├── kpi-dashboard.blade.php
+    ├── cost-analytics.blade.php
+    └── manpower-reports.blade.php

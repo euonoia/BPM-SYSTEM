@@ -9,44 +9,22 @@ use App\Models\Authenticate;
 
 class AuthController extends Controller
 {
-    /**
-     * Show login form
-     */
+ 
     public function showLogin()
     {
-        return view('auth.login');
+        return redirect()->route('admin.login');
     }
 
-    /**
-     * Process login
-     */
+
     public function login(Request $request)
     {
-        $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required',
-        ]);
-
-        $credentials = $request->only('email', 'password');
-
-        if (Auth::attempt($credentials)) {
-            $employee = Auth::user();
-
-            // Redirect based on role and position
-            return $this->redirectByRole($employee);
-        }
-
-        return back()->withErrors([
-            'email' => 'Invalid credentials.',
-        ]);
+        return redirect()->route('admin.login')->with('info', 'Please use the Admin login.');
     }
 
-    /**
-     * Show registration form
-     */
+
     public function showRegister()
     {
-        return view('auth.register');
+        return redirect()->route('admin.login');
     }
 
     /**
