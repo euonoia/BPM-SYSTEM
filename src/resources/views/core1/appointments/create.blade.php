@@ -10,7 +10,7 @@
     </div>
 
     <div class="core1-card core1-card-compact">
-        <form action="{{ route('appointments.store') }}" method="POST">
+        <form action="{{ route('core1.appointments.store') }}" method="POST">
             @csrf
             
             <div class="core1-form-grid">
@@ -83,7 +83,7 @@
                 <button type="submit" class="core1-btn core1-btn-primary">
                     Book Appointment
                 </button>
-                <a href="{{ route('appointments.index') }}" class="core1-btn core1-btn-outline">
+                <a href="{{ route('core1.appointments.index') }}" class="core1-btn core1-btn-outline">
                     Cancel
                 </a>
             </div>
@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
         msg.textContent = 'Checking availability...';
         timeSelect.disabled = true;
 
-        fetch(`{{ route('appointments.check-availability') }}?doctor_id=${doctorId}&date=${date}`)
+        fetch(`{{ route('core1.appointments.check-availability') }}?doctor_id=${doctorId}&date=${date}`)
             .then(response => response.json())
             .then(data => {
                 timeSelect.innerHTML = '<option value="">Select Time Slot</option>';

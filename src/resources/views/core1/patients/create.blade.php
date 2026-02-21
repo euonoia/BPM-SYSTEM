@@ -10,7 +10,7 @@
     </div>
 
     <div class="core1-card core1-card-compact">
-        <form action="{{ route('patients.store') }}" method="POST">
+        <form action="{{ route('core1.patients.store') }}" method="POST">
             @csrf
             
             <div class="core1-form-grid">
@@ -75,7 +75,7 @@
                 <button type="submit" class="core1-btn core1-btn-primary">
                     Register Patient
                 </button>
-                <a href="{{ route('patients.index') }}" class="core1-btn core1-btn-outline">
+                <a href="{{ route('core1.patients.index') }}" class="core1-btn core1-btn-outline">
                     Cancel
                 </a>
             </div>

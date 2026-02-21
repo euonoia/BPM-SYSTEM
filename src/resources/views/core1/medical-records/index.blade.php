@@ -17,18 +17,39 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
-                    @forelse($records as $record)
+                    @forelse($records as $patient)
+                        @php
+                            $latestRecord = $patient->medicalRecords->first();
+                            $latestAppointment = $patient->appointments->first();
+                        @endphp
+
                         <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4">{{ $record->patient->name }}</td>
-                            <td class="px-6 py-4">{{ $record->record_type }}</td>
-                            <td class="px-6 py-4">{{ $record->record_date->format('M d, Y') }}</td>
+                            <td class="px-6 py-4">{{ $patient->name }}</td>
                             <td class="px-6 py-4">
-                                <a href="{{ route('medical-records.show', $record) }}" class="text-blue-600 hover:text-blue-900">View</a>
+                                @if($latestRecord)
+                                    {{ $latestRecord->record_type }}
+                                @elseif($latestAppointment)
+                                    {{ ucfirst($latestAppointment->type ?? 'N/A') }}
+                                @else
+                                    N/A
+                                @endif
                             </td>
+                            <td class="px-6 py-4">
+                                @if($latestRecord)
+                                    {{ $latestRecord->record_date->format('M d, Y') }}
+                                @elseif($latestAppointment)
+                                    {{ \Carbon\Carbon::parse($latestAppointment->appointment_date)->format('M d, Y') }}
+                                @else
+                                    N/A
+                                @endif
+                            </td>
+                            <td class="px-6 py-4">
+    <a href="{{ route('core1.medical-records.show', $patient->id) }}" class="text-blue-600 hover:text-blue-900">View</a>
+</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="px-6 py-4 text-center text-gray-500">No records found</td>
+                            <td colspan="4" class="text-center text-gray-500">No records found</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -40,4 +61,3 @@
     </div>
 </div>
 @endsection
-

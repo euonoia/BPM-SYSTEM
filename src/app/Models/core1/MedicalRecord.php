@@ -37,5 +37,17 @@ class MedicalRecord extends Model
     {
         return $this->belongsTo(\App\Models\core1\User::class, 'doctor_id');
     }
+
+    public function patientAppointments()
+{
+    return $this->hasManyThrough(
+        \App\Models\core1\Appointment::class,
+        \App\Models\core1\Patient::class,
+        'id',
+        'patient_id',
+        'patient_id',
+        'id'
+    );
+}
 }
 

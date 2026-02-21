@@ -11,17 +11,20 @@ class Appointment extends Model
 
     protected $table = 'appointments_core1';
 
-    protected $fillable = [
-        'appointment_id',
-        'patient_id',
-        'doctor_id',
-        'appointment_date',
-        'appointment_time',
-        'type',
-        'status',
-        'notes',
-        'reason',
-    ];
+   protected $fillable = [
+    'appointment_id',
+    'patient_id',
+    'doctor_id',
+    'appointment_date',
+    'appointment_time',
+    'type',
+    'status',
+    'notes',
+    'reason',
+    'triage_note',
+    'vital_signs'
+];
+
 
     protected $casts = [
         'appointment_date' => 'date',

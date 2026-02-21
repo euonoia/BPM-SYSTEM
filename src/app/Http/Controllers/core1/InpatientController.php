@@ -4,40 +4,37 @@ namespace App\Http\Controllers\core1;
 
 use App\Http\Controllers\Controller;
 use App\Models\core1\Patient;
+use App\Models\core1\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Carbon;
 
 class InpatientController extends Controller
 {
     public function index()
     {
-         $user = Auth::user();
+        $user = Auth::user();
         $isDoctor = $user->role === 'doctor';
+        $isNurse = $user->role === 'nurse';
 
         // Query inpatients
         $inpatients = Patient::query()
-        ->where('care_type', 'inpatient')
-        ->when($isDoctor, fn($q) => $q->where('doctor_id', $user->id))
-        ->whereHas('appointments', function ($q) use ($user, $isDoctor) {
-            $q->where('status', 'scheduled'); // Only show scheduled patients
-            if ($isDoctor) {
-                $q->where('doctor_id', $user->id);
-            }
-        })
-        ->latest()
-        ->get();
+            ->where('care_type', 'inpatient')
+            ->when($isDoctor, fn($q) => $q->where('doctor_id', $user->id))
+            ->when(!$isDoctor && !$isNurse, fn($q) => $q)
+            ->latest()
+            ->get();
 
         // Stats
         $stats = [
             'current_inpatients' => $inpatients->count(),
-            'occupied' => $inpatients->count(), // assuming each inpatient occupies a bed
+            'occupied' => $inpatients->count(),
             'discharges_today' => Patient::where('care_type', 'inpatient')
+                                        ->when($isNurse, fn($q) => $q->where('assigned_nurse_id', $user->id))
                                         ->whereDate('last_visit', today())
                                         ->count(),
         ];
 
-        // Beds (temporary placeholders for UI)
+        // Beds placeholder
         $beds = [];
         for ($i = 1; $i <= 10; $i++) {
             $beds[] = [
@@ -50,17 +47,24 @@ class InpatientController extends Controller
             ];
         }
 
-        return view('core1.inpatient.index', compact('inpatients', 'stats', 'beds'));
+        // Nurses for dropdown
+        $nurses = [];
+        if ($user->isAdmin() || $user->role === 'head_nurse') {
+            $nurses = User::where('role', 'nurse')->get();
+        }
+
+        return view('core1.inpatient.index', compact('inpatients', 'stats', 'beds', 'nurses'));
     }
 
     public function deactivate(Patient $patient)
 {
-    // Toggle status
+    $newStatus = $patient->status === 'inactive' ? 'active' : 'inactive';
+
     $patient->update([
-        'status' => 'inactive',
+        'status' => $newStatus
     ]);
 
-    return back()->with('success', 'Patient status updated to inactive.');
+    return back()->with('success', 'Patient status updated successfully.');
 }
 
 }

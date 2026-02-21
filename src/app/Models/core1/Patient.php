@@ -16,29 +16,26 @@ class Patient extends Model
 
     // <--- Replace this $fillable with the updated version
     protected $fillable = [
-<<<<<<< Updated upstream
-        'patient_id',
-        'name',
-        'date_of_birth',
-        'gender',
-        'phone',
-        'email',
-        'address',
-        'emergency_contact_name',
-        'emergency_contact_phone',
-        'blood_type',
-        'assigned_nurse_id',
-        'allergies',
-        'medical_history',
-        'status',
-        'last_visit',
-=======
-        'patient_id', 'name', 'date_of_birth', 'gender', 'phone', 'email', 
-        'address', 'emergency_contact_name', 'emergency_contact_phone',
-        'blood_type', 'allergies', 'medical_history', 'status', 'last_visit',
-        'care_type', 'admission_date', 'doctor_id', 'reason'
->>>>>>> Stashed changes
-    ];
+    'patient_id',
+    'name',
+    'date_of_birth',
+    'gender',
+    'phone',
+    'email',
+    'address',
+    'emergency_contact_name',
+    'emergency_contact_phone',
+    'blood_type',
+    'allergies',
+    'medical_history',
+    'status',
+    'last_visit',
+    'care_type',
+    'admission_date',
+    'doctor_id',
+    'assigned_nurse_id',
+    'reason'
+];
 
     protected $casts = [
         'date_of_birth' => 'date',

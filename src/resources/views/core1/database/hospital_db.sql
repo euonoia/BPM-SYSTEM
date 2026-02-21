@@ -302,3 +302,31 @@ MODIFY status ENUM(
     'in consultation',
     'consulted'
 );
+
+ALTER TABLE patients_core1
+ADD COLUMN assigned_nurse_id BIGINT UNSIGNED NULL AFTER care_type;
+
+ALTER TABLE users_core1 
+MODIFY role ENUM('admin','doctor','head_nurse','nurse','patient','receptionist','billing') NOT NULL;
+
+ALTER TABLE appointments_core1
+ADD COLUMN triage_note VARCHAR(255) NULL AFTER notes,
+ADD COLUMN vital_signs VARCHAR(255) NULL AFTER triage_note;
+
+ALTER TABLE appointments_core1
+MODIFY status ENUM(
+    'pending',
+    'scheduled',
+    'confirmed',
+    'completed',
+    'cancelled',
+    'declined',
+    'no-sohw',
+    'waiting',
+    'in_consultation',
+    'consulted',
+    'triaged'
+) NOT NULL DEFAULT 'pending';
+
+ALTER TABLE medical_records_core1
+MODIFY record_type VARCHAR(50);

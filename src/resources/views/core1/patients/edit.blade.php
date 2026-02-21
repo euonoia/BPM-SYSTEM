@@ -10,7 +10,7 @@
     </div>
 
     <div class="core1-card core1-card-compact">
-        <form action="{{ route('patients.update', $patient) }}" method="POST">
+        <form action="{{ route('core1.patients.update', $patient) }}" method="POST">
             @csrf
             @method('PUT')
             
@@ -75,7 +75,7 @@
                 <button type="submit" class="core1-btn core1-btn-primary">
                     Update Patient
                 </button>
-                <a href="{{ route('patients.show', $patient) }}" class="core1-btn core1-btn-outline">
+                <a href="{{ route('core1.patients.show', $patient) }}" class="core1-btn core1-btn-outline">
                     Cancel
                 </a>
             </div>

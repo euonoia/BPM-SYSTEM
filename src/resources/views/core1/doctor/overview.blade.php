@@ -91,27 +91,28 @@
                         <th>Status</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @forelse($upcomingAppointments as $appointment)
-                    <tr>
-                        <td class="text-xs text-gray font-mono">{{ $appointment->patient->id ?? 'N/A' }}</td>
-                        <td class="font-bold text-blue">{{ $appointment->patient->name ?? 'N/A' }}</td>
-                        <td><span class="core1-badge-teal">{{ $appointment->bed ?? 'N/A' }}</span></td>
-                        <td>
-                             @php
-                                $statusClass = 'tag-pending';
-                                if($appointment->status == 'scheduled') $statusClass = 'core1-tag-recovering';
-                                if($appointment->status == 'completed') $statusClass = 'core1-tag-stable';
-                            @endphp
-                            <span class="core1-status-tag {{ $statusClass }}">{{ ucfirst($appointment->status) }}</span>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="4" class="empty-state-cell text-center p-40">No patients under care found.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
+              <tbody>
+    @forelse($inpatients as $patient)
+    <tr>
+        <td class="text-xs text-gray font-mono">{{ $patient->id }}</td>
+        <td class="font-bold text-blue">{{ $patient->name }}</td>
+        <td><span class="core1-badge-teal">{{ $patient->bed ?? 'N/A' }}</span></td>
+        <td>
+            @php
+                $statusClass = 'tag-pending';
+                if($patient->status == 'in consultation') $statusClass = 'core1-tag-recovering';
+                if($patient->status == 'consulted') $statusClass = 'core1-tag-stable';
+            @endphp
+            <span class="core1-status-tag {{ $statusClass }}">{{ ucfirst($patient->status) }}</span>
+        </td>
+    </tr>
+    @empty
+    <tr>
+        <td colspan="4" class="empty-state-cell text-center p-40">No patients under care found.</td>
+    </tr>
+    @endforelse
+</tbody>
+
             </table>
         </div>
     </div>

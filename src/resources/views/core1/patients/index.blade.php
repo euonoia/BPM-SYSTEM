@@ -18,27 +18,21 @@
         </div>
     @endif
 
-    <div class="core1-flex-between core1-header">
-        <div>
-            <h2 class="core1-title">Patient Management</h2>
-            <p class="core1-subtitle">Manage patient records and registrations</p>
-        </div>
-<<<<<<< Updated upstream
+   <div class="core1-flex-between core1-header">
+    <div>
+        <h2 class="core1-title">Patient Management</h2>
+        <p class="core1-subtitle">Manage patient records and registrations</p>
+    </div>
+
+    {{-- Only show New Patient button for Admin and Receptionist --}}
+    @if(auth()->user()->role === 'admin' || auth()->user()->role === 'receptionist')
         <a href="{{ route('core1.patients.create') }}" class="core1-btn core1-btn-primary">
             <i class="fas fa-plus"></i>
             <span class="pl-20">New Patient</span>
         </a>
-=======
+    @endif
+</div>
 
-        {{-- New Patient button only for non-doctors --}}
-        @if(auth()->user()->role !== 'doctor')
-            <a href="{{ route('patients.create') }}" class="core1-btn core1-btn-primary">
-                <i class="fas fa-plus"></i>
-                <span class="pl-20">New Patient</span>
-            </a>
-        @endif
->>>>>>> Stashed changes
-    </div>
 
     <div class="core1-stats-grid">
         <div class="core1-stat-card">
@@ -118,6 +112,9 @@
                     <th>Contact Info</th>
                     <th>Age/Gender</th>
                     <th>Assigned Nurse</th>
+                    @if(auth()->user()->role !== 'doctor')
+                        <th>Assigned Doctor</th>
+                    @endif
                     <th>Last Visit</th>
                     <th>Status</th>
                     <th class="text-center">Actions</th>
@@ -137,6 +134,7 @@
                                 </div>
                             </div>
                         </td>
+
                         <td>
                             <div class="text-sm text-dark d-flex items-center gap-2">
                                 <i class="fas fa-phone text-xs text-gray"></i>
@@ -147,6 +145,7 @@
                                 {{ $patient->email }}
                             </div>
                         </td>
+
                         <td>
                             <div class="d-flex items-center gap-2">
                                 <span class="text-sm font-medium text-dark">{{ $patient->age ?? 'N/A' }}</span>
@@ -154,25 +153,46 @@
                                 <span class="text-sm text-gray text-capitalize">{{ $patient->gender }}</span>
                             </div>
                         </td>
-                        <td>
-                            @if(auth()->user()->isAdmin() || auth()->user()->isHeadNurse())
-                                <form action="{{ route('core1.patients.assign-nurse', $patient) }}" method="POST" class="m-0 d-flex gap-2">
-                                    @csrf
-                                    <select name="nurse_id" onchange="this.form.submit()" class="core1-input text-xs w-auto py-5 px-10 m-0">
-                                        <option value="">-- Assign Nurse --</option>
-                                        @foreach($nurses as $nurse)
-                                            <option value="{{ $nurse->id }}" {{ $patient->assigned_nurse_id == $nurse->id ? 'selected' : '' }}>
-                                                {{ $nurse->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </form>
-                            @else
+
+     <td>
+    @if(auth()->user()->role === 'admin')
+        {{-- Admin: show nurse name only, read-only --}}
+        <div class="text-sm text-dark">
+            {{ $patient->assignedNurse->name ?? 'Not Admitted' }}
+        </div>
+    @elseif(auth()->user()->isHeadNurse() && $patient->care_type)
+        {{-- Head Nurse: keep editable dropdown --}}
+        <form action="{{ route('core1.patients.assign-nurse', $patient) }}" method="POST" class="m-0 d-flex gap-2">
+            @csrf
+            <select name="nurse_id" onchange="this.form.submit()" class="core1-input text-xs w-auto py-5 px-10 m-0">
+                <option value="">-- Assign Nurse --</option>
+                @foreach($nurses as $nurse)
+                    <option value="{{ $nurse->id }}" {{ $patient->assigned_nurse_id == $nurse->id ? 'selected' : '' }}>
+                        {{ $nurse->name }}
+                    </option>
+                @endforeach
+            </select>
+        </form>
+    @else
+        {{-- Nurse or others: show assigned nurse without PRIORITY --}}
+        <div class="text-sm text-dark">
+            {{ $patient->assignedNurse->name ?? 'Not Admitted' }}
+        </div>
+    @endif
+</td>
+
+
+                        @if(auth()->user()->role !== 'doctor')
+                            <td>
+                                @php
+                                    $doctor = $patient->appointments()->latest()->first()?->doctor;
+                                @endphp
                                 <div class="text-sm text-dark">
-                                    {{ $patient->assignedNurse->name ?? 'Unassigned' }}
+                                    {{ $doctor->name ?? 'Not Assigned' }}
                                 </div>
-                            @endif
-                        </td>
+                            </td>
+                        @endif
+
                         <td>
                             <div class="text-sm text-dark">
                                 {{ $patient->last_visit ? $patient->last_visit->format('M d, Y') : 'Never' }}
@@ -183,106 +203,110 @@
                                 </div>
                             @endif
                         </td>
+
                         <td>
-                            <span class="core1-badge {{ $patient->status === 'active' ? 'core1-badge-active' : 'core1-badge-inactive' }}">
-                                <i class="fas fa-circle text-xxs"></i>
-                                <span class="pl-20">{{ ucfirst($patient->status) }}</span>
-                            </span>
-                        </td>
+    @php
+        $isPriority = auth()->user()->role === 'nurse' && $patient->assigned_nurse_id === auth()->user()->id;
+    @endphp
+    <span class="core1-badge {{ $patient->status === 'active' ? 'core1-badge-active' : 'core1-badge-inactive' }}">
+        <i class="fas fa-circle text-xxs"></i>
+        <span class="pl-20">
+            {{ ucfirst($patient->status) }} 
+            @if($isPriority)
+                (PRIORITY)
+            @endif
+        </span>
+    </span>
+</td>
 
                         {{-- ACTIONS --}}
-                        <td>
-                            <div class="d-flex items-center justify-center gap-2">
-<<<<<<< Updated upstream
-                                <a href="{{ route('core1.patients.show', $patient) }}" 
-=======
+<td>
+   @php
+    $hasAppointment = $patient->appointments()
+        ->whereIn('status', ['scheduled', 'accepted'])
+        ->exists();
+    $canMovePatient = in_array(auth()->user()->role, ['admin', 'doctor']);
+    $isAdmin = auth()->user()->role === 'admin';
+@endphp
 
-                                {{-- View --}}
-                                <a href="{{ route('patients.show', $patient) }}" 
->>>>>>> Stashed changes
-                                   class="core1-icon-action text-blue"
-                                   title="View Details">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-<<<<<<< Updated upstream
-                                <a href="{{ route('core1.patients.edit', $patient) }}" 
-                                   class="core1-icon-action text-orange"
-                                   title="Edit Patient">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <a href="{{ route('core1.appointments.create', ['patient_id' => $patient->id]) }}" 
-                                   class="core1-icon-action text-purple"
-                                   title="Book Appointment">
-                                    <i class="fas fa-calendar-plus"></i>
-                                </a>
-                                <form action="{{ route('core1.patients.destroy', $patient) }}" 
-                                      method="POST" 
-                                      class="d-flex m-0 p-0 bg-transparent"
-                                      onsubmit="return confirm('Are you sure you want to delete this patient? This action cannot be undone.');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" 
-                                            class="core1-icon-action text-red"
-                                            title="Delete Patient">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
-=======
+{{-- Admin view: show actions if patient has appointment OR already admitted --}}
+@if(!$isAdmin || ($isAdmin && ($hasAppointment || $patient->care_type)) || auth()->user()->role === 'doctor')
+    <div class="d-flex items-center justify-center gap-2">
+        {{-- View --}}
+        <a href="{{ route('core1.patients.show', $patient) }}" 
+           class="core1-icon-action text-blue"
+           title="View Details">
+            <i class="fas fa-eye"></i>
+        </a>
 
-                                {{-- Edit (non-doctor only) --}}
-                                @if(auth()->user()->role !== 'doctor')
-                                    <a href="{{ route('patients.edit', $patient) }}" 
-                                       class="core1-icon-action text-orange"
-                                       title="Edit Patient">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                @endif
+        {{-- Edit --}}
+        @if(auth()->user()->role !== 'doctor')
+            <a href="{{ route('core1.patients.edit', $patient) }}" 
+               class="core1-icon-action text-orange"
+               title="Edit Patient">
+                <i class="fas fa-edit"></i>
+            </a>
+        @endif
 
-                                {{-- Move to Inpatient / Outpatient --}}
-                                @if(!$patient->care_type)
-                                    <form method="POST" action="{{ route('patients.move', $patient) }}" class="d-flex gap-1">
-                                        @csrf
-                                        <input type="hidden" name="care_type" value="inpatient">
-                                        <input type="hidden" name="admission_date" value="{{ now()->toDateString() }}">
-                                        <input type="hidden" name="doctor_id" value="{{ auth()->user()->id }}">
-                                        <input type="hidden" name="reason" value="Routine Checkup">
-                                        <button class="core1-btn-sm core1-btn-outline">Move to Inpatient</button>
-                                    </form>
+        {{-- Book Appointment --}}
+        <a href="{{ route('core1.appointments.create', ['patient_id' => $patient->id]) }}" 
+           class="core1-icon-action text-purple"
+           title="Book Appointment">
+            <i class="fas fa-calendar-plus"></i>
+        </a>
 
-                                    <form method="POST" action="{{ route('patients.move', $patient) }}" class="d-flex gap-1">
-                                        @csrf
-                                        <input type="hidden" name="care_type" value="outpatient">
-                                        <input type="hidden" name="admission_date" value="{{ now()->toDateString() }}">
-                                        <input type="hidden" name="doctor_id" value="{{ auth()->user()->id }}">
-                                        <input type="hidden" name="reason" value="Routine Checkup">
-                                        <button class="core1-btn-sm core1-btn-outline">Move to Outpatient</button>
-                                    </form>
-                                @else
-                                    <span class="core1-badge {{ $patient->care_type === 'inpatient' ? 'core1-badge-active' : 'core1-badge-inactive' }}">
-                                        {{ strtoupper($patient->care_type) }}
-                                    </span>
-                                @endif
+        {{-- Delete --}}
+        @if(auth()->user()->role !== 'doctor')
+            <form action="{{ route('core1.patients.destroy', $patient) }}" 
+                  method="POST"
+                  onsubmit="return confirm('Are you sure you want to delete this patient? This action cannot be undone.');">
+                @csrf
+                @method('DELETE')
+                <button class="core1-icon-action text-red">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </form>
+        @endif
 
-                                {{-- Delete (non-doctor only) --}}
-                                @if(auth()->user()->role !== 'doctor')
-                                    <form action="{{ route('patients.destroy', $patient) }}" 
-                                          method="POST"
-                                          onsubmit="return confirm('Are you sure?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="core1-icon-action text-red">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
-                                @endif
+        {{-- Move to Inpatient/Outpatient --}}
+        @if($canMovePatient && !$patient->care_type)
+            <form method="POST" action="{{ route('core1.patients.move', $patient) }}" class="d-flex gap-1">
+                @csrf
+                <input type="hidden" name="care_type" value="inpatient">
+                <input type="hidden" name="admission_date" value="{{ now()->toDateString() }}">
+                <input type="hidden" name="doctor_id" value="{{ auth()->user()->id }}">
+                <input type="hidden" name="reason" value="Routine Checkup">
+                <button class="core1-btn-sm core1-btn-outline">Move to Inpatient</button>
+            </form>
 
->>>>>>> Stashed changes
-                            </div>
-                        </td>
+            <form method="POST" action="{{ route('core1.patients.move', $patient) }}" class="d-flex gap-1">
+                @csrf
+                <input type="hidden" name="care_type" value="outpatient">
+                <input type="hidden" name="admission_date" value="{{ now()->toDateString() }}">
+                <input type="hidden" name="doctor_id" value="{{ auth()->user()->id }}">
+                <input type="hidden" name="reason" value="Routine Checkup">
+                <button class="core1-btn-sm core1-btn-outline">Move to Outpatient</button>
+            </form>
+        @elseif($patient->care_type)
+            <span class="core1-badge {{ $patient->care_type === 'inpatient' ? 'core1-badge-active' : 'core1-badge-inactive' }}">
+                {{ strtoupper($patient->care_type) }}
+            </span>
+        @endif
+    </div>
+@else
+    {{-- Admin view, patient not scheduled and not admitted --}}
+    @if($isAdmin && !$hasAppointment && !$patient->care_type)
+        <span class="text-gray text-xs">No actions available</span>
+    @endif
+@endif
+
+</td>
+
+
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="text-center p-40">
+                        <td colspan="8" class="text-center p-40">
                             <div class="d-flex flex-col items-center justify-center">
                                 <div class="icon-box-large">
                                     <i class="fas fa-user-slash"></i>
@@ -291,23 +315,13 @@
                                 <p class="text-gray text-sm mb-5">
                                     @if($searchTerm || $statusFilter)
                                         Try adjusting your search or filters
-                                    @else
-                                        @if(auth()->user()->role !== 'doctor')
-                                            Get started by adding a new patient
-                                        @else
-                                            {{-- Doctors see no extra message --}}
-                                        @endif
+                                    @elseif(auth()->user()->role !== 'doctor')
+                                        Get started by adding a new patient
                                     @endif
                                 </p>
-<<<<<<< Updated upstream
-                                @if(!$searchTerm && !$statusFilter)
-                                    <a href="{{ route('core1.patients.create') }}" class="core1-btn core1-btn-primary">
-=======
 
-                                {{-- Add First Patient button only for non-doctors --}}
                                 @if(!$searchTerm && !$statusFilter && auth()->user()->role !== 'doctor')
-                                    <a href="{{ route('patients.create') }}" class="core1-btn core1-btn-primary">
->>>>>>> Stashed changes
+                                    <a href="{{ route('core1.patients.create') }}" class="core1-btn core1-btn-primary">
                                         <i class="fas fa-plus"></i>
                                         <span class="pl-20">Add First Patient</span>
                                     </a>

@@ -39,13 +39,12 @@
     </div>
     <div class="d-flex justify-end mt-15">
     @if(auth()->user()->role !== 'doctor')
-        <a href="{{ route('patients.create') }}" class="core1-btn core1-btn-primary">
+        <a href="{{ route('core1.patients.create') }}" class="core1-btn core1-btn-primary">
             <i class="bi bi-plus"></i>
             <span class="ml-10">Admit Patient</span>
         </a>
     @endif
 </div>
-
 
     <!-- Tabs Section -->
     <div class="core1-card no-hover p-0 overflow-hidden mt-30">
@@ -71,6 +70,7 @@
                                 <th>Bed</th>
                                 <th>Admission Date</th>
                                 <th>Doctor</th>
+                                <th>Nurse</th>
                                 <th>Reason</th>
                                 <th>Status</th>
                                 <th class="text-right">Actions</th>
@@ -93,36 +93,55 @@
             </td>
 
             {{-- Admission Date --}}
+            <td>
+                {{ $inp->admission_date ? \Carbon\Carbon::parse($inp->admission_date)->format('M d, Y') : 'N/A' }}
+            </td>
+
+            {{-- Doctor --}}
+            <td>
+                {{ $inp->doctor?->name ?? 'N/A' }}
+            </td>
+
+            {{-- Nurse --}}
 <td>
-    {{ $inp->admission_date ? \Carbon\Carbon::parse($inp->admission_date)->format('M d, Y') : 'N/A' }}
+    <div class="text-sm text-dark">
+        {{ $inp->assignedNurse?->name ?? 'Unassigned' }}
+    </div>
 </td>
 
-{{-- Doctor --}}
-<td>
-    {{ $inp->doctor?->name ?? 'N/A' }}
-</td>
-
-{{-- Reason --}}
-<td>
-    {{ $inp->reason ?? 'N/A' }}
-</td>
-
+            {{-- Reason --}}
+            <td>
+                {{ $inp->reason ?? 'N/A' }}
+            </td>
 
             {{-- Status --}}
-            <td>
-                <span class="text-{{ $inp->status === 'inactive' ? 'red' : 'green' }} font-bold">
-                    {{ ucfirst($inp->status ?? 'active') }}
-                </span>
-            </td>
+<td>
+    @php
+        $isPriority = auth()->user()->role === 'nurse' && $inp->assigned_nurse_id === auth()->user()->id;
+    @endphp
+    <span class="text-{{ $inp->status === 'inactive' ? 'red' : 'green' }} font-bold">
+        {{ ucfirst($inp->status ?? 'active') }} 
+        @if($isPriority)
+            (PRIORITY)
+        @endif
+    </span>
+</td>
 
             {{-- Actions: Edit button to change status --}}
             <td class="text-right">
-                <form action="{{ route('inpatients.deactivate', $inp) }}" method="POST" style="display:inline-block;">
+                <form action="{{ route('core1.inpatients.deactivate', $inp) }}" method="POST" style="display:inline-block;">
                     @csrf
                     @method('PATCH')
-                    <button type="submit" class="core1-btn-sm core1-btn-outline text-orange">
-                        <i class="bi bi-pencil"></i> Edit
-                    </button>
+                    <button type="submit"
+    class="core1-btn-sm core1-btn-outline {{ $inp->status === 'inactive' ? 'text-green' : 'text-orange' }}">
+    
+    @if($inp->status === 'inactive')
+        <i class="bi bi-check-circle"></i> Activate
+    @else
+        <i class="bi bi-x-circle"></i> Deactivate
+    @endif
+</button>
+
                 </form>
             </td>
         </tr>
@@ -166,19 +185,14 @@
 
 <script>
 function switchTab(evt, tabId) {
-    // Hide all tab panes
     const tabPanes = document.getElementsByClassName('core1-tab-pane');
     for (let i = 0; i < tabPanes.length; i++) {
         tabPanes[i].classList.remove('active');
     }
-
-    // Remove active class from all buttons
     const tabBtns = document.getElementsByClassName('core1-tab-btn');
     for (let i = 0; i < tabBtns.length; i++) {
         tabBtns[i].classList.remove('active');
     }
-
-    // Show the current tab, and add an "active" class to the button that opened the tab
     document.getElementById(tabId).classList.add('active');
     evt.currentTarget.classList.add('active');
 }

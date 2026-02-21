@@ -58,16 +58,15 @@ class AppointmentController extends Controller
     );
 }
 
-
-    public function create()
+public function create()
 {
     $patients = Patient::all();
 
     $patients->each(function($patient) {
-        // Check if the patient has any upcoming appointment that is NOT cancelled
+        // Patient is considered "already booked" only if they have an active appointment
+        // Active appointments: scheduled, accepted, pending
         $patient->hasUpcomingAppointment = $patient->appointments()
-            ->where('appointment_date', '>=', now())
-            ->where('status', '!=', 'cancelled')  // any status except cancelled
+            ->whereIn('status', ['scheduled', 'accepted', 'pending', 'waiting', 'in_consultation', 'consulted', 'completed'])
             ->exists();
     });
 
@@ -75,6 +74,7 @@ class AppointmentController extends Controller
 
     return view('core1.appointments.create', compact('patients', 'doctors'));
 }
+
 
 
     public function store(StoreAppointmentRequest $request)
@@ -89,14 +89,10 @@ class AppointmentController extends Controller
 
     Appointment::create($validated);
 
-    return redirect()->route('appointments.index')->with('success', 'Appointment booked successfully.');
+    return redirect()->route('core1.appointments.index')->with('success', 'Appointment booked successfully.');
 }
 
-<<<<<<< Updated upstream
-        return redirect()->route('core1.appointments.index')->with('success', 'Appointment booked successfully.');
-    }
-=======
->>>>>>> Stashed changes
+      
 
     public function show(Appointment $appointment)
 {
@@ -129,7 +125,7 @@ class AppointmentController extends Controller
         ]);
 
         $appointment->update($validated);
-        return redirect()->route('appointments.show', $appointment)
+        return redirect()->route('core1.appointments.show', $appointment)
          ->with('success', 'Appointment updated successfully.');
 
 

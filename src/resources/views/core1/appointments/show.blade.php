@@ -9,13 +9,13 @@
             <h1 class="text-3xl font-bold text-gray-900">Appointment Details</h1>
             <p class="text-gray-600 mt-1">View or edit appointment information</p>
         </div>
-        <a href="{{ route('appointments.index') }}" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+        <a href="{{ route('core1.appointments.index') }}" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
             Back to List
         </a>
     </div>
 
     <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 max-w-2xl">
-        <form action="{{ route('appointments.update', $appointment) }}" method="POST" class="space-y-6">
+        <form action="{{ route('core1.appointments.update', $appointment) }}" method="POST" class="space-y-6">
     @csrf
     @method('PUT')
 

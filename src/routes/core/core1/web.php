@@ -85,24 +85,10 @@ Route::middleware(['multiAuth'])->group(function () {
     });
 
     Route::middleware('role:doctor')->group(function() {
-    Route::post('/appointments/{appointment}/accept', [AppointmentController::class, 'accept'])->name('appointments.accept');
-    Route::post('/appointments/{appointment}/decline', [AppointmentController::class, 'decline'])->name('appointments.decline');
+    Route::post('/appointments/{appointment}/accept', [AppointmentController::class, 'accept'])->name('core1.appointments.accept');
+    Route::post('/appointments/{appointment}/decline', [AppointmentController::class, 'decline'])->name('core1.appointments.decline');
 });
 
-Route::prefix('appointments')->name('appointments.')->group(function () {
-    Route::get('/', [AppointmentController::class, 'index'])->name('index');
-    Route::get('/create', [AppointmentController::class, 'create'])->name('create');
-    Route::post('/store', [AppointmentController::class, 'store'])->name('store');
-    Route::get('/{appointment}', [AppointmentController::class, 'show'])->name('show');
-    Route::put('/{appointment}', [AppointmentController::class, 'update'])->name('update');
-
-    // Doctor actions
-    Route::post('/{appointment}/accept', [AppointmentController::class, 'accept'])->name('accept');
-    Route::post('/{appointment}/decline', [AppointmentController::class, 'decline'])->name('decline');
-
-    // API
-    Route::get('/check-availability', [AppointmentController::class, 'checkAvailability'])->name('check-availability');
-});
     
     Route::middleware('role:admin,doctor,nurse,head_nurse')->group(function () {
         Route::get('/inpatient', [InpatientController::class, 'index'])->name('core1.inpatient.index');
@@ -112,16 +98,38 @@ Route::prefix('appointments')->name('appointments.')->group(function () {
 
     Route::post('/patients/{patient}/move', 
     [\App\Http\Controllers\core1\PatientManagementController::class, 'move']
-)->name('patients.move');
-Route::patch('/inpatient/{patient}/deactivate', [InpatientController::class, 'deactivate'])->name('inpatients.deactivate');
+)->name('core1.patients.move');
+Route::patch('/inpatient/{patient}/deactivate', [InpatientController::class, 'deactivate'])->name('core1.inpatients.deactivate');
 Route::patch('/patients/{patient}/status', 
     [PatientManagementController::class, 'updateStatus']
-)->name('patients.updateStatus');
+)->name('core1.patients.updateStatus');
+Route::post('/outpatient/{id}/update-status',
+    [OutpatientController::class, 'updateStatus']
+)->name('core1.outpatient.updateStatus');
+Route::post('/core1/outpatient/{id}/triage',
+    [OutpatientController::class, 'saveTriage']
+)->name('core1.outpatient.saveTriage');
+// Prescriptions
+Route::post('/outpatient/prescription/store', [OutpatientController::class, 'storePrescription'])
+    ->name('core1.outpatient.storePrescription');
 
+Route::put('/outpatient/prescription/update/{id}', [OutpatientController::class, 'updatePrescription'])
+    ->name('core1.outpatient.updatePrescription');
+
+Route::post('/core1/outpatient/store-lab-order',
+    [OutpatientController::class, 'storeLabOrder']
+)->name('core1.outpatient.storeLabOrder');
+
+    Route::post('/outpatient/follow-up/store',
+    [OutpatientController::class,'storeFollowUp']
+)->name('core1.outpatient.storeFollowUp');
+Route::put('/outpatient/follow-up/{id}/update', [OutpatientController::class, 'updateFollowUp'])
+    ->name('core1.outpatient.updateFollowUp');
     
+
     Route::middleware('role:admin,doctor,nurse,head_nurse,patient')->group(function () {
         Route::get('/medical-records', [MedicalRecordController::class, 'index'])->name('core1.medical-records.index');
-        Route::get('/medical-records/{record}', [MedicalRecordController::class, 'show'])->name('core1.medical-records.show');
+        Route::get('/medical-records/{patient}', [MedicalRecordController::class, 'show'])->name('core1.medical-records.show');
     });
     
     Route::middleware('role:admin,billing,patient')->group(function () {
