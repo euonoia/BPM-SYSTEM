@@ -113,6 +113,51 @@ class OnboardingController_hr1 extends Controller
         return response()->json($tasks);
     }
 
+    /**
+     * Create a new task/requirement for a specific candidate and job.
+     */
+    public function storeApplicantTask(Request $request)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users_hr1,id',
+            'job_posting_id' => 'required|exists:job_postings_hr1,id',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        // Create the base task definition
+        $taskId = DB::table('tasks_hr1')->insertGetId([
+            'title' => $validated['title'],
+            'description' => $validated['description'] ?? null,
+            'task_set_id' => null,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // Attach task to the candidate for this job
+        $applicantTaskId = DB::table('applicant_tasks_hr1')->insertGetId([
+            'user_id' => $validated['user_id'],
+            'job_posting_id' => $validated['job_posting_id'],
+            'task_id' => $taskId,
+            'completed' => false,
+            'completed_at' => null,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $task = DB::table('applicant_tasks_hr1')
+            ->leftJoin('tasks_hr1', 'applicant_tasks_hr1.task_id', '=', 'tasks_hr1.id')
+            ->where('applicant_tasks_hr1.id', $applicantTaskId)
+            ->select(
+                'applicant_tasks_hr1.*',
+                'tasks_hr1.title as task_title',
+                'tasks_hr1.description as task_description'
+            )
+            ->first();
+
+        return response()->json($task, 201);
+    }
+
     public function updateApplicantTaskStatus(Request $request, $id)
     {
         $validated = $request->validate([

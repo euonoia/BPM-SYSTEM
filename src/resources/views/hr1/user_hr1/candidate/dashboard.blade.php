@@ -563,6 +563,42 @@
                                 <label class="text-xs font-semibold text-text-light uppercase tracking-wide">Status</label>
                                 <div class="text-base font-semibold text-primary mt-1" x-text="candidateProfile?.status || 'N/A'"></div>
                             </div>
+                            <div class="p-4 bg-gray-50 rounded-xl" x-show="candidateProfile?.status">
+                                <label class="text-xs font-semibold text-text-light uppercase tracking-wide">Update Status</label>
+                                <div class="mt-3 flex flex-wrap gap-2">
+                                    <template x-if="candidateProfile?.status === 'Candidate'">
+                                        <div class="flex flex-wrap gap-2">
+                                            <button type="button"
+                                                    @click="updateCandidateStatus('Probation')"
+                                                    class="px-3 py-2 text-[11px] bg-yellow-50 text-yellow-800 rounded-lg hover:bg-yellow-100 font-bold">
+                                                Move to Probation
+                                            </button>
+                                            <button type="button"
+                                                    @click="updateCandidateStatus('Rejected')"
+                                                    class="px-3 py-2 text-[11px] bg-red-50 text-red-700 rounded-lg hover:bg-red-100 font-bold">
+                                                Reject
+                                            </button>
+                                        </div>
+                                    </template>
+                                    <template x-if="candidateProfile?.status === 'Probation'">
+                                        <div class="flex flex-wrap gap-2">
+                                            <button type="button"
+                                                    @click="updateCandidateStatus('Regular')"
+                                                    class="px-3 py-2 text-[11px] bg-green-50 text-green-700 rounded-lg hover:bg-green-100 font-bold">
+                                                Promote to Regular
+                                            </button>
+                                            <button type="button"
+                                                    @click="updateCandidateStatus('Probation')"
+                                                    class="px-3 py-2 text-[11px] bg-primary/10 text-primary rounded-lg hover:bg-primary/20 font-bold">
+                                                Retain (Keep Probation)
+                                            </button>
+                                        </div>
+                                    </template>
+                                </div>
+                                <div class="text-[11px] text-text-light mt-2">
+                                    This updates your HR1 status and may affect onboarding/performance access.
+                                </div>
+                            </div>
                         </div>
                     </template>
 
@@ -695,11 +731,10 @@ function dashboard() {
         
         getStatusClass(status) {
             const classes = {
-                'Applied': 'bg-blue-50 text-blue-700 border-blue-200',
-                'Evaluation': 'bg-purple-50 text-purple-700 border-purple-200',
-                'Interviewing': 'bg-yellow-50 text-yellow-700 border-yellow-200',
-                'Offer': 'bg-green-50 text-green-700 border-green-200',
-                'Onboarding': 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                'Applicant': 'bg-blue-50 text-blue-700 border-blue-200',
+                'Candidate': 'bg-purple-50 text-purple-700 border-purple-200',
+                'Probation': 'bg-yellow-50 text-yellow-700 border-yellow-200',
+                'Regular': 'bg-green-50 text-green-700 border-green-200',
                 'Rejected': 'bg-red-50 text-red-700 border-red-200'
             };
             return classes[status] || 'bg-gray-50 text-gray-700 border-gray-200';
@@ -723,11 +758,10 @@ function dashboard() {
         getApplicationProgress(app) {
             // Calculate progress based on status
             const statusProgress = {
-                'Applied': 20,
-                'Evaluation': 40,
-                'Interviewing': 60,
-                'Offer': 80,
-                'Onboarding': 100,
+                'Applicant': 25,
+                'Candidate': 50,
+                'Probation': 75,
+                'Regular': 100,
                 'Rejected': 0
             };
             return statusProgress[app.status] || 0;
@@ -779,6 +813,7 @@ function dashboard() {
             
             fetch(`/api/hr1/question-sets/${this.selectedQuestionSet.id}/submit`, {
                 method: 'POST',
+                credentials: 'same-origin',
                 headers: { 
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     'Accept': 'application/json'
@@ -806,6 +841,7 @@ function dashboard() {
         markModuleComplete(assignmentId) {
             fetch(`/api/hr1/modules/complete/${assignmentId}`, {
                 method: 'POST',
+                credentials: 'same-origin',
                 headers: { 
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     'Accept': 'application/json'
@@ -921,6 +957,7 @@ function dashboard() {
             if (confirm('Are you sure you want to cancel this application?')) {
                 fetch(`/api/hr1/applications/${appId}`, {
                     method: 'DELETE',
+                    credentials: 'same-origin',
                     headers: { 
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         'Accept': 'application/json'
@@ -941,9 +978,20 @@ function dashboard() {
             const form = event.target;
             const formData = new FormData(form);
             formData.append('job_posting_id', this.selectedJob.id);
+
+            // Enforce resume upload if job requires it (frontend guard)
+            if (this.selectedJob?.require_resume) {
+                const docs = formData.getAll('documents[]') || [];
+                const hasFile = docs.some(d => d instanceof File && d.name);
+                if (!hasFile) {
+                    alert('Please upload your resume before submitting.');
+                    return;
+                }
+            }
             
             fetch('/api/hr1/applications', {
                 method: 'POST',
+                credentials: 'same-origin',
                 headers: { 
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     'Accept': 'application/json'
@@ -970,6 +1018,7 @@ function dashboard() {
             
             fetch(`/api/hr1/applications/${this.selectedApplication.id}`, {
                 method: 'PATCH',
+                credentials: 'same-origin',
                 headers: { 
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     'Accept': 'application/json'
@@ -995,6 +1044,7 @@ function dashboard() {
         congratulateRecognition(id) {
             fetch(`/api/hr1/recognitions/${id}/congratulate`, {
                 method: 'POST',
+                credentials: 'same-origin',
                 headers: { 
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     'Accept': 'application/json'
@@ -1011,6 +1061,7 @@ function dashboard() {
         boostRecognition(id) {
             fetch(`/api/hr1/recognitions/${id}/boost`, {
                 method: 'POST',
+                credentials: 'same-origin',
                 headers: { 
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     'Accept': 'application/json'
@@ -1058,6 +1109,7 @@ function dashboard() {
             
             fetch(`/api/hr1/candidate/profile`, {
                 method: 'PATCH',
+                credentials: 'same-origin',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     'Accept': 'application/json'
@@ -1073,6 +1125,33 @@ function dashboard() {
             }).catch(err => {
                 console.error('Error updating profile:', err);
                 alert('Failed to update profile. Please try again.');
+            });
+        },
+
+        updateCandidateStatus(status) {
+            const desired = (status || '').toString();
+            if (!desired) return;
+
+            fetch('/api/hr1/candidate/status', {
+                method: 'PATCH',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ status: desired })
+            }).then(async res => {
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || data.error || 'Failed to update status');
+                return data;
+            }).then(data => {
+                this.candidateProfile.status = data.status || desired;
+                alert('Status updated successfully.');
+            }).catch(err => {
+                console.error('Error updating status:', err);
+                alert(err.message || 'Failed to update status. Please try again.');
             });
         },
         

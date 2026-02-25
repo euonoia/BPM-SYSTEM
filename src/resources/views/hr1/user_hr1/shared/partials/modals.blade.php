@@ -17,13 +17,16 @@
                     <div class="text-xs text-text-light mt-1" x-text="selectedJob?.description"></div>
                 </div>
                 <div class="space-y-1">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-accent">Upload Documents (CV, License, IDs, Certificates)</label>
+                    <label class="text-[10px] font-black uppercase tracking-widest text-accent">
+                        Upload Documents (Resume/CV, License, IDs, Certificates)
+                        <span class="text-text-light font-semibold normal-case tracking-normal" x-show="selectedJob?.require_resume">— resume required</span>
+                    </label>
                     <div class="p-12 border-4 border-dashed border-gray-100 rounded-[2.5rem] flex flex-col items-center justify-center text-text-light hover:border-accent hover:bg-bg transition-all cursor-pointer"
                          @click="document.getElementById('documents').click()">
                         <i data-lucide="upload" class="w-12 h-12 mb-4 text-accent"></i>
                         <p class="font-bold text-sm">Select files or drag and drop</p>
                         <p class="text-xs mt-1">PDF, DOC, DOCX, JPG, PNG (Max 5MB per file)</p>
-                        <input type="file" name="documents[]" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" class="hidden" id="documents">
+                        <input type="file" name="documents[]" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" class="hidden" id="documents" :required="selectedJob?.require_resume ? true : false">
                     </div>
                     <div id="file-list" class="mt-2 space-y-1"></div>
                 </div>

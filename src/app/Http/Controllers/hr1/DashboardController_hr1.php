@@ -36,6 +36,18 @@ class DashboardController_hr1 extends Controller
         $totalJobs = JobPosting_hr1::where('status', 'Open')->count();
         $totalRecognitions = Recognition_hr1::count();
         $pendingTasks = OnboardingTask_hr1::where('completed', false)->count();
+
+        // Candidate status breakdown (based on candidate user status)
+        $statusLabels = ['Applicant', 'Candidate', 'Probation', 'Regular', 'Rejected'];
+        $rawStatusCounts = User::where('role', 'candidate')
+            ->selectRaw('status, COUNT(*) as count')
+            ->groupBy('status')
+            ->pluck('count', 'status');
+
+        $statusCounts = [];
+        foreach ($statusLabels as $label) {
+            $statusCounts[$label] = (int) ($rawStatusCounts[$label] ?? 0);
+        }
         
         // Calculate offer acceptance rate
         $offeredCount = Application_hr1::where('status', 'Offer')->count();
@@ -55,17 +67,17 @@ class DashboardController_hr1 extends Controller
         $completedModules = \DB::table('user_learning_modules_hr1')->where('completed', 1)->count();
         $trainingCompliance = $totalAssignedModules > 0 ? round(($completedModules / $totalAssignedModules) * 100) : 0;
         
-        // Get onboarding candidates (status = Onboarding or Offer)
+        // Get onboarding candidates (in-process: Candidate / Probation)
         $onboardingCandidates = User::where('role', 'candidate')
-            ->whereIn('status', ['Onboarding', 'Offer'])
+            ->whereIn('status', ['Candidate', 'Probation'])
             ->with(['applications_hr1' => function($query) {
-                $query->whereIn('status', ['Onboarding', 'Offer']);
+                $query->whereIn('status', ['Candidate', 'Probation']);
             }])
             ->get()
             ->map(function($candidate) {
                 // Get applications with onboarding status
                 $applications = $candidate->applications_hr1->filter(function($app) {
-                    return in_array($app->status, ['Onboarding', 'Offer']);
+                    return in_array($app->status, ['Candidate', 'Probation']);
                 });
                 
                 // Get tasks for each application
@@ -99,7 +111,7 @@ class DashboardController_hr1 extends Controller
                      'tasks_hr1.description as task_description',
                      'users_hr1.name as user_name',
                      'job_postings_hr1.title as job_title')
-            ->whereIn('users_hr1.status', ['Onboarding', 'Offer'])
+            ->whereIn('users_hr1.status', ['Candidate', 'Probation'])
             ->get();
         
         // Get task sets and question sets from database
@@ -219,6 +231,7 @@ class DashboardController_hr1 extends Controller
                 'totalJobs' => $totalJobs,
                 'pendingTasks' => $pendingTasks,
                 'totalRecognitions' => $totalRecognitions,
+                'statusCounts' => $statusCounts,
             ],
         ];
 
@@ -265,6 +278,32 @@ class DashboardController_hr1 extends Controller
         ]);
 
         $user->update($validated);
+        return response()->json($user);
+    }
+
+    public function updateCandidateStatus(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user || $user->role !== 'candidate') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $validated = $request->validate([
+            'status' => 'required|in:Candidate,Probation,Regular,Rejected',
+        ]);
+
+        $current = $user->status ?? 'Candidate';
+        $next = $validated['status'];
+
+        if ($current === 'Candidate' && !in_array($next, ['Probation', 'Rejected'], true)) {
+            return response()->json(['error' => 'Invalid transition'], 422);
+        }
+        if ($current === 'Probation' && !in_array($next, ['Regular', 'Probation', 'Rejected'], true)) {
+            return response()->json(['error' => 'Invalid transition'], 422);
+        }
+
+        $user->update(['status' => $next]);
+
         return response()->json($user);
     }
 }

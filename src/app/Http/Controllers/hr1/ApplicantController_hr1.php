@@ -30,7 +30,7 @@ class ApplicantController_hr1 extends Controller
             'password' => bcrypt($validated['password']),
             'position' => $validated['position'],
             'role' => 'candidate',
-            'status' => 'Applied',
+            'status' => 'Applicant',
             'applied_date' => now(),
         ]);
 
@@ -40,13 +40,56 @@ class ApplicantController_hr1 extends Controller
     public function updateStatus(Request $request, $id)
     {
         $validated = $request->validate([
-            'status' => 'required|in:Applied,Evaluation,Interviewing,Offer,Onboarding,Rejected',
+            'status' => 'required|in:Applicant,Candidate,Probation,Regular,Rejected',
         ]);
 
         $user = User::findOrFail($id);
         $user->update(['status' => $validated['status']]);
 
-        return response()->json($user);
+        // Keep related applications in sync with the candidate status
+        Application_hr1::where('user_id', $user->id)
+            ->update(['status' => $validated['status']]);
+
+        return response()->json($user->load('applications_hr1'));
+    }
+
+    public function exportByStatus(Request $request)
+    {
+        $status = $request->query('status');
+        $allowed = ['Applicant', 'Candidate', 'Probation', 'Regular', 'Rejected'];
+        if (!in_array($status, $allowed, true)) {
+            return response()->json(['error' => 'Invalid status'], 422);
+        }
+
+        $rows = User::where('role', 'candidate')
+            ->where('status', $status)
+            ->orderBy('name')
+            ->get();
+
+        $filename = 'candidates_' . strtolower($status) . '_' . now()->format('Ymd_His') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ];
+
+        $callback = function () use ($rows) {
+            $out = fopen('php://output', 'w');
+            fputcsv($out, ['ID', 'Name', 'Email', 'Position', 'Status', 'Applied Date']);
+            foreach ($rows as $user) {
+                fputcsv($out, [
+                    $user->id,
+                    $user->name,
+                    $user->email,
+                    $user->position,
+                    $user->status,
+                    optional($user->applied_date)->toDateString(),
+                ]);
+            }
+            fclose($out);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
     public function show($id)
@@ -65,7 +108,7 @@ class ApplicantController_hr1 extends Controller
             'password' => 'sometimes|string|min:8',
             'position' => 'sometimes|string|max:255',
             'contact_no' => 'sometimes|string|max:20',
-            'status' => 'sometimes|in:Applied,Evaluation,Interviewing,Offer,Onboarding,Rejected',
+            'status' => 'sometimes|in:Applicant,Candidate,Probation,Regular,Rejected',
         ]);
 
         if (isset($validated['password'])) {

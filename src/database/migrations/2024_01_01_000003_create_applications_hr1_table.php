@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users_hr1')->onDelete('cascade');
             $table->foreignId('job_posting_id')->constrained('job_postings_hr1')->onDelete('cascade');
-            $table->enum('status', ['Applied', 'Evaluation', 'Interviewing', 'Offer', 'Onboarding', 'Rejected'])->default('Applied');
+            $table->enum('status', ['Applicant', 'Candidate', 'Probation', 'Regular', 'Rejected'])->default('Applicant');
             $table->date('applied_date');
             $table->dateTime('interview_date')->nullable();
             $table->string('interview_location')->nullable();

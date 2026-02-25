@@ -84,14 +84,14 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Status</label>
-                    <select x-model="selectedApplicant.status" 
+                    <select name="status"
+                            x-model="selectedApplicant.status" 
                             class="w-full p-4 bg-bg rounded-2xl outline-none font-bold text-sm">
-                        <option value="applied">Applied</option>
-                        <option value="evaluating">Evaluating</option>
-                        <option value="interviewing">Interviewing</option>
-                        <option value="offered">Offered</option>
-                        <option value="onboard">Onboard</option>
-                        <option value="rejected">Rejected</option>
+                        <option value="Applicant">Applicant</option>
+                        <option value="Candidate">Candidate</option>
+                        <option value="Probation">Probation</option>
+                        <option value="Regular">Regular</option>
+                        <option value="Rejected">Rejected</option>
                     </select>
                 </div>
                 <button type="submit" class="w-full bg-primary text-white py-5 rounded-2xl font-black text-xs uppercase shadow-xl">Update Applicant</button>
@@ -356,6 +356,84 @@
     </div>
 </div>
 
+<!-- Create Job Modal -->
+<div x-show="modalType === 'create-job'"
+     x-cloak
+     x-transition
+     class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-primary/40 backdrop-blur-md" @click="modalType = null"></div>
+    <div class="relative bg-white w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-hidden">
+        <div class="p-8 border-b border-gray-100 flex justify-between items-center">
+            <h3 class="text-2xl font-black text-primary tracking-tight">Create Job Posting</h3>
+            <button @click="modalType = null" class="p-2 hover:bg-bg rounded-full transition-colors">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+        <div class="p-8 max-h-[85vh] overflow-y-auto">
+            <form @submit.prevent="createJob" class="space-y-6">
+                <div>
+                    <label class="block text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Job Title</label>
+                    <input type="text" name="title" required
+                           class="w-full p-4 bg-bg rounded-2xl outline-none font-bold text-sm"
+                           placeholder="e.g., Registered Nurse - Emergency Department">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Department</label>
+                        <input type="text" name="department" required
+                               class="w-full p-4 bg-bg rounded-2xl outline-none font-bold text-sm"
+                               placeholder="e.g., Emergency">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Location</label>
+                        <input type="text" name="location" required
+                               class="w-full p-4 bg-bg rounded-2xl outline-none font-bold text-sm"
+                               placeholder="e.g., Main Hospital">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Job Type</label>
+                        <select name="type" class="w-full p-4 bg-bg rounded-2xl outline-none font-bold text-sm">
+                            <option value="Full-time">Full-time</option>
+                            <option value="Part-time">Part-time</option>
+                            <option value="Contract">Contract</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Status</label>
+                        <select name="status" class="w-full p-4 bg-bg rounded-2xl outline-none font-bold text-sm">
+                            <option value="Open">Open</option>
+                            <option value="Closed">Closed</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Description</label>
+                    <textarea name="description" rows="6"
+                              class="w-full p-4 bg-bg rounded-2xl outline-none font-bold text-sm"
+                              placeholder="Responsibilities, qualifications, shift details, etc."></textarea>
+                </div>
+
+                <div class="p-4 bg-gray-50 rounded-2xl space-y-4">
+                    <label class="flex items-center gap-2">
+                        <input type="checkbox" name="require_resume" value="1" checked class="w-4 h-4 text-primary rounded">
+                        <span class="text-sm font-semibold text-primary">Require applicants to upload resume</span>
+                    </label>
+                    <div>
+                        <label class="block text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Attach a file (optional)</label>
+                        <input type="file" name="job_attachment" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                               class="w-full p-3 bg-bg rounded-xl border border-gray-200 outline-none focus:border-primary text-sm">
+                        <div class="text-xs text-text-light mt-1">You can attach a PDF/DOC (job details, requirements, etc.).</div>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-primary text-white py-5 rounded-2xl font-black text-xs uppercase shadow-xl">Post Job</button>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- Edit Job Modal -->
 <div x-show="modalType === 'edit-job'" 
      x-cloak
@@ -396,6 +474,20 @@
                     <label class="block text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Description</label>
                     <textarea name="description" x-model="selectedJob.description" rows="6"
                               class="w-full p-4 bg-bg rounded-2xl outline-none font-bold text-sm"></textarea>
+                </div>
+                <div class="p-4 bg-gray-50 rounded-2xl space-y-4">
+                    <label class="flex items-center gap-2">
+                        <input type="checkbox" name="require_resume" value="1"
+                               :checked="selectedJob?.require_resume ? true : false"
+                               class="w-4 h-4 text-primary rounded">
+                        <span class="text-sm font-semibold text-primary">Require applicants to upload resume</span>
+                    </label>
+                    <div>
+                        <label class="block text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Replace attachment (optional)</label>
+                        <input type="file" name="job_attachment" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                               class="w-full p-3 bg-bg rounded-xl border border-gray-200 outline-none focus:border-primary text-sm">
+                        <div class="text-xs text-text-light mt-1">Leave empty to keep existing attachment.</div>
+                    </div>
                 </div>
                 <button type="submit" class="w-full bg-primary text-white py-5 rounded-2xl font-black text-xs uppercase shadow-xl">Update Job</button>
             </form>
@@ -476,6 +568,45 @@
                     <i class="bi bi-plus-circle"></i> Add New Task
                 </button>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Task to Candidate Modal -->
+<div x-show="modalType === 'add-task-to-candidate'"
+     x-cloak
+     x-transition
+     class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-primary/40 backdrop-blur-md" @click="modalType = 'edit-candidate-tasks'"></div>
+    <div class="relative bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden">
+        <div class="p-8 border-b border-gray-100 flex justify-between items-center">
+            <h3 class="text-2xl font-black text-primary tracking-tight">Add Task for Candidate</h3>
+            <button @click="modalType = 'edit-candidate-tasks'" class="p-2 hover:bg-bg rounded-full transition-colors">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+        <div class="p-8 max-h-[85vh] overflow-y-auto" x-show="editingCandidateTasks">
+            <form @submit.prevent="addTaskToCandidate" class="space-y-6">
+                <div class="p-4 bg-gray-50 rounded-xl mb-4">
+                    <div class="text-sm font-semibold text-primary" x-text="editingCandidateTasks.user?.name || editingCandidateTasks.name || 'Unknown'"></div>
+                    <div class="text-xs text-text-light" x-text="editingCandidateTasks.user?.email || editingCandidateTasks.email || 'N/A'"></div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Task Title</label>
+                    <input type="text" name="title" required
+                           class="w-full p-4 bg-bg rounded-2xl outline-none font-bold text-sm"
+                           placeholder="e.g., Submit government ID, Upload medical clearance">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Description (Optional)</label>
+                    <textarea name="description" rows="4"
+                              class="w-full p-4 bg-bg rounded-2xl outline-none font-bold text-sm"
+                              placeholder="Add any notes or instructions for this requirement"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-primary text-white py-5 rounded-2xl font-black text-xs uppercase shadow-xl">
+                    Save Task
+                </button>
+            </form>
         </div>
     </div>
 </div>

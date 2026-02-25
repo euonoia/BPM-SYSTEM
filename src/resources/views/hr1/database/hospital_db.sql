@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS `users_hr1` (
     `profile_picture` VARCHAR(255) NULL,
     `role` ENUM('admin', 'staff', 'candidate') NOT NULL DEFAULT 'candidate',
     `position` VARCHAR(255) NULL,
-    `status` ENUM('Applied', 'Evaluation', 'Interviewing', 'Offer', 'Onboarding', 'Rejected') NULL,
+    `status` ENUM('Applicant', 'Candidate', 'Probation', 'Regular', 'Rejected') NULL,
     `applied_date` DATE NULL,
     `score` INT NOT NULL DEFAULT 0,
     `skills` TEXT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS `applicants_hr1` (
     `password` VARCHAR(255) NULL,
     `position` VARCHAR(255) NULL,
     `contact_no` VARCHAR(20) NULL,
-    `status` ENUM('applied', 'evaluating', 'interviewing', 'offered', 'onboard', 'rejected') NOT NULL DEFAULT 'applied',
+    `status` ENUM('applicant', 'candidate', 'probation', 'regular', 'rejected') NOT NULL DEFAULT 'applicant',
     `notes` TEXT NULL,
     `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -69,6 +69,8 @@ CREATE TABLE IF NOT EXISTS `job_postings_hr1` (
     `status` ENUM('Open', 'Closed') NOT NULL DEFAULT 'Open',
     `posted_date` DATE NOT NULL,
     `description` TEXT NULL,
+    `require_resume` TINYINT(1) NOT NULL DEFAULT 1,
+    `attachment_path` VARCHAR(500) NULL,
     `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX `idx_status` (`status`),
@@ -80,7 +82,7 @@ CREATE TABLE IF NOT EXISTS `applications_hr1` (
     `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `user_id` BIGINT UNSIGNED NOT NULL,
     `job_posting_id` BIGINT UNSIGNED NOT NULL,
-    `status` ENUM('Applied', 'Evaluation', 'Interviewing', 'Offer', 'Onboarding', 'Rejected') NOT NULL DEFAULT 'Applied',
+    `status` ENUM('Applicant', 'Candidate', 'Probation', 'Regular', 'Rejected') NOT NULL DEFAULT 'Applicant',
     `applied_date` DATE NOT NULL,
     `interview_date` DATETIME NULL,
     `interview_location` VARCHAR(255) NULL,
@@ -460,28 +462,28 @@ INSERT INTO `users_hr1` (`id`, `name`, `email`, `password`, `phone`, `role`, `po
 
 -- Candidate Users (These will also appear in applicants_hr1)
 INSERT INTO `users_hr1` (`id`, `name`, `email`, `password`, `phone`, `role`, `position`, `status`, `applied_date`, `score`, `skills`, `contact_no`, `created_at`, `updated_at`) VALUES
-(5, 'Michael Chen', 'michael.chen@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+1-555-1001', 'candidate', 'Registered Nurse', 'Applied', DATE_SUB(CURDATE(), INTERVAL 10 DAY), 85, 'Emergency Care, ACLS, BLS', '+1-555-1001', NOW(), NOW()),
-(6, 'Emily Rodriguez', 'emily.rodriguez@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+1-555-1002', 'candidate', 'Medical Technologist', 'Evaluation', DATE_SUB(CURDATE(), INTERVAL 5 DAY), 92, 'Laboratory Testing, Quality Control', '+1-555-1002', NOW(), NOW()),
-(7, 'David Kim', 'david.kim@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+1-555-1003', 'candidate', 'Physical Therapist', 'Interviewing', DATE_SUB(CURDATE(), INTERVAL 3 DAY), 88, 'Physical Therapy, Rehabilitation', '+1-555-1003', NOW(), NOW()),
-(8, 'Jessica Martinez', 'jessica.martinez@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+1-555-1004', 'candidate', 'Pharmacist', 'Offer', DATE_SUB(CURDATE(), INTERVAL 7 DAY), 95, 'Clinical Pharmacy, Medication Management', '+1-555-1004', NOW(), NOW()),
-(9, 'Robert Taylor', 'robert.taylor@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+1-555-1005', 'candidate', 'Radiology Technician', 'Onboarding', DATE_SUB(CURDATE(), INTERVAL 14 DAY), 90, 'Radiology, Imaging, ARRT', '+1-555-1005', NOW(), NOW()),
+(5, 'Michael Chen', 'michael.chen@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+1-555-1001', 'candidate', 'Registered Nurse', 'Applicant', DATE_SUB(CURDATE(), INTERVAL 10 DAY), 85, 'Emergency Care, ACLS, BLS', '+1-555-1001', NOW(), NOW()),
+(6, 'Emily Rodriguez', 'emily.rodriguez@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+1-555-1002', 'candidate', 'Medical Technologist', 'Applicant', DATE_SUB(CURDATE(), INTERVAL 5 DAY), 92, 'Laboratory Testing, Quality Control', '+1-555-1002', NOW(), NOW()),
+(7, 'David Kim', 'david.kim@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+1-555-1003', 'candidate', 'Physical Therapist', 'Candidate', DATE_SUB(CURDATE(), INTERVAL 3 DAY), 88, 'Physical Therapy, Rehabilitation', '+1-555-1003', NOW(), NOW()),
+(8, 'Jessica Martinez', 'jessica.martinez@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+1-555-1004', 'candidate', 'Pharmacist', 'Candidate', DATE_SUB(CURDATE(), INTERVAL 7 DAY), 95, 'Clinical Pharmacy, Medication Management', '+1-555-1004', NOW(), NOW()),
+(9, 'Robert Taylor', 'robert.taylor@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+1-555-1005', 'candidate', 'Radiology Technician', 'Probation', DATE_SUB(CURDATE(), INTERVAL 14 DAY), 90, 'Radiology, Imaging, ARRT', '+1-555-1005', NOW(), NOW()),
 (10, 'Amanda White', 'amanda.white@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+1-555-1006', 'candidate', 'Laboratory Assistant', 'Rejected', DATE_SUB(CURDATE(), INTERVAL 8 DAY), 65, 'Basic Lab Skills', '+1-555-1006', NOW(), NOW()),
-(11, 'James Wilson', 'james.wilson@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+1-555-1007', 'candidate', 'Respiratory Therapist', 'Applied', DATE_SUB(CURDATE(), INTERVAL 2 DAY), 82, 'Respiratory Care, Ventilator Management', '+1-555-1007', NOW(), NOW()),
-(12, 'Lisa Anderson', 'lisa.anderson@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+1-555-1008', 'candidate', 'Nurse Practitioner', 'Evaluation', DATE_SUB(CURDATE(), INTERVAL 4 DAY), 89, 'Advanced Practice, Primary Care', '+1-555-1008', NOW(), NOW());
+(11, 'James Wilson', 'james.wilson@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+1-555-1007', 'candidate', 'Respiratory Therapist', 'Applicant', DATE_SUB(CURDATE(), INTERVAL 2 DAY), 82, 'Respiratory Care, Ventilator Management', '+1-555-1007', NOW(), NOW()),
+(12, 'Lisa Anderson', 'lisa.anderson@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+1-555-1008', 'candidate', 'Nurse Practitioner', 'Applicant', DATE_SUB(CURDATE(), INTERVAL 4 DAY), 89, 'Advanced Practice, Primary Care', '+1-555-1008', NOW(), NOW());
 
 -- =====================================================
 -- 2. APPLICANTS DATA (Separate table for admin management)
 -- =====================================================
 
 INSERT INTO `applicants_hr1` (`id`, `user_id`, `name`, `email`, `password`, `position`, `contact_no`, `status`, `notes`, `created_at`, `updated_at`) VALUES
-(1, 5, 'Michael Chen', 'michael.chen@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Registered Nurse', '+1-555-1001', 'applied', 'Strong background in emergency care', NOW(), NOW()),
-(2, 6, 'Emily Rodriguez', 'emily.rodriguez@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Medical Technologist', '+1-555-1002', 'evaluating', 'Excellent technical skills', NOW(), NOW()),
-(3, 7, 'David Kim', 'david.kim@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Physical Therapist', '+1-555-1003', 'interviewing', 'Scheduled for interview next week', NOW(), NOW()),
-(4, 8, 'Jessica Martinez', 'jessica.martinez@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Pharmacist', '+1-555-1004', 'offered', 'Offer extended, awaiting response', NOW(), NOW()),
-(5, 9, 'Robert Taylor', 'robert.taylor@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Radiology Technician', '+1-555-1005', 'onboard', 'Successfully onboarded', NOW(), NOW()),
+(1, 5, 'Michael Chen', 'michael.chen@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Registered Nurse', '+1-555-1001', 'applicant', 'Strong background in emergency care', NOW(), NOW()),
+(2, 6, 'Emily Rodriguez', 'emily.rodriguez@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Medical Technologist', '+1-555-1002', 'applicant', 'Excellent technical skills', NOW(), NOW()),
+(3, 7, 'David Kim', 'david.kim@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Physical Therapist', '+1-555-1003', 'candidate', 'Scheduled for interview next week', NOW(), NOW()),
+(4, 8, 'Jessica Martinez', 'jessica.martinez@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Pharmacist', '+1-555-1004', 'candidate', 'Offer extended, awaiting response', NOW(), NOW()),
+(5, 9, 'Robert Taylor', 'robert.taylor@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Radiology Technician', '+1-555-1005', 'probation', 'Successfully onboarded', NOW(), NOW()),
 (6, 10, 'Amanda White', 'amanda.white@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Laboratory Assistant', '+1-555-1006', 'rejected', 'Did not meet requirements', NOW(), NOW()),
-(7, 11, 'James Wilson', 'james.wilson@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Respiratory Therapist', '+1-555-1007', 'applied', 'Recent graduate', NOW(), NOW()),
-(8, 12, 'Lisa Anderson', 'lisa.anderson@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Nurse Practitioner', '+1-555-1008', 'evaluating', 'Advanced practice nurse', NOW(), NOW());
+(7, 11, 'James Wilson', 'james.wilson@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Respiratory Therapist', '+1-555-1007', 'applicant', 'Recent graduate', NOW(), NOW()),
+(8, 12, 'Lisa Anderson', 'lisa.anderson@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Nurse Practitioner', '+1-555-1008', 'applicant', 'Advanced practice nurse', NOW(), NOW());
 
 -- =====================================================
 -- 3. JOB POSTINGS DATA
@@ -500,13 +502,13 @@ INSERT INTO `job_postings_hr1` (`id`, `title`, `department`, `location`, `type`,
 -- =====================================================
 
 INSERT INTO `applications_hr1` (`id`, `user_id`, `job_posting_id`, `status`, `applied_date`, `interview_date`, `interview_location`, `interview_description`, `documents`, `created_at`, `updated_at`) VALUES
-(1, 5, 1, 'Applied', DATE_SUB(CURDATE(), INTERVAL 10 DAY), NULL, NULL, NULL, '["cv.pdf", "license.pdf"]', NOW(), NOW()),
-(2, 6, 2, 'Evaluation', DATE_SUB(CURDATE(), INTERVAL 5 DAY), NULL, NULL, NULL, '["resume.pdf", "certificate.pdf"]', NOW(), NOW()),
-(3, 7, 3, 'Interviewing', DATE_SUB(CURDATE(), INTERVAL 3 DAY), DATE_ADD(CURDATE(), INTERVAL 5 DAY), 'Main Hospital - Conference Room A', 'Initial screening interview', '["cv.pdf"]', NOW(), NOW()),
-(4, 8, 4, 'Offer', DATE_SUB(CURDATE(), INTERVAL 7 DAY), DATE_SUB(CURDATE(), INTERVAL 2 DAY), 'Main Hospital - HR Office', 'Final interview completed', '["cv.pdf", "license.pdf", "references.pdf"]', NOW(), NOW()),
-(5, 9, 5, 'Onboarding', DATE_SUB(CURDATE(), INTERVAL 14 DAY), DATE_SUB(CURDATE(), INTERVAL 9 DAY), 'Main Hospital', 'Interview completed, offer accepted', '["cv.pdf", "license.pdf"]', NOW(), NOW()),
-(6, 11, 1, 'Applied', DATE_SUB(CURDATE(), INTERVAL 2 DAY), NULL, NULL, NULL, '["resume.pdf"]', NOW(), NOW()),
-(7, 12, 2, 'Evaluation', DATE_SUB(CURDATE(), INTERVAL 4 DAY), NULL, NULL, NULL, '["cv.pdf", "certificate.pdf"]', NOW(), NOW());
+(1, 5, 1, 'Applicant', DATE_SUB(CURDATE(), INTERVAL 10 DAY), NULL, NULL, NULL, '["cv.pdf", "license.pdf"]', NOW(), NOW()),
+(2, 6, 2, 'Applicant', DATE_SUB(CURDATE(), INTERVAL 5 DAY), NULL, NULL, NULL, '["resume.pdf", "certificate.pdf"]', NOW(), NOW()),
+(3, 7, 3, 'Candidate', DATE_SUB(CURDATE(), INTERVAL 3 DAY), DATE_ADD(CURDATE(), INTERVAL 5 DAY), 'Main Hospital - Conference Room A', 'Initial screening interview', '["cv.pdf"]', NOW(), NOW()),
+(4, 8, 4, 'Candidate', DATE_SUB(CURDATE(), INTERVAL 7 DAY), DATE_SUB(CURDATE(), INTERVAL 2 DAY), 'Main Hospital - HR Office', 'Final interview completed', '["cv.pdf", "license.pdf", "references.pdf"]', NOW(), NOW()),
+(5, 9, 5, 'Probation', DATE_SUB(CURDATE(), INTERVAL 14 DAY), DATE_SUB(CURDATE(), INTERVAL 9 DAY), 'Main Hospital', 'Interview completed, offer accepted', '["cv.pdf", "license.pdf"]', NOW(), NOW()),
+(6, 11, 1, 'Applicant', DATE_SUB(CURDATE(), INTERVAL 2 DAY), NULL, NULL, NULL, '["resume.pdf"]', NOW(), NOW()),
+(7, 12, 2, 'Applicant', DATE_SUB(CURDATE(), INTERVAL 4 DAY), NULL, NULL, NULL, '["cv.pdf", "certificate.pdf"]', NOW(), NOW());
 
 -- =====================================================
 -- 5. TASK SETS & TASKS DATA

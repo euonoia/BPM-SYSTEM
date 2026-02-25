@@ -26,6 +26,7 @@ Route::prefix('api/hr1')->group(function () {
     Route::get('/applicants/{id}', [ApplicantController_hr1::class, 'show']);
     Route::patch('/applicants/{id}', [ApplicantController_hr1::class, 'update']);
     Route::patch('/applicants/{id}/status', [ApplicantController_hr1::class, 'updateStatus']);
+    Route::get('/applicants/export', [ApplicantController_hr1::class, 'exportByStatus']);
 
     // Jobs
     Route::get('/jobs', [JobController_hr1::class, 'index']);
@@ -48,6 +49,7 @@ Route::prefix('api/hr1')->group(function () {
     
     // Candidate Profile
     Route::patch('/candidate/profile', [DashboardController_hr1::class, 'updateCandidateProfile']);
+    Route::patch('/candidate/status', [DashboardController_hr1::class, 'updateCandidateStatus']);
 
     // Recognitions
     Route::get('/recognitions', [RecognitionController_hr1::class, 'index']);
@@ -79,6 +81,7 @@ Route::prefix('api/hr1')->group(function () {
     
     // Applicant Tasks (from applicant_tasks_hr1 table)
     Route::get('/applicant-tasks', [OnboardingController_hr1::class, 'applicantTasks']);
+    Route::post('/applicant-tasks', [OnboardingController_hr1::class, 'storeApplicantTask']);
     Route::patch('/applicant-tasks/{id}/status', [OnboardingController_hr1::class, 'updateApplicantTaskStatus']);
     Route::patch('/applicant-tasks/{id}', [OnboardingController_hr1::class, 'updateApplicantTask']);
     Route::delete('/applicant-tasks/{id}', [OnboardingController_hr1::class, 'deleteApplicantTask']);

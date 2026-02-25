@@ -140,6 +140,52 @@
                     </div>
                 </div>
 
+                <!-- Candidate Status Overview -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+                    <div class="card !w-full group cursor-pointer text-left">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center group-hover:bg-emerald-100 transition-colors flex-shrink-0">
+                                <i class="bi bi-person-check text-emerald-600 text-lg"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <h4 class="text-[10px] font-semibold text-text-light uppercase tracking-wide">Active Candidates</h4>
+                                    <span class="text-[10px] text-text-light">Candidate / Probation / Regular</span>
+                                </div>
+                                <div class="text-3xl font-black text-primary" x-text="(analytics.statusCounts?.Candidate ?? 0) + (analytics.statusCounts?.Probation ?? 0) + (analytics.statusCounts?.Regular ?? 0)"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card !w-full group cursor-pointer text-left">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center group-hover:bg-green-100 transition-colors flex-shrink-0">
+                                <i class="bi bi-hand-thumbs-up text-green-700 text-lg"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <h4 class="text-[10px] font-semibold text-text-light uppercase tracking-wide">Regular Employees</h4>
+                                    <span class="text-[10px] text-text-light">Regular status</span>
+                                </div>
+                                <div class="text-3xl font-black text-primary" x-text="analytics.statusCounts?.Regular ?? 0"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card !w-full group cursor-pointer text-left">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center group-hover:bg-red-100 transition-colors flex-shrink-0">
+                                <i class="bi bi-x-circle text-red-600 text-lg"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <h4 class="text-[10px] font-semibold text-text-light uppercase tracking-wide">Rejected Candidates</h4>
+                                    <span class="text-[10px] text-text-light">Final rejections</span>
+                                </div>
+                                <div class="text-3xl font-black text-primary" x-text="analytics.statusCounts?.Rejected ?? 0"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Additional Admin Metrics -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                     <div class="card !w-full group cursor-pointer text-left">
@@ -199,10 +245,44 @@
             <div x-show="activeTab === 'applicant'" class="main-inner !w-full !max-w-none mt-8">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="text-xl font-black text-primary">Applicant Management</h3>
-                    <button @click="modalType = 'add-applicant'" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-hover transition-colors flex items-center gap-2">
-                        <i class="bi bi-person-plus"></i>
-                        <span class="text-sm font-semibold">Add Candidate</span>
-                    </button>
+                    <div class="flex flex-col gap-2 items-end">
+                        <button @click="modalType = 'add-applicant'" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-hover transition-colors flex items-center gap-2">
+                            <i class="bi bi-person-plus"></i>
+                            <span class="text-sm font-semibold">Add Candidate</span>
+                        </button>
+                        <div class="flex flex-wrap gap-2 justify-end">
+                            <button
+                                type="button"
+                                class="px-3 py-1 text-[11px] rounded-full border border-gray-300 text-text-light hover:border-primary hover:text-primary bg-white"
+                                @click="downloadApplicantsByStatus('rejected')">
+                                Download Rejected
+                            </button>
+                            <button
+                                type="button"
+                                class="px-3 py-1 text-[11px] rounded-full border border-gray-300 text-text-light hover:border-primary hover:text-primary bg-white"
+                                @click="downloadApplicantsByStatus('applicant')">
+                                Download Applicants
+                            </button>
+                            <button
+                                type="button"
+                                class="px-3 py-1 text-[11px] rounded-full border border-gray-300 text-text-light hover:border-primary hover:text-primary bg-white"
+                                @click="downloadApplicantsByStatus('candidate')">
+                                Download Candidates
+                            </button>
+                            <button
+                                type="button"
+                                class="px-3 py-1 text-[11px] rounded-full border border-gray-300 text-text-light hover:border-primary hover:text-primary bg-white"
+                                @click="downloadApplicantsByStatus('probation')">
+                                Download Probation
+                            </button>
+                            <button
+                                type="button"
+                                class="px-3 py-1 text-[11px] rounded-full border border-gray-300 text-text-light hover:border-primary hover:text-primary bg-white"
+                                @click="downloadApplicantsByStatus('regular')">
+                                Download Regular
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Search Bar -->
@@ -282,8 +362,8 @@
                                     </td>
                                     <td class="py-4 px-4">
                                         <span class="text-xs font-semibold px-3 py-1.5 rounded-full border"
-                                              :class="getStatusClass(applicant.status || 'Applied')"
-                                              x-text="applicant.status || 'Applied'"></span>
+                                              :class="getStatusClass(applicant.status || 'Applicant')"
+                                              x-text="applicant.status || 'Applicant'"></span>
                                     </td>
                                     <td class="py-4 px-4">
                                         <div class="flex items-center justify-center gap-2">
@@ -374,8 +454,8 @@
                                     <h4 class="text-sm font-semibold text-primary">Applicants for this position:</h4>
                                     <select @change="sortJobApplicants(job.id, $event.target.value)"
                                             class="text-[11px] px-2 py-1 rounded border bg-bg">
-                                        <option value="applied_date_desc">Applied (Newest)</option>
-                                        <option value="applied_date_asc">Applied (Oldest)</option>
+                                        <option value="applied_date_desc">Applied Date (Newest)</option>
+                                        <option value="applied_date_asc">Applied Date (Oldest)</option>
                                         <option value="name_asc">Name A–Z</option>
                                         <option value="name_desc">Name Z–A</option>
                                     </select>
@@ -390,7 +470,7 @@
                                                 </div>
                                                 <div class="flex items-center gap-2">
                                                     <span class="text-xs font-semibold px-2 py-1 rounded-full bg-primary/10 text-primary" 
-                                                          x-text="app.status || 'Applied'"></span>
+                                                          x-text="app.status || 'Applicant'"></span>
                                                     <button @click="viewJobApplicantProfile(app.user)" 
                                                             class="p-1.5 text-primary hover:bg-primary/10 rounded-lg transition-colors"
                                                             title="View Profile">
@@ -411,10 +491,11 @@
                                                     </template>
                                                 </div>
                                             </div>
-                                            <!-- Actions: Accept / Reject -->
+                                            <!-- Actions: Schedule Interview / Reject -->
                                             <div class="flex items-center gap-2 mt-2">
-                                                <button @click="updateApplicationStatus(app.id, job.id, 'Interviewing')"
-                                                        class="px-2 py-1 text-[11px] bg-green-50 text-green-700 rounded hover:bg-green-100">
+                                                <button
+                                                    @click="openScheduleInterviewModal(app, job)"
+                                                    class="px-2 py-1 text-[11px] bg-green-50 text-green-700 rounded hover:bg-green-100">
                                                     Accept to Interview
                                                 </button>
                                                 <button @click="updateApplicationStatus(app.id, job.id, 'Rejected')"
@@ -432,6 +513,65 @@
                 <div x-show="!filteredJobs.length" class="text-center py-12 text-sm text-text-light">
                     <span x-show="jobSearchQuery">No jobs found matching your search.</span>
                     <span x-show="!jobSearchQuery">No job postings available. <button @click="modalType = 'create-job'" class="text-primary font-semibold hover:underline">Create your first job posting</button></span>
+                </div>
+            </div>
+
+            <!-- Schedule Interview Modal -->
+            <div x-show="modalType === 'schedule-interview'"
+                 x-cloak
+                 x-transition
+                 class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                <div class="absolute inset-0 bg-primary/40 backdrop-blur-md" @click="modalType = null"></div>
+                <div class="relative bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden" x-show="interviewDraft">
+                    <div class="p-8 border-b border-gray-100 flex justify-between items-center">
+                        <h3 class="text-2xl font-black text-primary tracking-tight">Schedule Interview</h3>
+                        <button @click="modalType = null" class="p-2 hover:bg-bg rounded-full transition-colors">
+                            <i data-lucide="x" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+                    <div class="p-8 max-h-[85vh] overflow-y-auto">
+                        <div class="p-4 bg-gray-50 rounded-xl mb-6">
+                            <div class="text-sm font-semibold text-primary" x-text="interviewDraft?.candidate_name || 'Candidate'"></div>
+                            <div class="text-xs text-text-light" x-text="interviewDraft?.candidate_email || ''"></div>
+                            <div class="text-xs text-text-light mt-1" x-text="interviewDraft?.job_title ? ('Job: ' + interviewDraft.job_title) : ''"></div>
+                        </div>
+
+                        <form @submit.prevent="scheduleInterview" class="space-y-5">
+                            <div>
+                                <label class="block text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Interview Date & Time</label>
+                                <input type="datetime-local"
+                                       x-model="interviewDraft.interview_date"
+                                       required
+                                       class="w-full p-4 bg-bg rounded-2xl outline-none font-bold text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Place</label>
+                                <input type="text"
+                                       x-model="interviewDraft.interview_location"
+                                       placeholder="e.g., HR Office / Zoom link / Conference Room"
+                                       required
+                                       class="w-full p-4 bg-bg rounded-2xl outline-none font-bold text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Additional Information</label>
+                                <textarea rows="4"
+                                          x-model="interviewDraft.interview_description"
+                                          placeholder="What to bring, who to look for, meeting link, notes..."
+                                          class="w-full p-4 bg-bg rounded-2xl outline-none font-bold text-sm"></textarea>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <input id="sendInterviewEmail"
+                                       type="checkbox"
+                                       x-model="interviewDraft.send_email"
+                                       class="w-4 h-4 text-primary rounded">
+                                <label for="sendInterviewEmail" class="text-sm font-semibold text-primary">Send email notification</label>
+                            </div>
+                            <button type="submit"
+                                    class="w-full bg-primary text-white py-5 rounded-2xl font-black text-xs uppercase shadow-xl">
+                                Save Interview & Mark as Candidate
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
 
@@ -462,8 +602,8 @@
                                     <div class="flex items-center gap-3 mb-2">
                                         <div class="text-lg font-semibold text-primary" x-text="candidate.name || 'Unknown'"></div>
                                         <span class="text-xs font-semibold px-2 py-1 rounded-full"
-                                              :class="getStatusClass(candidate.status || 'Onboarding')"
-                                              x-text="candidate.status || 'Onboarding'"></span>
+                                              :class="getStatusClass(candidate.status || 'Candidate')"
+                                              x-text="candidate.status || 'Candidate'"></span>
                                     </div>
                                     <div class="text-sm text-text-light flex items-center gap-2 mb-2">
                                         <i class="bi bi-envelope text-accent"></i>
@@ -476,12 +616,12 @@
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <select @change="updateCandidateOnboardingStatus(candidate.application_id || candidate.id, candidate.id, candidate.job_id, $event.target.value)" 
-                                            :value="candidate.status || 'Onboarding'"
+                                            :value="candidate.status || 'Candidate'"
                                             class="text-xs font-semibold px-3 py-1.5 rounded-full border outline-none"
-                                            :class="getStatusClass(candidate.status || 'Onboarding')">
-                                        <option value="Onboarding">Onboarding</option>
-                                        <option value="Offer">Offer</option>
-                                        <option value="Onboard">Onboard</option>
+                                            :class="getStatusClass(candidate.status || 'Candidate')">
+                                        <option value="Candidate">Candidate</option>
+                                        <option value="Probation">Probation</option>
+                                        <option value="Regular">Regular</option>
                                         <option value="Rejected">Rejected</option>
                                     </select>
                                     <button @click="expandedCandidateId = expandedCandidateId === candidate.id ? null : candidate.id" 
@@ -540,8 +680,8 @@
                     </template>
                 </div>
                 <div x-show="filteredOnboardingCandidates.length === 0" class="text-center py-12 text-sm text-text-light">
-                    <span x-show="onboardingSearchQuery">No onboarding candidates found matching your search.</span>
-                    <span x-show="!onboardingSearchQuery">No candidates in onboarding status.</span>
+                    <span x-show="onboardingSearchQuery">No candidates found matching your search.</span>
+                    <span x-show="!onboardingSearchQuery">No candidates in Candidate/Probation/Regular status.</span>
                 </div>
             </div>
 
@@ -871,6 +1011,7 @@ function dashboard() {
         selectedOnboardingJob: null,
         expandedOnboardingJobId: null,
         expandedCandidateId: null,
+        interviewDraft: null,
         selectedFormForScores: null,
         scoreFilterType: 'name',
         onboardingSearchQuery: '',
@@ -919,19 +1060,32 @@ function dashboard() {
                 profile_picture: profile.profile_picture || ''
             };
         })(),
+
+        downloadApplicantsByStatus(status) {
+            const normalized = (status || '').toString().toLowerCase();
+            const statusMap = {
+                rejected: 'Rejected',
+                applicant: 'Applicant',
+                candidates: 'Candidate',
+                candidate: 'Candidate',
+                probation: 'Probation',
+                regular: 'Regular'
+            };
+            const mapped = statusMap[normalized] || status;
+            const url = `/api/hr1/applicants/export?status=${encodeURIComponent(mapped)}`;
+            window.open(url, '_blank');
+        },
         
         getStatusClass(status) {
             const classes = {
-                'applied': 'bg-blue-50 text-blue-700 border-blue-200',
-                'Applied': 'bg-blue-50 text-blue-700 border-blue-200',
-                'evaluating': 'bg-purple-50 text-purple-700 border-purple-200',
-                'Evaluation': 'bg-purple-50 text-purple-700 border-purple-200',
-                'interviewing': 'bg-yellow-50 text-yellow-700 border-yellow-200',
-                'Interviewing': 'bg-yellow-50 text-yellow-700 border-yellow-200',
-                'offered': 'bg-green-50 text-green-700 border-green-200',
-                'Offer': 'bg-green-50 text-green-700 border-green-200',
-                'onboard': 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                'Onboarding': 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                'applicant': 'bg-blue-50 text-blue-700 border-blue-200',
+                'Applicant': 'bg-blue-50 text-blue-700 border-blue-200',
+                'candidate': 'bg-purple-50 text-purple-700 border-purple-200',
+                'Candidate': 'bg-purple-50 text-purple-700 border-purple-200',
+                'probation': 'bg-yellow-50 text-yellow-700 border-yellow-200',
+                'Probation': 'bg-yellow-50 text-yellow-700 border-yellow-200',
+                'regular': 'bg-green-50 text-green-700 border-green-200',
+                'Regular': 'bg-green-50 text-green-700 border-green-200',
                 'rejected': 'bg-red-50 text-red-700 border-red-200',
                 'Rejected': 'bg-red-50 text-red-700 border-red-200'
             };
@@ -1029,19 +1183,19 @@ function dashboard() {
         },
         
         updateApplicantStatus(id, status) {
-            // Map status values
+            // Map incoming keys to canonical casing
             const statusMap = {
-                'applied': 'Applied',
-                'evaluating': 'Evaluation',
-                'interviewing': 'Interviewing',
-                'offered': 'Offer',
-                'onboard': 'Onboarding',
+                'applicant': 'Applicant',
+                'candidate': 'Candidate',
+                'probation': 'Probation',
+                'regular': 'Regular',
                 'rejected': 'Rejected'
             };
-            const mappedStatus = statusMap[status] || status;
+            const mappedStatus = statusMap[(status || '').toLowerCase()] || status || 'Applicant';
             
             fetch(`/api/hr1/applicants/${id}/status`, {
                 method: 'PATCH',
+                credentials: 'same-origin',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
@@ -1108,7 +1262,7 @@ function dashboard() {
                 this.jobs.forEach(job => {
                     if (job.applications_hr1) {
                         job.applications_hr1.forEach(app => {
-                            if (app.status === 'Onboarding' || app.status === 'onboard' || app.status === 'Offer') {
+                            if (app.status === 'Candidate' || app.status === 'Probation' || app.status === 'Regular') {
                                 candidates.push({
                                     id: app.user?.id || app.user_id,
                                     name: app.user?.name,
@@ -1141,7 +1295,7 @@ function dashboard() {
             const job = this.jobs.find(j => j.id == jobId);
             if (!job || !job.applications_hr1) return [];
             return job.applications_hr1.filter(app => 
-                app.status === 'Onboarding' || app.status === 'onboard' || app.status === 'Offer'
+                app.status === 'Candidate' || app.status === 'Probation' || app.status === 'Regular'
             );
         },
 
@@ -1167,6 +1321,7 @@ function dashboard() {
         updateApplicationStatus(applicationId, jobId, status) {
             fetch(`/api/hr1/applications/${applicationId}`, {
                 method: 'PATCH',
+                credentials: 'same-origin',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -1195,6 +1350,67 @@ function dashboard() {
                 alert(err.message || 'Failed to update application');
             });
         },
+
+        openScheduleInterviewModal(app, job) {
+            this.interviewDraft = {
+                application_id: app?.id,
+                job_id: job?.id,
+                job_title: job?.title || '',
+                candidate_name: app?.user?.name || 'Candidate',
+                candidate_email: app?.user?.email || '',
+                interview_date: '',
+                interview_location: '',
+                interview_description: '',
+                send_email: true
+            };
+            this.modalType = 'schedule-interview';
+        },
+
+        scheduleInterview() {
+            if (!this.interviewDraft?.application_id) {
+                alert('Missing application reference.');
+                return;
+            }
+
+            fetch(`/api/hr1/applications/${this.interviewDraft.application_id}/interview`, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    interview_date: this.interviewDraft.interview_date,
+                    interview_location: this.interviewDraft.interview_location,
+                    interview_description: this.interviewDraft.interview_description
+                })
+            }).then(async res => {
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || data.error || 'Failed to schedule interview');
+                return data;
+            }).then(data => {
+                // Expect application returned (or at least status) from backend
+                const job = this.jobs.find(j => j.id == this.interviewDraft.job_id);
+                if (job && job.applications_hr1) {
+                    const app = job.applications_hr1.find(a => a.id == this.interviewDraft.application_id);
+                    if (app) {
+                        app.status = data.status || 'Candidate';
+                        if (data.interview_date) app.interview_date = data.interview_date;
+                        if (data.interview_location) app.interview_location = data.interview_location;
+                        if (data.interview_description) app.interview_description = data.interview_description;
+                    }
+                }
+                this.filterJobs();
+                this.modalType = null;
+                this.interviewDraft = null;
+                alert('Interview scheduled and status updated.');
+            }).catch(err => {
+                console.error('Error scheduling interview:', err);
+                alert(err.message || 'Failed to schedule interview.');
+            });
+        },
         
         getCandidateTasks(userId, jobId) {
             if (!userId) return [];
@@ -1210,15 +1426,16 @@ function dashboard() {
         
         updateCandidateOnboardingStatus(applicationId, userId, jobId, status) {
             const statusMap = {
-                'Onboarding': 'Onboarding',
-                'Offer': 'Offer',
-                'Onboard': 'Onboard',
-                'Rejected': 'Rejected'
+                'candidate': 'Candidate',
+                'probation': 'Probation',
+                'regular': 'Regular',
+                'rejected': 'Rejected'
             };
-            const mappedStatus = statusMap[status] || status;
+            const mappedStatus = statusMap[(status || '').toString().toLowerCase()] || status;
             
             fetch(`/api/hr1/applications/${applicationId}`, {
                 method: 'PATCH',
+                credentials: 'same-origin',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -1237,13 +1454,13 @@ function dashboard() {
                 if (job && job.applications_hr1) {
                     const app = job.applications_hr1.find(a => a.id == applicationId);
                     if (app) {
-                        app.status = mappedStatus;
+                        app.status = data.status || mappedStatus;
                     }
                 }
                 // Update in onboarding candidates
                 const candidate = this.onboardingCandidates.find(c => c.id == userId);
                 if (candidate) {
-                    candidate.status = mappedStatus;
+                    candidate.status = data.status || mappedStatus;
                 }
                 this.filterOnboardingCandidates();
             }).catch(err => {
@@ -1255,6 +1472,46 @@ function dashboard() {
         editCandidateTasks(candidate, jobId) {
             this.editingCandidateTasks = { ...candidate, jobId };
             this.modalType = 'edit-candidate-tasks';
+        },
+
+        addTaskToCandidate() {
+            if (!this.editingCandidateTasks) {
+                alert('No candidate selected');
+                return;
+            }
+
+            const form = event.target;
+            const formData = new FormData(form);
+
+            formData.append(
+                'user_id',
+                this.editingCandidateTasks.user_id || this.editingCandidateTasks.id
+            );
+            formData.append('job_posting_id', this.editingCandidateTasks.jobId);
+
+            fetch('/api/hr1/applicant-tasks', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=\"csrf-token\"]').content,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            }).then(async res => {
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.message || data.error || 'Failed to add task');
+                }
+                return data;
+            }).then(data => {
+                // Push new task into candidateTasks collection so UI updates immediately
+                this.candidateTasks.push(data);
+                this.modalType = 'edit-candidate-tasks';
+                form.reset();
+                alert('Task added successfully!');
+            }).catch(err => {
+                console.error('Error adding task:', err);
+                alert(err.message || 'Failed to add task. Please try again.');
+            });
         },
         
         deleteOnboardingCandidate(applicationId, userId) {
@@ -1301,6 +1558,7 @@ function dashboard() {
             
             fetch(`/api/hr1/applicant-tasks/${taskId}/status`, {
                 method: 'PATCH',
+                credentials: 'same-origin',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -1338,6 +1596,7 @@ function dashboard() {
             
             fetch(`/api/hr1/applicant-tasks/${this.editingTask.id}`, {
                 method: 'PATCH',
+                credentials: 'same-origin',
                 headers: { 
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     'Accept': 'application/json'
@@ -1367,6 +1626,7 @@ function dashboard() {
             if (confirm('Delete this task?')) {
                 fetch(`/api/hr1/applicant-tasks/${taskId}`, {
                     method: 'DELETE',
+                    credentials: 'same-origin',
                     headers: { 
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         'Accept': 'application/json'
@@ -1449,6 +1709,7 @@ function dashboard() {
             
             fetch('/api/hr1/jobs', {
                 method: 'POST',
+                credentials: 'same-origin',
                 headers: { 
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     'Accept': 'application/json'
@@ -1513,7 +1774,7 @@ function dashboard() {
             const job = this.jobs.find(j => j.id == jobId);
             if (!job || !job.applications_hr1) return this.onboardingCandidates;
             return job.applications_hr1
-                .filter(app => app.user && (app.status === 'Onboarding' || app.status === 'Offer'))
+                .filter(app => app.user && (app.status === 'Candidate' || app.status === 'Probation' || app.status === 'Regular'))
                 .map(app => app.user)
                 .filter(Boolean);
         },
@@ -1684,18 +1945,17 @@ function dashboard() {
             const form = event.target;
             const formData = new FormData(form);
             
-            // Map status if needed
+            // Normalize status casing if provided
             if (formData.get('status')) {
                 const statusMap = {
-                    'applied': 'Applied',
-                    'evaluating': 'Evaluation',
-                    'interviewing': 'Interviewing',
-                    'offered': 'Offer',
-                    'onboard': 'Onboarding',
+                    'applicant': 'Applicant',
+                    'candidate': 'Candidate',
+                    'probation': 'Probation',
+                    'regular': 'Regular',
                     'rejected': 'Rejected'
                 };
-                const status = formData.get('status');
-                formData.set('status', statusMap[status] || status);
+                const rawStatus = (formData.get('status') || '').toString().toLowerCase();
+                formData.set('status', statusMap[rawStatus] || formData.get('status'));
             }
             
             fetch(`/api/hr1/applicants/${this.selectedApplicant.id}`, {
@@ -1845,6 +2105,7 @@ function dashboard() {
             
             fetch('/api/hr1/question-sets', {
                 method: 'POST',
+                credentials: 'same-origin',
                 headers: { 
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     'X-Requested-With': 'XMLHttpRequest',

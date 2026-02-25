@@ -8,6 +8,7 @@ use App\Models\hr1\JobPosting_hr1;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
 
 class ApplicationController_hr1 extends Controller
 {
@@ -38,7 +39,7 @@ class ApplicationController_hr1 extends Controller
         $application = Application_hr1::create([
             'user_id' => Auth::id() ?? 5, // Fallback for testing
             'job_posting_id' => $validated['job_posting_id'],
-            'status' => 'Applied',
+            'status' => 'Applicant',
             'applied_date' => now(),
             'documents' => $documents,
         ]);
@@ -63,7 +64,7 @@ class ApplicationController_hr1 extends Controller
         }
 
         $validated = $request->validate([
-            'status' => 'sometimes|in:Applied,Evaluation,Interviewing,Offer,Onboarding,Rejected',
+            'status' => 'sometimes|in:Applicant,Candidate,Probation,Regular,Rejected',
             'documents' => 'nullable|array',
             'documents.*' => 'file|max:5120',
         ]);
@@ -115,15 +116,33 @@ class ApplicationController_hr1 extends Controller
             'interview_description' => 'nullable|string',
         ]);
 
-        $application = Application_hr1::findOrFail($id);
+        $application = Application_hr1::with('user', 'jobPosting_hr1')->findOrFail($id);
         $application->update([
             'interview_date' => $validated['interview_date'],
             'interview_location' => $validated['interview_location'],
             'interview_description' => $validated['interview_description'] ?? '',
-            'status' => 'Interviewing',
+            'status' => 'Candidate',
         ]);
 
-        $application->user->update(['status' => 'Interviewing']);
+        if ($application->user) {
+            $application->user->update(['status' => 'Candidate']);
+
+            try {
+                $jobTitle = $application->jobPosting_hr1->title ?? 'the position';
+                $body = "You are invited for an interview for {$jobTitle}.\n\n"
+                    . "Date & time: {$validated['interview_date']}\n"
+                    . "Location: {$validated['interview_location']}\n\n"
+                    . "Additional information:\n"
+                    . ($validated['interview_description'] ?? '');
+
+                Mail::raw($body, function ($message) use ($application) {
+                    $message->to($application->user->email)
+                        ->subject('Interview Invitation');
+                });
+            } catch (\Throwable $e) {
+                // Don't block scheduling if mail fails in local setups
+            }
+        }
 
         return response()->json($application);
     }
