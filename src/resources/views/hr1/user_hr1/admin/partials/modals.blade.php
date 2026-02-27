@@ -79,8 +79,13 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Position</label>
-                    <input type="text" x-model="selectedApplicant.position" 
-                           class="w-full p-4 bg-bg rounded-2xl outline-none font-bold text-sm">
+                    <select x-model="selectedApplicant.position"
+                            class="w-full p-4 bg-bg rounded-2xl outline-none font-bold text-sm">
+                        <option value="">Select Position</option>
+                        <template x-for="job in jobs" :key="job.id">
+                            <option :value="job.title" x-text="job.title"></option>
+                        </template>
+                    </select>
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Status</label>
@@ -95,6 +100,74 @@
                     </select>
                 </div>
                 <button type="submit" class="w-full bg-primary text-white py-5 rounded-2xl font-black text-xs uppercase shadow-xl">Update Applicant</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Add Applicant/User Modal -->
+<div x-show="modalType === 'add-applicant'"
+     x-cloak
+     x-transition
+     class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-primary/40 backdrop-blur-md" @click="modalType = null"></div>
+    <div class="relative bg-white w-full max-w-3xl rounded-[2.5rem] shadow-2xl overflow-hidden">
+        <div class="p-8 border-b border-gray-100 flex justify-between items-center">
+            <h3 class="text-2xl font-black text-primary tracking-tight">Add User</h3>
+            <button @click="modalType = null" class="p-2 hover:bg-bg rounded-full transition-colors">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+        <div class="p-8 max-h-[85vh] overflow-y-auto">
+            <form @submit.prevent="addApplicant" class="space-y-6">
+                <div class="grid grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Name</label>
+                        <input type="text" name="name" required
+                               class="w-full p-4 bg-bg rounded-2xl outline-none font-bold text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Email</label>
+                        <input type="email" name="email" required
+                               class="w-full p-4 bg-bg rounded-2xl outline-none font-bold text-sm">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Password</label>
+                        <input type="password" name="password" required
+                               class="w-full p-4 bg-bg rounded-2xl outline-none font-bold text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Contact Number</label>
+                        <input type="tel" name="contact_no"
+                               class="w-full p-4 bg-bg rounded-2xl outline-none font-bold text-sm">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Position</label>
+                    <select name="position"
+                            class="w-full p-4 bg-bg rounded-2xl outline-none font-bold text-sm" required>
+                        <option value="">Select Position</option>
+                        <template x-for="job in jobs" :key="job.id">
+                            <option :value="job.title" x-text="job.title"></option>
+                        </template>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Status</label>
+                    <select name="status"
+                            class="w-full p-4 bg-bg rounded-2xl outline-none font-bold text-sm">
+                        <option value="Applicant">Applicant</option>
+                        <option value="Candidate">Candidate</option>
+                        <option value="Probation">Probation</option>
+                        <option value="Regular">Regular</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-primary text-white py-5 rounded-2xl font-black text-xs uppercase shadow-xl">
+                    Save User
+                </button>
             </form>
         </div>
     </div>
@@ -243,7 +316,25 @@
             <h3 class="text-2xl font-black text-primary tracking-tight">Edit Assessment Form</h3>
             <button @click="modalType = null" class="p-2 hover:bg-bg rounded-full transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
         </div>
-        <div class="p-8 max-h-[85vh] overflow-y-auto" x-show="editingForm">
+        <div class="p-8 max-h-[85vh] overflow-y-auto"
+             x-show="editingForm"
+             x-data="{ editQuestions: [] }"
+             x-init="
+                const hydrate = (val) => {
+                    editQuestions = (val?.questions || []).map(q => ({
+                        id: q.id || null,
+                        text: q.question_text || q.text || '',
+                        type: q.question_type || 'text',
+                        options: (() => {
+                            if (!q.options) return [];
+                            if (Array.isArray(q.options)) return q.options;
+                            try { return JSON.parse(q.options) || []; } catch (e) { return []; }
+                        })()
+                    }));
+                };
+                hydrate(editingForm);
+                $watch('editingForm', (val) => hydrate(val));
+             ">
             <form @submit.prevent="updateForm" class="space-y-6">
                 <div>
                     <label class="block text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Form Title</label>
@@ -263,6 +354,67 @@
                     <label class="block text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Description</label>
                     <textarea name="description" x-model="editingForm.description" rows="3"
                               class="w-full p-4 bg-bg rounded-2xl outline-none font-bold text-sm"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-text-light uppercase tracking-wide mb-2">Questions</label>
+                    <div class="space-y-4">
+                        <template x-for="(question, index) in editQuestions" :key="question.id || index">
+                            <div class="p-4 bg-gray-50 rounded-xl space-y-3">
+                                <input type="hidden" :name="'questions[' + index + '][id]'" x-model="question.id">
+                                <div class="flex gap-2">
+                                    <input type="text"
+                                           :name="'questions[' + index + '][question_text]'"
+                                           x-model="question.text"
+                                           placeholder="Question text"
+                                           class="flex-1 p-3 bg-bg rounded-xl outline-none font-bold text-sm"
+                                           required>
+                                    <select :name="'questions[' + index + '][question_type]'"
+                                            x-model="question.type"
+                                            @change="question.type = $event.target.value"
+                                            class="p-3 bg-bg rounded-xl outline-none font-bold text-sm">
+                                        <option value="text">Text</option>
+                                        <option value="multiple-choice">Multiple Choice (Radio)</option>
+                                        <option value="rating">Rating</option>
+                                    </select>
+                                    <button type="button" @click="editQuestions.splice(index, 1)"
+                                            class="p-3 text-red-600 hover:bg-red-50 rounded-xl">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                                <div x-show="question.type === 'multiple-choice'" class="space-y-2">
+                                    <div class="text-xs font-semibold text-text-light">Options (Radio Buttons):</div>
+                                    <div class="space-y-2"
+                                         x-data="{ options: question.options || [''] }"
+                                         x-init="question.options = question.options && question.options.length ? question.options : ['']">
+                                        <template x-for="(option, optIndex) in options" :key="optIndex">
+                                            <div class="flex gap-2">
+                                                <input type="text"
+                                                       x-model="options[optIndex]"
+                                                       :name="'questions[' + index + '][options][' + optIndex + ']'"
+                                                       placeholder="Option text"
+                                                       class="flex-1 p-2 bg-bg rounded-lg outline-none font-bold text-sm">
+                                                <button type="button"
+                                                        @click="options.splice(optIndex, 1); question.options = options"
+                                                        class="p-2 text-red-600 hover:bg-red-50 rounded-lg">
+                                                    <i class="bi bi-trash text-xs"></i>
+                                                </button>
+                                            </div>
+                                        </template>
+                                        <button type="button"
+                                                @click="options.push(''); question.options = options"
+                                                class="w-full p-2 border border-dashed border-gray-300 rounded-lg text-text-light hover:border-primary transition-colors text-xs">
+                                            <i class="bi bi-plus-circle"></i> Add Option
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                        <button type="button"
+                                @click="editQuestions.push({id: null, text: '', type: 'text', options: []})"
+                                class="w-full p-3 border-2 border-dashed border-gray-300 rounded-xl text-text-light hover:border-primary transition-colors">
+                            <i class="bi bi-plus-circle"></i> Add Question
+                        </button>
+                    </div>
                 </div>
                 <button type="submit" class="w-full bg-primary text-white py-5 rounded-2xl font-black text-xs uppercase shadow-xl">Update Form</button>
             </form>

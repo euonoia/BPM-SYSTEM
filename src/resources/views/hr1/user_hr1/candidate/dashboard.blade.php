@@ -68,21 +68,7 @@
             
             <!-- Candidate Dashboard Content -->
             <div x-show="activeTab === 'dashboard'" class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-                    <div class="card !w-full group cursor-pointer text-left">
-                        <div class="flex items-start gap-3">
-                            <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors flex-shrink-0">
-                                <i class="bi bi-briefcase text-primary text-lg"></i>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center gap-2 mb-0.5">
-                                    <h4 class="text-[10px] font-semibold text-text-light uppercase tracking-wide">Open Positions</h4>
-                                    <p class="text-[10px] text-text-light">Available jobs</p>
-                                </div>
-                        <div class="text-3xl font-black text-primary" x-text="jobs.length"></div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     <div class="card !w-full group cursor-pointer text-left">
                         <div class="flex items-start gap-3">
                             <div class="w-10 h-10 rounded-lg bg-yellow-100 flex items-center justify-center group-hover:bg-yellow-200 transition-colors flex-shrink-0">
@@ -126,173 +112,38 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Live Application Journey -->
-                <div class="main-inner !w-full !max-w-none">
-                    <h3 class="text-xl font-black text-primary mb-6">Live Application Journey</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" x-show="myApplications.length">
-                        <template x-for="app in myApplications" :key="app.id">
-                            <div class="p-5 bg-white rounded-xl border border-gray-200 hover:border-primary/30 hover:shadow-lg transition-all duration-200 group">
-                                <div class="flex items-center justify-between mb-4">
-                                    <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                                        <i class="bi bi-file-earmark-text text-primary"></i>
-                                    </div>
-                                    <span class="text-xs font-semibold uppercase px-2.5 py-1 rounded-full" 
-                                          :class="getStatusClass(app.status)"
-                                          x-text="app.status"></span>
-                                </div>
-                                <div class="text-sm font-semibold text-primary mb-3" x-text="app.job_posting_hr1?.title || 'Unknown Job'"></div>
-                                <div class="space-y-2">
-                                    <div class="flex items-center justify-between text-xs text-text-light mb-1">
-                                        <span>Progress</span>
-                                        <span class="font-semibold text-primary" x-text="getApplicationProgress(app) + '%'"></span>
-                                    </div>
-                                    <div class="w-full h-2.5 bg-gray-200 rounded-full overflow-hidden">
-                                        <div class="h-full bg-gradient-to-r from-primary to-accent rounded-full transition-all duration-500" 
-                                             :style="'width: ' + getApplicationProgress(app) + '%'"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </template>
-                    </div>
-                    <div x-show="!myApplications.length" class="text-center py-8 text-sm text-text-light">
-                        No active applications yet.
-                    </div>
-                </div>
             </div>
 
-            <!-- My Applications Tab -->
-            <div x-show="activeTab === 'my-application'" class="main-inner !w-full !max-w-none mt-8">
-                <h3 class="text-xl font-black text-primary mb-6">My Applications</h3>
-                
-                <!-- Search Bar -->
-                <div class="mb-6">
-                    <div class="relative">
-                        <input type="text" 
-                               x-model="applicationSearchQuery" 
-                               @input="filterApplications()"
-                               placeholder="Search by job title, department, or status..." 
-                               class="w-full p-4 bg-bg rounded-xl border border-gray-200 outline-none focus:border-primary pl-12">
-                        <i class="bi bi-search absolute left-4 top-1/2 transform -translate-y-1/2 text-text-light"></i>
-                    </div>
-                </div>
-                
-                <div class="flex flex-col gap-4" x-show="filteredApplications.length">
-                    <template x-for="app in filteredApplications" :key="app.id">
-                        <div class="p-5 bg-white rounded-xl border border-gray-200 hover:border-primary/30 hover:shadow-lg transition-all duration-200">
-                            <div class="flex items-start justify-between mb-4">
-                                <div class="flex-1">
-                                    <div class="flex items-center gap-3 mb-2">
-                                        <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                                            <i class="bi bi-file-earmark-text text-primary"></i>
-                                        </div>
-                                        <div class="flex-1">
-                                            <div class="text-base font-semibold text-primary mb-1" x-text="app.job_posting_hr1?.title || 'Unknown Job'"></div>
-                                            <div class="text-xs text-text-light flex items-center gap-2 mb-2">
-                                                <i class="bi bi-building text-accent"></i>
-                                                <span x-text="app.job_posting_hr1?.department || 'N/A'"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="space-y-2 text-xs text-text-light">
-                                        <div class="flex items-center gap-2">
-                                            <i class="bi bi-calendar text-accent"></i>
-                                            <span><strong>Applied:</strong> <span x-text="formatDate(app.applied_date)"></span></span>
-                                        </div>
-                                        <div class="flex items-center gap-2" x-show="app.interview_date">
-                                            <i class="bi bi-clock text-accent"></i>
-                                            <span><strong>Interview:</strong> <span x-text="formatDateTime(app.interview_date)"></span></span>
-                                        </div>
-                                        <div class="flex items-center gap-2" x-show="app.documents">
-                                            <i class="bi bi-paperclip text-accent"></i>
-                                            <span><strong>Documents:</strong> <span x-text="getDocumentCount(app.documents)"></span> file(s)</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="flex flex-col items-end gap-2">
-                                    <span class="text-xs font-semibold uppercase px-3 py-1.5 rounded-full" 
-                                          :class="getStatusClass(app.status)"
-                                          x-text="app.status"></span>
-                                    <div class="flex gap-2">
-                                        <button @click="viewApplicationDetails(app)" 
-                                                class="px-3 py-1.5 text-xs font-semibold bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors">
-                                            View Details
-                                        </button>
-                                        <button @click="editApplication(app)" 
-                                                class="px-3 py-1.5 text-xs font-semibold bg-accent/10 text-accent rounded-lg hover:bg-accent/20 transition-colors">
-                                            Edit
-                                        </button>
-                                        <button @click="cancelApplication(app.id)" 
-                                                class="px-3 py-1.5 text-xs font-semibold bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors">
-                                            Cancel
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-                <div x-show="!filteredApplications.length" class="text-center py-12 text-sm text-text-light">
-                    <span x-show="applicationSearchQuery">No applications found matching your search.</span>
-                    <span x-show="!applicationSearchQuery">You have no active applications yet.</span>
-                </div>
-            </div>
-
-            <!-- Jobs Tab -->
-            <div x-show="activeTab === 'recruitment'" class="main-inner !w-full !max-w-none mt-8">
-                <h3 class="text-xl font-black text-primary mb-6">Available Jobs</h3>
-                
-                <!-- Search Bar -->
-                <div class="mb-6">
-                    <div class="relative">
-                        <input type="text" 
-                               x-model="jobSearchQuery" 
-                               @input="filterJobs()"
-                               placeholder="Search by job title, department, or type..." 
-                               class="w-full p-4 bg-bg rounded-xl border border-gray-200 outline-none focus:border-primary pl-12">
-                        <i class="bi bi-search absolute left-4 top-1/2 transform -translate-y-1/2 text-text-light"></i>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" x-show="filteredJobs.length">
-                    <template x-for="job in filteredJobs" :key="job.id">
-                        <div class="p-5 bg-white rounded-xl border border-gray-200 hover:border-primary/30 hover:shadow-lg transition-all duration-200 flex flex-col group" style="min-height: 180px;">
-                            <div class="flex items-start justify-between mb-3">
-                                <div class="flex-1">
-                                    <div class="text-base font-semibold text-primary mb-1" x-text="job.title"></div>
-                                    <div class="text-xs text-text-light flex items-center gap-2 mb-2">
-                                        <i class="bi bi-building text-accent"></i>
-                                        <span x-text="job.department"></span>
-                                    </div>
-                                    <div class="text-xs text-text-light flex items-center gap-2">
-                                        <i class="bi bi-geo-alt text-accent"></i>
-                                        <span x-text="job.location || 'N/A'"></span>
-                                    </div>
-                                </div>
-                                <div class="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors flex-shrink-0">
-                                    <i class="bi bi-briefcase text-accent"></i>
-                                </div>
-                            </div>
-                            <div class="mt-auto pt-3">
-                                <button class="w-full text-xs font-semibold text-white uppercase bg-primary hover:bg-primary-hover px-4 py-2.5 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
-                                        @click="openApplyModal(job)"
-                                        :disabled="hasAppliedToJob(job.id)">
-                                    <i class="bi bi-send"></i>
-                                    <span x-text="hasAppliedToJob(job.id) ? 'Already Applied' : 'Apply Now'"></span>
-                            </button>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-                <div x-show="!filteredJobs.length" class="text-center py-12 text-sm text-text-light">
-                    <span x-show="jobSearchQuery">No jobs found matching your search.</span>
-                    <span x-show="!jobSearchQuery">No open positions are available right now.</span>
-                </div>
-            </div>
-
-            <!-- Tasks Tab -->
+            <!-- Status Tab (Onboarding Tasks) -->
             <div x-show="activeTab === 'onboarding'" class="main-inner !w-full !max-w-none mt-8">
-                <h3 class="text-xl font-black text-primary mb-6">Onboarding Tasks</h3>
+                <h3 class="text-xl font-black text-primary mb-6">Status</h3>
+
+                <!-- Job & Status Card (at top) -->
+                <div class="mb-8 p-6 bg-white rounded-xl border-2 border-primary/20 shadow-sm">
+                    <div class="flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center">
+                                <i class="bi bi-briefcase text-primary text-2xl"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs font-semibold text-text-light uppercase tracking-wide">Your Position</div>
+                                <div class="text-xl font-black text-primary" x-text="candidateJob?.title || candidateProfile?.position || 'Not assigned'"></div>
+                                <div class="text-sm text-text-light" x-show="candidateJob?.department" x-text="candidateJob?.department"></div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xs font-semibold text-text-light uppercase tracking-wide mb-1">Status</div>
+                            <span class="inline-block text-sm font-bold px-4 py-2 rounded-xl border-2"
+                                  :class="getStatusClass(candidateProfile?.status)"
+                                  x-text="candidateProfile?.status || 'N/A'"></span>
+                            <div x-show="candidateProfile?.status === 'Probation'" class="mt-2 text-sm text-text-light">
+                                <i class="bi bi-clock-history"></i> Probation duration: at least 5 months
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="text-lg font-bold text-primary mb-4">Onboarding Tasks</h4>
                 
                 <!-- Search Bar -->
                 <div class="mb-6">
@@ -300,7 +151,7 @@
                         <input type="text" 
                                x-model="taskSearchQuery" 
                                @input="filterTasks()"
-                               placeholder="Search by job title or task name..." 
+                               placeholder="Search by task name..." 
                                class="w-full p-4 bg-bg rounded-xl border border-gray-200 outline-none focus:border-primary pl-12">
                         <i class="bi bi-search absolute left-4 top-1/2 transform -translate-y-1/2 text-text-light"></i>
                     </div>
@@ -318,18 +169,6 @@
                             <option value="pending">Not Accomplished</option>
                         </select>
                     </div>
-                </div>
-                
-                <!-- Job Selection -->
-                <div class="mb-6" x-show="myApplications.length">
-                    <label class="block text-sm font-semibold text-primary mb-2">Select Job</label>
-                    <select @change="selectedJobForTasks = $event.target.value" 
-                            class="w-full p-3 bg-bg rounded-xl border border-gray-200 outline-none focus:border-primary">
-                        <option value="">All Jobs</option>
-                        <template x-for="app in myApplications" :key="app.id">
-                            <option :value="app.job_posting_hr1?.id" x-text="app.job_posting_hr1?.title || 'Unknown'"></option>
-                        </template>
-                    </select>
                 </div>
                 
                 <!-- Tasks by Job -->
@@ -398,9 +237,38 @@
             <!-- Self Assessment Tab -->
             <div x-show="activeTab === 'performance'" class="main-inner !w-full !max-w-none mt-8">
                 <h3 class="text-xl font-black text-primary mb-6">Self Assessment</h3>
+
+                <!-- Assessment completion filter -->
+                <div class="mb-6 flex flex-wrap items-center gap-4">
+                    <label class="text-sm font-semibold text-primary">Filter:</label>
+                    <select x-model="assessmentFilter" 
+                            @change="filterAssessments()"
+                            class="p-2.5 bg-bg rounded-xl border border-gray-200 outline-none focus:border-primary">
+                        <option value="all">All Assessments</option>
+                        <option value="completed">Completed</option>
+                        <option value="not-completed">Not Completed</option>
+                    </select>
+                </div>
+
+                <!-- Score summary for completed assessments -->
+                <div class="mb-8 p-6 bg-white rounded-xl border border-gray-200" x-show="completedAssessmentSummary.length">
+                    <h4 class="text-base font-bold text-primary mb-4 flex items-center gap-2">
+                        <i class="bi bi-graph-up"></i>
+                        Assessment Scores Summary
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <template x-for="item in completedAssessmentSummary" :key="item.id">
+                            <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                                <div class="text-sm font-semibold text-primary mb-1" x-text="item.title"></div>
+                                <div class="text-2xl font-black text-primary" x-text="item.scoreDisplay"></div>
+                                <div class="text-xs text-text-light mt-1">Completed</div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" x-show="myQuestionSets.length">
-                    <template x-for="questionSet in myQuestionSets" :key="questionSet.id">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" x-show="filteredQuestionSets.length">
+                    <template x-for="questionSet in filteredQuestionSets" :key="questionSet.id">
                         <div class="p-5 bg-white rounded-xl border border-gray-200 hover:border-primary/30 hover:shadow-lg transition-all duration-200">
                             <div class="flex items-start justify-between mb-4">
                                 <div class="flex-1">
@@ -454,9 +322,11 @@
                     </div>
                 </div>
                 
-                <div x-show="!myQuestionSets.length && !myLearningModules.length" class="text-center py-12 text-sm text-text-light">
-                    No assessments or modules assigned yet.
+                <div x-show="!filteredQuestionSets.length && !myLearningModules.length" class="text-center py-12 text-sm text-text-light">
+                    <span x-show="assessmentFilter !== 'all'">No assessments match the selected filter.</span>
+                    <span x-show="assessmentFilter === 'all'">No assessments or modules assigned yet.</span>
                 </div>
+                <div x-show="filteredQuestionSets.length && myLearningModules.length" class="mt-8"></div>
             </div>
 
             <!-- Culture Tab -->
@@ -706,8 +576,9 @@ function dashboard() {
         filteredTasksByJob: [],
         taskSearchQuery: '',
         taskStatusFilter: '',
-        selectedJobForTasks: '',
         myQuestionSets: @json($myQuestionSets ?? []),
+        filteredQuestionSets: [],
+        assessmentFilter: 'all',
         myLearningModules: @json($myLearningModules ?? []),
         candidateProfile: (() => {
             const profile = @json($candidateProfile ?? []);
@@ -721,12 +592,14 @@ function dashboard() {
                 profile_picture: profile.profile_picture || ''
             };
         })(),
+        candidateJob: @json($candidateJob ?? null),
         
         init() {
             this.filterApplications();
             this.filterJobs();
             this.filterRecognitions();
             this.filterTasks();
+            this.filterAssessments();
         },
         
         getStatusClass(status) {
@@ -909,9 +782,9 @@ function dashboard() {
         filterTasks() {
             const query = this.taskSearchQuery.toLowerCase();
             const statusFilter = this.taskStatusFilter;
-            const jobFilter = this.selectedJobForTasks;
+            const jobFilter = this.candidateJob?.id || null;
             
-            // Group tasks by job
+            // Group tasks by job (candidate's job is fixed - no selector)
             const tasksByJob = {};
             
             this.applicantTasks.forEach(task => {
@@ -941,6 +814,34 @@ function dashboard() {
             });
             
             this.filteredTasksByJob = Object.values(tasksByJob);
+        },
+        
+        filterAssessments() {
+            const filter = this.assessmentFilter;
+            if (filter === 'all') {
+                this.filteredQuestionSets = [...this.myQuestionSets];
+                return;
+            }
+            if (filter === 'completed') {
+                this.filteredQuestionSets = this.myQuestionSets.filter(qs => qs.completed);
+                return;
+            }
+            if (filter === 'not-completed') {
+                this.filteredQuestionSets = this.myQuestionSets.filter(qs => !qs.completed);
+                return;
+            }
+            this.filteredQuestionSets = [...this.myQuestionSets];
+        },
+        
+        get completedAssessmentSummary() {
+            return this.myQuestionSets
+                .filter(qs => qs.completed)
+                .map(qs => ({
+                    id: qs.id,
+                    title: qs.title,
+                    score: qs.score,
+                    scoreDisplay: (qs.score != null && qs.score !== '' && !isNaN(Number(qs.score))) ? Number(qs.score) : 'N/A'
+                }));
         },
         
         viewApplicationDetails(app) {
@@ -1158,9 +1059,7 @@ function dashboard() {
         get navItems() {
             return [
                 { id: 'dashboard', label: 'Dashboard', icon: 'layout-dashboard' },
-                { id: 'my-application', label: 'My Apps', icon: 'clipboard-list' },
-                { id: 'recruitment', label: 'Jobs', icon: 'briefcase' },
-                { id: 'onboarding', label: 'Tasks', icon: 'check-square' },
+                { id: 'onboarding', label: 'Status', icon: 'check-square' },
                 { id: 'performance', label: 'Self Assessment', icon: 'target' },
                 { id: 'recognition', label: 'Culture', icon: 'star' },
                 { id: 'profile', label: 'Profile', icon: 'user-circle' }

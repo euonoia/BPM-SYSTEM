@@ -248,39 +248,48 @@
                     <div class="flex flex-col gap-2 items-end">
                         <button @click="modalType = 'add-applicant'" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-hover transition-colors flex items-center gap-2">
                             <i class="bi bi-person-plus"></i>
-                            <span class="text-sm font-semibold">Add Candidate</span>
+                            <span class="text-sm font-semibold">Add User</span>
                         </button>
-                        <div class="flex flex-wrap gap-2 justify-end">
+                        <div class="relative">
                             <button
                                 type="button"
-                                class="px-3 py-1 text-[11px] rounded-full border border-gray-300 text-text-light hover:border-primary hover:text-primary bg-white"
-                                @click="downloadApplicantsByStatus('rejected')">
-                                Download Rejected
+                                @click="showDownloadMenu = !showDownloadMenu"
+                                class="px-4 py-2 text-[11px] rounded-lg border border-gray-300 text-text-light hover:border-primary hover:text-primary bg-white flex items-center gap-2">
+                                <i class="bi bi-download"></i>
+                                <span class="font-semibold">Download List</span>
+                                <i class="bi" :class="showDownloadMenu ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
                             </button>
-                            <button
-                                type="button"
-                                class="px-3 py-1 text-[11px] rounded-full border border-gray-300 text-text-light hover:border-primary hover:text-primary bg-white"
-                                @click="downloadApplicantsByStatus('applicant')">
-                                Download Applicants
-                            </button>
-                            <button
-                                type="button"
-                                class="px-3 py-1 text-[11px] rounded-full border border-gray-300 text-text-light hover:border-primary hover:text-primary bg-white"
-                                @click="downloadApplicantsByStatus('candidate')">
-                                Download Candidates
-                            </button>
-                            <button
-                                type="button"
-                                class="px-3 py-1 text-[11px] rounded-full border border-gray-300 text-text-light hover:border-primary hover:text-primary bg-white"
-                                @click="downloadApplicantsByStatus('probation')">
-                                Download Probation
-                            </button>
-                            <button
-                                type="button"
-                                class="px-3 py-1 text-[11px] rounded-full border border-gray-300 text-text-light hover:border-primary hover:text-primary bg-white"
-                                @click="downloadApplicantsByStatus('regular')">
-                                Download Regular
-                            </button>
+                            <div
+                                x-show="showDownloadMenu"
+                                x-cloak
+                                @click.outside="showDownloadMenu = false"
+                                class="absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-lg border border-gray-100 py-2 text-[11px] z-[120]">
+                                <button type="button"
+                                        class="w-full text-left px-3 py-1.5 hover:bg-bg text-text-light"
+                                        @click="downloadApplicantsByStatus('applicant'); showDownloadMenu = false;">
+                                    Applicants
+                                </button>
+                                <button type="button"
+                                        class="w-full text-left px-3 py-1.5 hover:bg-bg text-text-light"
+                                        @click="downloadApplicantsByStatus('candidate'); showDownloadMenu = false;">
+                                    Candidates
+                                </button>
+                                <button type="button"
+                                        class="w-full text-left px-3 py-1.5 hover:bg-bg text-text-light"
+                                        @click="downloadApplicantsByStatus('probation'); showDownloadMenu = false;">
+                                    Probation
+                                </button>
+                                <button type="button"
+                                        class="w-full text-left px-3 py-1.5 hover:bg-bg text-text-light"
+                                        @click="downloadApplicantsByStatus('regular'); showDownloadMenu = false;">
+                                    Regular
+                                </button>
+                                <button type="button"
+                                        class="w-full text-left px-3 py-1.5 hover:bg-bg text-red-600"
+                                        @click="downloadApplicantsByStatus('rejected'); showDownloadMenu = false;">
+                                    Rejected
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -427,7 +436,7 @@
                                         <span x-text="job.department"></span>
                                     </div>
                                     <div class="flex items-center gap-4 text-xs text-text-light">
-                                        <span><strong class="text-primary">Applications:</strong> <span x-text="job.applications_hr1 ? job.applications_hr1.length : 0"></span></span>
+                                        <span><strong class="text-primary">Applications:</strong> <span x-text="getRecruitmentApplicants(job).length"></span></span>
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-2">
@@ -448,7 +457,7 @@
                             </div>
                             
                             <!-- Applicants for this job -->
-                            <div x-show="selectedJobId === job.id && job.applications_hr1 && job.applications_hr1.length" 
+                            <div x-show="selectedJobId === job.id && getRecruitmentApplicants(job).length" 
                                  class="mt-4 pt-4 border-t border-gray-200">
                                 <div class="flex items-center justify-between mb-3">
                                     <h4 class="text-sm font-semibold text-primary">Applicants for this position:</h4>
@@ -461,7 +470,7 @@
                                     </select>
                                 </div>
                                 <div class="space-y-2">
-                                    <template x-for="app in job.applications_hr1" :key="app.id">
+                                    <template x-for="app in getRecruitmentApplicants(job)" :key="app.id">
                                         <div class="p-3 bg-gray-50 rounded-lg space-y-2">
                                             <div class="flex items-center justify-between">
                                                 <div>
@@ -636,10 +645,49 @@
                                  class="mt-4 pt-4 border-t border-gray-200">
                                 <div class="flex items-center justify-between mb-3">
                                     <h4 class="text-sm font-semibold text-primary">Tasks & Requirements</h4>
-                                    <button @click="editCandidateTasks(candidate, candidate.job_id)" 
-                                            class="text-xs px-2 py-1 bg-accent/10 text-accent rounded hover:bg-accent/20 transition-colors">
-                                        <i class="bi bi-pencil"></i> Edit Tasks
-                                    </button>
+                                    <div class="flex items-center gap-2">
+                                        <button @click="editCandidateTasks(candidate, candidate.job_id)" 
+                                                class="text-xs px-2 py-1 bg-accent/10 text-accent rounded hover:bg-accent/20 transition-colors">
+                                            <i class="bi bi-pencil"></i> Edit Tasks
+                                        </button>
+                                        <div class="relative" x-show="candidate.status === 'Candidate' || candidate.status === 'Probation' || candidate.status === 'Regular'">
+                                            <button type="button"
+                                                    @click="candidate.showPresetMenu = !candidate.showPresetMenu"
+                                                    class="text-xs px-2 py-1 bg-primary/5 text-primary rounded hover:bg-primary/10 transition-colors flex items-center gap-1">
+                                                <i class="bi bi-magic"></i>
+                                                Preset Tasks
+                                                <i class="bi" :class="candidate.showPresetMenu ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+                                            </button>
+                                            <div x-show="candidate.showPresetMenu"
+                                                 x-cloak
+                                                 @click.outside="candidate.showPresetMenu = false"
+                                                 class="absolute right-0 mt-1 w-64 bg-white border border-gray-100 rounded-lg shadow-lg text-[11px] z-[140]">
+                                                <div class="px-3 pt-2 pb-1 text-[10px] text-text-light border-b border-gray-100">
+                                                    <span x-text="candidate.job_title || 'Any Job'"></span>
+                                                    <span> • </span>
+                                                    <span>Apply preset tasks by status</span>
+                                                </div>
+                                                <button type="button"
+                                                        class="w-full text-left px-3 py-1.5 hover:bg-bg"
+                                                        x-show="(candidate.status || 'Candidate') === 'Candidate'"
+                                                        @click="applyPresetTasks(candidate, candidate.job_id, 'Candidate'); candidate.showPresetMenu = false;">
+                                                    Candidate – Training & Orientation
+                                                </button>
+                                                <button type="button"
+                                                        class="w-full text-left px-3 py-1.5 hover:bg-bg"
+                                                        x-show="(candidate.status || 'Candidate') === 'Probation'"
+                                                        @click="applyPresetTasks(candidate, candidate.job_id, 'Probation'); candidate.showPresetMenu = false;">
+                                                    Probation – Seminars & Evaluation
+                                                </button>
+                                                <button type="button"
+                                                        class="w-full text-left px-3 py-1.5 hover:bg-bg"
+                                                        x-show="(candidate.status || 'Candidate') === 'Regular'"
+                                                        @click="applyPresetTasks(candidate, candidate.job_id, 'Regular'); candidate.showPresetMenu = false;">
+                                                    Regular – Continuous Development
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 
                                 <div class="space-y-2" x-show="getCandidateTasks(candidate.id, candidate.job_id).length > 0">
@@ -687,16 +735,32 @@
 
             <!-- Performance Tab -->
             <div x-show="activeTab === 'performance'" class="main-inner !w-full !max-w-none mt-8">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-black text-primary">Performance Assessment Builder</h3>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-black text-primary">Performance & Assessments</h3>
                     <button @click="modalType = 'create-form'" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-hover transition-colors flex items-center gap-2">
                         <i class="bi bi-plus-circle"></i>
                         <span class="text-sm font-semibold">Create Form</span>
                     </button>
                 </div>
 
-                <!-- Search Bar -->
-                <div class="mb-6">
+                <!-- Inner tabs: Forms vs Scores -->
+                <div class="flex items-center gap-2 mb-6 border-b border-gray-200 pb-2 text-xs font-semibold">
+                    <button
+                        type="button"
+                        @click="performanceTab = 'forms'"
+                        :class="performanceTab === 'forms' ? 'text-primary border-b-2 border-primary pb-1' : 'text-text-light pb-1'">
+                        Forms
+                    </button>
+                    <button
+                        type="button"
+                        @click="performanceTab = 'scores'"
+                        :class="performanceTab === 'scores' ? 'text-primary border-b-2 border-primary pb-1' : 'text-text-light pb-1'">
+                        Scores
+                    </button>
+                </div>
+
+                <!-- Forms: Search & List -->
+                <div class="mb-6" x-show="performanceTab === 'forms'">
                     <div class="relative">
                         <input type="text" 
                                x-model="questionSetSearchQuery" 
@@ -708,7 +772,7 @@
                 </div>
 
                 <!-- Question Sets List -->
-                <div class="mb-6">
+                <div class="mb-6" x-show="performanceTab === 'forms'">
                     <h4 class="text-lg font-semibold text-primary mb-4">Available Forms/Assessments</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4" x-show="filteredQuestionSets.length">
                         <template x-for="form in filteredQuestionSets" :key="form.id">
@@ -741,7 +805,7 @@
                                         + <span x-text="(form.questions || []).length - 3"></span> more questions
                                     </div>
                                 </div>
-                                <button @click="viewFormCandidates(form)" 
+                                <button @click="performanceTab = 'scores'; viewFormCandidates(form)" 
                                         class="w-full mt-3 text-xs font-semibold text-primary hover:underline">
                                     View Candidate Scores (<span x-text="getFormCandidatesCount(form.id)"></span>)
                                 </button>
@@ -755,7 +819,7 @@
                 </div>
 
                 <!-- Candidate Scores Section -->
-                <div x-show="selectedFormForScores" class="mt-6">
+                <div x-show="performanceTab === 'scores' && selectedFormForScores" class="mt-6">
                     <div class="flex items-center justify-between mb-4">
                         <h4 class="text-lg font-semibold text-primary">Candidate Scores - <span x-text="selectedFormForScores?.title"></span></h4>
                         <button @click="selectedFormForScores = null" class="text-xs text-text-light hover:text-primary">Close</button>
@@ -1011,7 +1075,9 @@ function dashboard() {
         selectedOnboardingJob: null,
         expandedOnboardingJobId: null,
         expandedCandidateId: null,
+        showDownloadMenu: false,
         interviewDraft: null,
+        performanceTab: 'forms',
         selectedFormForScores: null,
         scoreFilterType: 'name',
         onboardingSearchQuery: '',
@@ -1066,8 +1132,8 @@ function dashboard() {
             const statusMap = {
                 rejected: 'Rejected',
                 applicant: 'Applicant',
-                candidates: 'Candidate',
                 candidate: 'Candidate',
+                candidates: 'Candidate',
                 probation: 'Probation',
                 regular: 'Regular'
             };
@@ -1137,11 +1203,16 @@ function dashboard() {
                 (job.title || '').toLowerCase().includes(query) ||
                 (job.department || '').toLowerCase().includes(query) ||
                 (job.type || '').toLowerCase().includes(query) ||
-                (job.applications_hr1 || []).some(app => 
+                this.getRecruitmentApplicants(job).some(app => 
                     (app.user?.name || '').toLowerCase().includes(query) ||
                     (app.user?.email || '').toLowerCase().includes(query)
                 )
             );
+        },
+
+        getRecruitmentApplicants(job) {
+            const apps = job?.applications_hr1 || [];
+            return apps.filter(app => (app.status || 'Applicant') === 'Applicant');
         },
         
         filterTaskSets() {
@@ -1303,19 +1374,24 @@ function dashboard() {
             const job = this.jobs.find(j => j.id == jobId);
             if (!job || !job.applications_hr1) return;
 
-            job.applications_hr1.sort((a, b) => {
+            const sorted = [...job.applications_hr1].sort((a, b) => {
                 if (mode === 'name_asc' || mode === 'name_desc') {
                     const aName = (a.user?.name || '').toLowerCase();
                     const bName = (b.user?.name || '').toLowerCase();
                     return mode === 'name_asc' ? aName.localeCompare(bName) : bName.localeCompare(aName);
                 }
                 if (mode === 'applied_date_asc' || mode === 'applied_date_desc') {
-                    const aDate = new Date(a.applied_date || 0);
-                    const bDate = new Date(b.applied_date || 0);
+                    const aDate = new Date(a.applied_date || a.created_at || a.user?.applied_date || 0);
+                    const bDate = new Date(b.applied_date || b.created_at || b.user?.applied_date || 0);
                     return mode === 'applied_date_asc' ? aDate - bDate : bDate - aDate;
                 }
                 return 0;
             });
+
+            // Re-assign to ensure Alpine reacts (avoid in-place mutation pitfalls)
+            job.applications_hr1 = sorted;
+            this.jobs = [...this.jobs];
+            this.filteredJobs = [...this.filteredJobs];
         },
 
         updateApplicationStatus(applicationId, jobId, status) {
@@ -1423,6 +1499,95 @@ function dashboard() {
                 title: task.title || task.task_title || 'Untitled Task'
             }));
         },
+
+        applyPresetTasks(candidate, jobId, phase) {
+            if (!candidate || !jobId) return;
+
+            const userId = candidate.user_id || candidate.id;
+            const jobTitle = (candidate.job_title || '').toLowerCase();
+            const currentPhase = (candidate.status || '').toString();
+
+            // Enforce: only apply presets matching the candidate's current status
+            if (currentPhase && currentPhase !== phase) {
+                alert(`Preset tasks for ${phase} can only be applied when status is ${phase}.`);
+                return;
+            }
+
+            // Default presets for any job
+            const genericPresets = {
+                Candidate: [
+                    'Complete onboarding orientation',
+                    'Submit required HR documents',
+                    'Review hospital policies and procedures',
+                ],
+                Probation: [
+                    'Attend monthly feedback session with supervisor',
+                    'Complete required training modules',
+                    'Participate in peer evaluation session',
+                ],
+                Regular: [
+                    'Enroll in continuous education program',
+                    'Attend annual performance review',
+                    'Participate in department improvement project',
+                ],
+            };
+
+            // Specialized presets for Registered Nurse roles
+            const rnPresets = {
+                Candidate: [
+                    'Complete RN orientation module',
+                    'Shadow senior nurse for 3 shifts',
+                    'Review emergency protocols handbook',
+                ],
+                Probation: [
+                    'Attend patient safety seminar',
+                    'Present case study to nursing supervisor',
+                    'Complete advanced skills checklist',
+                ],
+                Regular: [
+                    'Lead a nursing team huddle',
+                    'Facilitate one clinical skills training',
+                    'Submit quarterly patient care improvement report',
+                ],
+            };
+
+            const isRN = jobTitle.includes('registered nurse');
+            const bank = isRN ? rnPresets : genericPresets;
+            const titles = bank[phase] || genericPresets[phase] || [];
+            if (!titles.length) return;
+
+            // Fire requests sequentially to reuse existing API
+            const createOne = (title) => {
+                const formData = new FormData();
+                formData.append('title', title);
+                formData.append('description', '');
+                formData.append('user_id', userId);
+                formData.append('job_posting_id', jobId);
+
+                return fetch('/api/hr1/applicant-tasks', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json',
+                    },
+                    body: formData,
+                }).then(res => res.ok ? res.json() : res.json().then(d => Promise.reject(d)));
+            };
+
+            (async () => {
+                try {
+                    for (const title of titles) {
+                        const task = await createOne(title);
+                        this.candidateTasks.push(task);
+                    }
+                    alert('Preset tasks added successfully.');
+                } catch (err) {
+                    console.error('Error applying preset tasks:', err);
+                    alert('Failed to apply preset tasks.');
+                }
+            })();
+        },
         
         updateCandidateOnboardingStatus(applicationId, userId, jobId, status) {
             const statusMap = {
@@ -1432,16 +1597,23 @@ function dashboard() {
                 'rejected': 'Rejected'
             };
             const mappedStatus = statusMap[(status || '').toString().toLowerCase()] || status;
-            
+
+            // Use method spoofing + form payload for maximum CSRF compatibility
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
+            const formData = new FormData();
+            formData.append('_token', csrf);
+            formData.append('_method', 'PATCH');
+            formData.append('status', mappedStatus);
+
             fetch(`/api/hr1/applications/${applicationId}`, {
-                method: 'PATCH',
+                method: 'POST',
                 credentials: 'same-origin',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'X-CSRF-TOKEN': csrf,
+                    'X-Requested-With': 'XMLHttpRequest',
                     'Accept': 'application/json'
                 },
-                body: JSON.stringify({ status: mappedStatus })
+                body: formData
             }).then(async res => {
                 const data = await res.json();
                 if (!res.ok) {
@@ -1977,6 +2149,24 @@ function dashboard() {
                     this.applicants[index] = data;
                     this.filterApplicants();
                 }
+                // Update onboarding candidates in the current session if present
+                const candidate = this.onboardingCandidates.find(c => c.id == data.id);
+                if (candidate) {
+                    candidate.status = data.status;
+                }
+                // Keep embedded user info in job applications in sync so onboarding view reflects changes
+                this.jobs.forEach(job => {
+                    if (!job.applications_hr1) return;
+                    job.applications_hr1.forEach(app => {
+                        if (app.user && app.user.id == data.id) {
+                            app.user = { ...app.user, ...data };
+                            if (data.status) {
+                                app.status = data.status;
+                            }
+                        }
+                    });
+                });
+                this.filterOnboardingCandidates();
                 this.modalType = null;
                 this.editingApplicant = false;
                 alert('Applicant updated successfully');
@@ -2094,7 +2284,7 @@ function dashboard() {
                     questions.push({
                         question_text: q.question_text,
                         question_type: q.question_type || 'text',
-                        options: q.options && q.options.length > 0 ? JSON.stringify(q.options.filter(opt => opt)) : null,
+                        options: q.options && q.options.length > 0 ? q.options.filter(opt => opt) : null,
                         is_required: true
                     });
                 }
@@ -2117,6 +2307,8 @@ function dashboard() {
                 if (!res.ok) {
                     throw new Error(data.message || data.error || 'Failed to create form');
                 }
+                // Ensure newly created form has questions available in UI
+                if (!data.questions) data.questions = questions;
                 return data;
             }).then(data => {
                 this.questionSets.push(data);
@@ -2138,11 +2330,55 @@ function dashboard() {
             if (formData.get('job_id')) {
                 formData.append('job_id', formData.get('job_id'));
             }
+
+            // Collect questions (supports editing + adding + removing)
+            const questions = [];
+            const questionInputs = form.querySelectorAll('[name^="questions["]');
+            const questionMap = {};
+            questionInputs.forEach(input => {
+                const match = input.name.match(/questions\[(\d+)\]\[(\w+)\](?:\[(\d+)\])?/);
+                if (match) {
+                    const index = parseInt(match[1]);
+                    const field = match[2];
+                    const optIndex = match[3] ? parseInt(match[3]) : null;
+
+                    if (!questionMap[index]) {
+                        questionMap[index] = { options: [] };
+                    }
+
+                    if (optIndex !== null) {
+                        if (!questionMap[index].options[optIndex]) {
+                            questionMap[index].options[optIndex] = '';
+                        }
+                        questionMap[index].options[optIndex] = input.value;
+                    } else {
+                        questionMap[index][field] = input.value;
+                    }
+                }
+            });
+
+            Object.keys(questionMap).forEach(index => {
+                const q = questionMap[index];
+                if (q.question_text) {
+                    const payload = {
+                        question_text: q.question_text,
+                        question_type: q.question_type || 'text',
+                        options: q.options && q.options.length > 0 ? q.options.filter(opt => opt) : null,
+                        is_required: true,
+                    };
+                    if (q.id) payload.id = q.id;
+                    questions.push(payload);
+                }
+            });
+
+            formData.append('questions', JSON.stringify(questions));
             
             fetch(`/api/hr1/question-sets/${this.editingForm.id}`, {
                 method: 'PATCH',
+                credentials: 'same-origin',
                 headers: { 
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'X-Requested-With': 'XMLHttpRequest',
                     'Accept': 'application/json'
                 },
                 body: formData
@@ -2151,6 +2387,8 @@ function dashboard() {
                 if (!res.ok) {
                     throw new Error(data.message || data.error || 'Failed to update form');
                 }
+                // Keep UI consistent even if backend omits questions in response
+                if (!data.questions) data.questions = questions;
                 return data;
             }).then(data => {
                 const index = this.questionSets.findIndex(qs => qs.id == data.id);

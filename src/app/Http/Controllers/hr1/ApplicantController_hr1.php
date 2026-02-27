@@ -22,7 +22,10 @@ class ApplicantController_hr1 extends Controller
             'email' => 'required|email|unique:users_hr1',
             'password' => 'required|string|min:8',
             'position' => 'required|string|max:255',
+            'status' => 'sometimes|in:Applicant,Candidate,Probation,Regular,Rejected',
         ]);
+
+        $status = $validated['status'] ?? 'Applicant';
 
         $user = User::create([
             'name' => $validated['name'],
@@ -30,7 +33,7 @@ class ApplicantController_hr1 extends Controller
             'password' => bcrypt($validated['password']),
             'position' => $validated['position'],
             'role' => 'candidate',
-            'status' => 'Applicant',
+            'status' => $status,
             'applied_date' => now(),
         ]);
 
@@ -116,6 +119,12 @@ class ApplicantController_hr1 extends Controller
         }
 
         $user->update($validated);
+
+        // Keep related applications in sync when status changes via this endpoint
+        if (isset($validated['status'])) {
+            Application_hr1::where('user_id', $user->id)
+                ->update(['status' => $validated['status']]);
+        }
         return response()->json($user->load('applications_hr1'));
     }
 }

@@ -145,7 +145,8 @@ class DashboardController_hr1 extends Controller
         $myQuestionSets = collect();
         $myLearningModules = collect();
         $candidateProfile = null;
-        
+        $candidateJob = null;
+
         if ($role === 'candidate') {
             // Get the first candidate as example, or use authenticated user
             $currentCandidate = $user && $user->role === 'candidate' ? $user : User::where('role', 'candidate')->first();
@@ -168,6 +169,17 @@ class DashboardController_hr1 extends Controller
                              'job_postings_hr1.title as job_title', 'job_postings_hr1.id as job_id')
                     ->get();
                 
+                // Candidate's primary job (set when admin created user - first application in Candidate/Probation)
+                $primaryApp = $myApplications->whereIn('status', ['Candidate', 'Probation'])->first() ?? $myApplications->first();
+                $candidateJob = null;
+                if ($primaryApp && $primaryApp->jobPosting_hr1) {
+                    $candidateJob = (object)[
+                        'id' => $primaryApp->job_posting_id,
+                        'title' => $primaryApp->jobPosting_hr1->title,
+                        'department' => $primaryApp->jobPosting_hr1->department ?? null,
+                    ];
+                }
+
                 // Get question sets assigned to candidate
                 $myQuestionSets = DB::table('question_sets_hr1')
                     ->where('is_active', true)
@@ -186,6 +198,11 @@ class DashboardController_hr1 extends Controller
                             ? round(($qs->responses->count() / $qs->questions->count()) * 100) 
                             : 0;
                         $qs->completed = $qs->responses->count() === $qs->questions->count() && $qs->questions->count() > 0;
+                        // Compute score from numeric response_value (e.g. rating 1-5)
+                        $qs->score = $qs->responses->sum(function ($r) {
+                            $v = $r->response_value;
+                            return is_numeric($v) ? (float) $v : 0;
+                        });
                         return $qs;
                     });
                 
@@ -222,6 +239,7 @@ class DashboardController_hr1 extends Controller
             'myQuestionSets' => $myQuestionSets,
             'myLearningModules' => $myLearningModules,
             'candidateProfile' => $candidateProfile,
+            'candidateJob' => $candidateJob ?? null,
             // Analytics
             'analytics' => [
                 'totalApplicants' => $totalApplicants,

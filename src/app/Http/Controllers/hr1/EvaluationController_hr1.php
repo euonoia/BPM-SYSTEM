@@ -9,6 +9,44 @@ use Illuminate\Support\Facades\DB;
 
 class EvaluationController_hr1 extends Controller
 {
+    private function decodeQuestionsPayload($raw): array
+    {
+        if ($raw === null || $raw === '') {
+            return [];
+        }
+
+        if (is_array($raw)) {
+            return $raw;
+        }
+
+        $decoded = json_decode($raw, true);
+        return is_array($decoded) ? $decoded : [];
+    }
+
+    private function normalizeQuestionOptions($options): ?string
+    {
+        if ($options === null || $options === '') {
+            return null;
+        }
+
+        if (is_string($options)) {
+            $decoded = json_decode($options, true);
+            if (is_array($decoded)) {
+                $options = $decoded;
+            }
+        }
+
+        if (!is_array($options)) {
+            return null;
+        }
+
+        $clean = array_values(array_filter(array_map(function ($v) {
+            return is_string($v) ? trim($v) : '';
+        }, $options), fn ($v) => $v !== ''));
+
+        return $clean ? json_encode($clean) : null;
+    }
+
     public function index()
     {
         $criteria = EvaluationCriterion_hr1::all();
@@ -54,20 +92,55 @@ class EvaluationController_hr1 extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'type' => 'sometimes|in:assessment,evaluation,survey,interview',
+            'questions' => 'nullable',
         ]);
 
-        $questionSet = DB::table('question_sets_hr1')->insertGetId([
-            'title' => $validated['title'],
-            'description' => $validated['description'] ?? null,
-            'type' => $validated['type'] ?? 'assessment',
-            'is_active' => true,
-            'created_by' => auth()->id(),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        $questions = $this->decodeQuestionsPayload($request->input('questions'));
+        $allowedTypes = ['text', 'multiple-choice', 'rating', 'yes-no', 'file-upload'];
 
-        $questionSetData = DB::table('question_sets_hr1')->where('id', $questionSet)->first();
-        $questionSetData->questions = [];
+        $questionSetId = DB::transaction(function () use ($validated, $questions, $allowedTypes) {
+            $qsId = DB::table('question_sets_hr1')->insertGetId([
+                'title' => $validated['title'],
+                'description' => $validated['description'] ?? null,
+                'type' => $validated['type'] ?? 'assessment',
+                'is_active' => true,
+                'created_by' => auth()->id(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            $order = 0;
+            foreach ($questions as $q) {
+                if (!is_array($q)) {
+                    continue;
+                }
+                $text = trim((string) ($q['question_text'] ?? ''));
+                if ($text === '') {
+                    continue;
+                }
+                $type = (string) ($q['question_type'] ?? 'text');
+                if (!in_array($type, $allowedTypes, true)) {
+                    $type = 'text';
+                }
+                $options = $this->normalizeQuestionOptions($q['options'] ?? null);
+
+                DB::table('questions_hr1')->insert([
+                    'question_set_id' => $qsId,
+                    'question_text' => $text,
+                    'question_type' => $type,
+                    'options' => $options,
+                    'is_required' => isset($q['is_required']) ? (bool) $q['is_required'] : true,
+                    'order' => $order++,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+
+            return $qsId;
+        });
+
+        $questionSetData = DB::table('question_sets_hr1')->where('id', $questionSetId)->first();
+        $questionSetData->questions = DB::table('questions_hr1')->where('question_set_id', $questionSetId)->orderBy('order')->get();
         
         return response()->json($questionSetData, 201);
     }
@@ -79,14 +152,89 @@ class EvaluationController_hr1 extends Controller
             'description' => 'nullable|string',
             'type' => 'sometimes|in:assessment,evaluation,survey,interview',
             'is_active' => 'sometimes|boolean',
+            'questions' => 'nullable',
         ]);
 
-        DB::table('question_sets_hr1')
-            ->where('id', $id)
-            ->update(array_merge($validated, ['updated_at' => now()]));
+        $hasQuestions = $request->has('questions');
+        $questions = $this->decodeQuestionsPayload($request->input('questions'));
+        $allowedTypes = ['text', 'multiple-choice', 'rating', 'yes-no', 'file-upload'];
+
+        DB::transaction(function () use ($validated, $id, $hasQuestions, $questions, $allowedTypes) {
+            $update = $validated;
+            unset($update['questions']);
+
+            if (!empty($update)) {
+                DB::table('question_sets_hr1')
+                    ->where('id', $id)
+                    ->update(array_merge($update, ['updated_at' => now()]));
+            }
+
+            if (!$hasQuestions) {
+                return;
+            }
+
+            $keepIds = [];
+            $order = 0;
+            foreach ($questions as $q) {
+                if (!is_array($q)) {
+                    continue;
+                }
+
+                $text = trim((string) ($q['question_text'] ?? ''));
+                if ($text === '') {
+                    continue;
+                }
+
+                $type = (string) ($q['question_type'] ?? 'text');
+                if (!in_array($type, $allowedTypes, true)) {
+                    $type = 'text';
+                }
+
+                $options = $this->normalizeQuestionOptions($q['options'] ?? null);
+                $isRequired = isset($q['is_required']) ? (bool) $q['is_required'] : true;
+
+                $qid = isset($q['id']) ? (int) $q['id'] : null;
+                if ($qid) {
+                    $updated = DB::table('questions_hr1')
+                        ->where('id', $qid)
+                        ->where('question_set_id', $id)
+                        ->update([
+                            'question_text' => $text,
+                            'question_type' => $type,
+                            'options' => $options,
+                            'is_required' => $isRequired,
+                            'order' => $order++,
+                            'updated_at' => now(),
+                        ]);
+
+                    if ($updated) {
+                        $keepIds[] = $qid;
+                        continue;
+                    }
+                }
+
+                $newId = DB::table('questions_hr1')->insertGetId([
+                    'question_set_id' => $id,
+                    'question_text' => $text,
+                    'question_type' => $type,
+                    'options' => $options,
+                    'is_required' => $isRequired,
+                    'order' => $order++,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+                $keepIds[] = $newId;
+            }
+
+            // Remove questions not present anymore
+            DB::table('questions_hr1')
+                ->where('question_set_id', $id)
+                ->when(count($keepIds) > 0, fn ($q) => $q->whereNotIn('id', $keepIds))
+                ->delete();
+        });
 
         $questionSet = DB::table('question_sets_hr1')->where('id', $id)->first();
-        $questionSet->questions = DB::table('questions_hr1')->where('question_set_id', $id)->get();
+        $questionSet->questions = DB::table('questions_hr1')->where('question_set_id', $id)->orderBy('order')->get();
         
         return response()->json($questionSet);
     }
