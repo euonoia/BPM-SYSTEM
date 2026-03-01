@@ -15,6 +15,7 @@
                             <th>ID</th>
                             <th>Name</th>
                             <th>Department</th>
+                            <th>Role</th>
                             <th>Position</th>
                             <th>Status</th>
                             <th></th>
@@ -26,6 +27,7 @@
                             <td>{{ $e->employee_id }}</td>
                             <td>{{ $e->first_name }} {{ $e->last_name }}</td>
                             <td>{{ $e->department }}</td>
+                            <td>{{ ucfirst($e->role ?? 'employee') }}</td>
                             <td>{{ $e->position }}</td>
                             <td>{{ ucfirst($e->status ?? $e->employment_type ?? 'active') }}</td>
                             <td>

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\hr4;
 use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class HumanCapitalController extends Controller
 {
@@ -29,26 +28,13 @@ class HumanCapitalController extends Controller
     }
     
     public function save(Request $request) {
-        $validated = $request->validate([
-            'employee_id' => 'required|string|max:20',
-            'first_name' => 'required|string|max:50',
-            'last_name' => 'required|string|max:50',
-            'department' => 'required|string|max:50',
-            'position' => 'required|string|max:100',
-            'basic_salary' => 'required|numeric|min:0',
-            'email' => 'nullable|email|unique:employees,email,' . ($request->input('employee_id') ?? 'NULL'),
-            'password' => 'nullable|min:8|confirmed'
-        ]);
-        // hospital workers always have role "hospital"
-        $validated['role'] = 'hospital';
-
-        $is_complete = !empty($validated['employee_id'])
-                    && !empty($validated['first_name'])
-                    && !empty($validated['department'])
-                    && ($validated['basic_salary'] ?? 0) > 0
-                    && !empty($validated['role']);
-
-        session(['employee_record' => $validated, 'is_complete' => $is_complete]);
+        $data = $request->all();
+        $is_complete = !empty($data['employee_id']) 
+                    && !empty($data['first_name'])
+                    && !empty($data['department'])
+                    && ($data['basic_salary'] ?? 0) > 0;
+        
+        session(['employee_record' => $data, 'is_complete' => $is_complete]);
         return redirect()->route('hr.hr4.human-capital.validate-record');
     }
     
@@ -84,7 +70,9 @@ class HumanCapitalController extends Controller
                 ->with('error', 'No valid record to save.');
         }
 
-        $dataToSave = [
+        $emp = Employee::updateOrCreate(
+            ['employee_id' => $employee['employee_id']],
+            [
                 'first_name' => $employee['first_name'],
                 'last_name' => $employee['last_name'],
                 'department' => $employee['department'],
@@ -93,18 +81,7 @@ class HumanCapitalController extends Controller
                 'employment_type' => $employee['employment_type'] ?? 'regular',
                 'date_hired' => $employee['date_hired'] ?? now(),
                 'basic_salary' => $employee['basic_salary'],
-                'role' => $employee['role'] ?? 'employee',
-            ];
-        if (!empty($employee['email'])) {
-            $dataToSave['email'] = $employee['email'];
-        }
-        if (!empty($employee['password'])) {
-            $dataToSave['password'] = Hash::make($employee['password']);
-        }
-
-        $emp = Employee::updateOrCreate(
-            ['employee_id' => $employee['employee_id']],
-            $dataToSave
+            ]
         );
 
         session()->forget(['employee_record', 'employee_data', 'is_complete', 'is_new']);

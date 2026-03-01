@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'HR4 - Hospital Management')</title>
-    <link rel="stylesheet" href="{{ asset('css/hr4/example.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/hr4/professional.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     @yield('styles')
 </head>
@@ -31,6 +31,11 @@
             <i class="bi bi-people"></i> <span>Employees</span>
         </a>
         
+        <!-- Manage HR Users -->
+        <a href="{{ route('hr.hr4.admin.users.index') }}" class="{{ request()->routeIs('hr.hr4.admin.users.*') ? 'active' : '' }}">
+            <i class="bi bi-people"></i> <span>Manage HR Users</span>
+        </a>
+        
         <!-- Payroll -->
         <a href="{{ route('hr.hr4.admin.payrolls') }}" class="{{ request()->routeIs('hr.hr4.admin.payrolls*') ? 'active' : '' }}">
             <i class="bi bi-cash-coin"></i> <span>Payroll</span>
@@ -49,9 +54,9 @@
         <hr style="border-color: rgba(255,255,255,0.2);">
         
         <!-- Logout -->
-        <form action="{{ route('admin.logout') }}" method="POST" style="margin:0;">
+        <form action="{{ route('admin.logout') }}" method="POST" class="sidebar-logout">
             @csrf
-            <button type="submit" style="background:none; border:none; color:#fff; cursor:pointer; width:100%; text-align:left; padding:12px 0;">
+            <button type="submit" class="logout-btn">
                 <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
             </button>
         </form>
@@ -62,23 +67,31 @@
         <a href="{{ route('hr.hr4.index') }}" class="{{ request()->routeIs('hr.hr4.index') ? 'active' : '' }}">
             <i class="bi bi-house-door"></i> <span>Dashboard</span>
         </a>
-        
-        <!-- Payroll -->
-        <a href="{{ route('hr.hr4.index') }}" class="">
-            <i class="bi bi-cash-coin"></i> <span>Payroll</span>
-        </a>
-        
-        <!-- Compensation -->
-        <a href="{{ route('hr.hr4.index') }}" class="">
-            <i class="bi bi-graph-up"></i> <span>Compensation</span>
-        </a>
+        @php
+            $u = auth()->guard('user')->user();
+            $role = $u ? $u->role : '';
+        @endphp
+
+        <!-- Payroll (hr_head only) -->
+        @if($role === 'hr_head')
+            <a href="{{ route('hr.hr4.payroll.index') }}" class="{{ request()->routeIs('hr.hr4.payroll.*') ? 'active' : '' }}">
+                <i class="bi bi-cash-coin"></i> <span>Payroll</span>
+            </a>
+        @endif
+
+        <!-- Compensation (hr_head only) -->
+        @if($role === 'hr_head')
+            <a href="{{ route('hr.hr4.compensation.index') }}" class="{{ request()->routeIs('hr.hr4.compensation.*') ? 'active' : '' }}">
+                <i class="bi bi-graph-up"></i> <span>Compensation</span>
+            </a>
+        @endif
         
         <hr style="border-color: rgba(255,255,255,0.2);">
         
         <!-- Logout -->
-        <form action="{{ route('user.logout') }}" method="POST" style="margin:0;">
+        <form action="{{ route('user.logout') }}" method="POST" class="sidebar-logout">
             @csrf
-            <button type="submit" style="background:none; border:none; color:#fff; cursor:pointer; width:100%; text-align:left; padding:12px 0;">
+            <button type="submit" class="logout-btn">
                 <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
             </button>
         </form>

@@ -10,16 +10,16 @@ use App\Http\Controllers\hr4\AdminController;
 
 Route::prefix('hr/hr4')->name('hr.hr4.')->group(function () {
     
-    // EMPLOYEE/USER ROUTES (protected by user or admin guard)
-    Route::middleware('auth:user,admin')->group(function () {
+    // EMPLOYEE/USER ROUTES (protected by user guard)
+    Route::middleware('auth:user')->group(function () {
         
         // Main Dashboard
         Route::get('/', [HR4Controller::class, 'index'])->name('index');
         Route::get('/policies', [HR4Controller::class, 'policies'])->name('policies');
         Route::get('/reports', [HR4Controller::class, 'reports'])->name('reports');
         
-        // PAYROLL MODULE (hr_head only for users)
-        Route::prefix('payroll')->name('payroll.')->middleware('role:hr_head')->group(function () {
+        // PAYROLL MODULE
+        Route::prefix('payroll')->name('payroll.')->group(function () {
             Route::get('/', [PayrollController::class, 'index'])->name('index');
             Route::get('/input', [PayrollController::class, 'input'])->name('input');
             Route::post('/validate', [PayrollController::class, 'validateData'])->name('validate');
@@ -30,8 +30,8 @@ Route::prefix('hr/hr4')->name('hr.hr4.')->group(function () {
             Route::get('/payslip/{id?}', [PayrollController::class, 'payslip'])->name('payslip');
         });
             
-        // COMPENSATION PLANNING MODULE (hr_head only for users)
-        Route::prefix('compensation')->name('compensation.')->middleware('role:hr_head')->group(function () {
+        // COMPENSATION PLANNING MODULE
+        Route::prefix('compensation')->name('compensation.')->group(function () {
             Route::get('/', [CompensationController::class, 'index'])->name('index');
             Route::get('/input', [CompensationController::class, 'input'])->name('input');
             Route::post('/validate', [CompensationController::class, 'validateData'])->name('validate');
@@ -43,8 +43,7 @@ Route::prefix('hr/hr4')->name('hr.hr4.')->group(function () {
         });
             
         // HUMAN CAPITAL MODULE
-        // accessible to both hr_staff and hr_head
-        Route::prefix('human-capital')->name('human-capital.')->middleware('role:hr_staff,hr_head')->group(function () {
+        Route::prefix('human-capital')->name('human-capital.')->group(function () {
             Route::get('/', [HumanCapitalController::class, 'index'])->name('index');
             Route::get('/process', [HumanCapitalController::class, 'process'])->name('process');
             Route::post('/check-employee', [HumanCapitalController::class, 'checkEmployee'])->name('check-employee');
@@ -58,8 +57,7 @@ Route::prefix('hr/hr4')->name('hr.hr4.')->group(function () {
         });
             
         // ANALYTICS MODULE
-        // accessible to both hr_staff and hr_head
-        Route::prefix('analytics')->name('analytics.')->middleware('role:hr_staff,hr_head')->group(function () {
+        Route::prefix('analytics')->name('analytics.')->group(function () {
             Route::get('/', [AnalyticsController::class, 'index'])->name('index');
             Route::get('/collect', [AnalyticsController::class, 'collect'])->name('collect');
             Route::post('/analyze', [AnalyticsController::class, 'analyze'])->name('analyze');
@@ -91,16 +89,6 @@ Route::prefix('hr/hr4')->name('hr.hr4.')->group(function () {
             Route::get('/{id}/edit', [\App\Http\Controllers\hr4\AdminManagementController::class, 'edit'])->name('edit');
             Route::put('/{id}', [\App\Http\Controllers\hr4\AdminManagementController::class, 'update'])->name('update');
             Route::delete('/{id}', [\App\Http\Controllers\hr4\AdminManagementController::class, 'destroy'])->name('destroy');
-        });
-
-        // Admin manage employees/users
-        Route::prefix('users')->name('users.')->group(function () {
-            Route::get('/', [\App\Http\Controllers\hr4\UserManagementController::class, 'index'])->name('index');
-            Route::get('/create', [\App\Http\Controllers\hr4\UserManagementController::class, 'create'])->name('create');
-            Route::post('/', [\App\Http\Controllers\hr4\UserManagementController::class, 'store'])->name('store');
-            Route::get('/{id}/edit', [\App\Http\Controllers\hr4\UserManagementController::class, 'edit'])->name('edit');
-            Route::put('/{id}', [\App\Http\Controllers\hr4\UserManagementController::class, 'update'])->name('update');
-            Route::delete('/{id}', [\App\Http\Controllers\hr4\UserManagementController::class, 'destroy'])->name('destroy');
         });
     });
 

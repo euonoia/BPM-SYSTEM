@@ -44,7 +44,8 @@ class HR4Seeder extends Seeder
                 'job_grade' => fake()->numberBetween(1, 10),
                 'employment_type' => 'regular',
                 'date_hired' => fake()->dateTimeBetween('-5 years', '-1 month'),
-                'basic_salary' => fake()->randomFloat(2, 30000, 100000)
+                'basic_salary' => fake()->randomFloat(2, 30000, 100000),
+                'role' => 'hospital'
             ]);
 
             for ($j = 0; $j < 3; $j++) {

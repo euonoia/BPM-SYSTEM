@@ -11,6 +11,7 @@
             <h4>{{ $employee->first_name }} {{ $employee->last_name }}</h4>
             <p><strong>Employee ID:</strong> {{ $employee->employee_id }}</p>
             <p><strong>Department:</strong> {{ $employee->department }}</p>
+            <p><strong>Role:</strong> {{ ucfirst($employee->role ?? 'employee') }}</p>
             <p><strong>Position:</strong> {{ $employee->position }}</p>
             <p><strong>Status:</strong> {{ ucfirst($employee->status ?? $employee->employment_type ?? 'active') }}</p>
             <p><strong>Date Hired:</strong> {{ optional($employee->date_hired)->format('Y-m-d') }}</p>

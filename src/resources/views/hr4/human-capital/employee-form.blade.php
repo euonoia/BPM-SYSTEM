@@ -36,6 +36,20 @@
                         <input type="text" name="last_name" class="form-control" value="{{ old('last_name', $data['last_name'] ?? '') }}" required>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label>Email</label>
+                        <input type="email" name="email" class="form-control" value="{{ old('email', $data['email'] ?? '') }}">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label>Password</label>
+                        <input type="password" name="password" class="form-control">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label>Confirm Password</label>
+                        <input type="password" name="password_confirmation" class="form-control">
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -44,7 +58,7 @@
             <div class="card-header">Employment Details</div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-3 mb-3">
                         <label>Department *</label>
                         <select name="department" class="form-control" required>
                             <option value="">Select</option>
@@ -53,11 +67,12 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-4 mb-3">
+
+                    <div class="col-md-3 mb-3">
                         <label>Position *</label>
                         <input type="text" name="position" class="form-control" value="{{ old('position', $data['position'] ?? '') }}" required>
                     </div>
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-3 mb-3">
                         <label>Basic Salary *</label>
                         <input type="number" name="basic_salary" class="form-control" value="{{ old('basic_salary', $data['basic_salary'] ?? '') }}" step="0.01" required>
                     </div>

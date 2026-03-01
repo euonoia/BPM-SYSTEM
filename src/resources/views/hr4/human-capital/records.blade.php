@@ -11,7 +11,7 @@
         <div class="card-body">
             <table class="table">
                 <thead>
-                    <tr><th>ID</th><th>Name</th><th>Department</th><th>Position</th><th>Actions</th></tr>
+                    <tr><th>ID</th><th>Name</th><th>Department</th><th>Role</th><th>Position</th><th>Actions</th></tr>
                 </thead>
                 <tbody>
                     @forelse($employees as $emp)
@@ -19,6 +19,7 @@
                         <td>{{ $emp->employee_id }}</td>
                         <td>{{ $emp->first_name }} {{ $emp->last_name }}</td>
                         <td>{{ $emp->department }}</td>
+                        <td>{{ ucfirst($emp->role ?? 'employee') }}</td>
                         <td>{{ $emp->position }}</td>
                         <td>
                             @auth('admin')
